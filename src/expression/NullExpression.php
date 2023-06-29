@@ -5,9 +5,10 @@
 namespace TimoLehnertz\formula\expression;
 
 use TimoLehnertz\formula\NullpointerException;
+use TimoLehnertz\formula\SubFormula;
 use TimoLehnertz\formula\operator\Calculateable;
 
-class NullExpression implements Calculateable {
+class NullExpression implements Calculateable, SubFormula {
   
   public function __construct() {
     
@@ -47,6 +48,10 @@ class NullExpression implements Calculateable {
 
   public function multiply(Calculateable $factor): Calculateable {
     $this->throw();
+  }
+
+  public function toString(): string {
+    return 'null';
   }
 }
 

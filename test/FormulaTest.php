@@ -6,9 +6,7 @@ use PHPUnit\Framework\TestCase;
 use TimoLehnertz\formula\ExpressionNotFoundException;
 use TimoLehnertz\formula\Formula;
 use TimoLehnertz\formula\NoVariableValueException;
-use TimoLehnertz\formula\NullpointerException;
 use DateTime;
-
 
 class FormulaTest extends TestCase {
   
@@ -482,6 +480,7 @@ class FormulaTest extends TestCase {
       ['{1,2,a+max(a,b,c)} + {1,2,3}'],
       ['(a+(b-c))*(a/d)*e+pow(a,b)*(b/d)-pow(a,e)'],
       ['a&&b||c^d!=e>=f'],
+      ['null'],
     ];
   }
   
