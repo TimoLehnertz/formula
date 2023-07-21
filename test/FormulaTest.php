@@ -685,4 +685,10 @@ class FormulaTest extends TestCase {
     $formula->setVariable('a', null);
     $this->assertEquals(null, $formula->calculate());
   }
+  
+  public function testMultiplication(): void {
+    $formula = new Formula("5a");
+    $formula->setVariable('a', 5);
+    $this->assertEquals(25, $formula->calculate());
+  }
 }
