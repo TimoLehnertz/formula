@@ -691,4 +691,19 @@ class FormulaTest extends TestCase {
     $formula->setVariable('a', 5);
     $this->assertEquals(25, $formula->calculate());
   }
+  
+  public function getMeasurements(string $sensorIdStr, int $fromBackInterval, int $toFrontInterval = 0, string $intervalStr = 'hourly', string $missingMwasurementsModeStr = 'ignore') {
+    $this->assertEquals('S1876', $sensorIdStr);
+    $this->assertEquals(60*60*24*2, $fromBackInterval);
+    $this->assertEquals(60*60*24*2, $toFrontInterval);
+    $this->assertEquals('daily', $intervalStr);
+    $this->assertEquals('ignore', $missingMwasurementsModeStr);
+    return [1,2,3];
+  }
+  
+  public function testGetMeasurementsFunction() {
+    $formula = new Formula("sum(getMeasurements('S1876',60*60*24*2, 60*60*24*2, 'daily'))");
+    $formula->setMethod('getMeasurements', [$this, 'getMeasurements']);
+    $this->assertEquals(6, $formula->calculate());
+  }
 }
