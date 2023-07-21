@@ -8,12 +8,12 @@ use Exception;
 /**
  *
  * @author Timo Lehnertz
- *        
+ *
  */
 class TimeIntervalLiteral extends Number {
 
   private string $stringRepresentation;
-  
+
   /**
    * @param int $value milliseconds
    */
@@ -21,13 +21,12 @@ class TimeIntervalLiteral extends Number {
     parent::__construct($value);
     $this->stringRepresentation = $stringRepresentation;
   }
-  
+
   /**
    * Will return a new time object when a matching format is found otherwise null
    * @return TimeLiteral|NULL
    */
   public static function fromString(string $string): ?TimeIntervalLiteral {
-    if(strlen(trim($string)) === 0) return null;
     if(!preg_match('/^P(?:\d+Y)?(?:\d+M)?(?:\d+W)?(?:\d+D)?(?:T(?:\d+H)?(?:\d+M)?(?:\d+S)?)?$/', $string)) {
       return null;
     }
@@ -38,13 +37,13 @@ class TimeIntervalLiteral extends Number {
       return nulL;
     }
   }
-  
+
   public static function intervalToMillis(DateInterval $interval): int {
     $date = new DateTime("@0");
     $date->add($interval);
     return $date->getTimestamp();
   }
-  
+
   /**
    * {@inheritDoc}
    * @see \TimoLehnertz\formula\SubFormula::toString()
