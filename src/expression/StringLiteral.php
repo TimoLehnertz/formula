@@ -9,7 +9,7 @@ use InvalidArgumentException;
 /**
  *
  * @author Timo Lehnertz
- *        
+ *
  */
 class StringLiteral implements Calculateable, SubFormula {
 
@@ -36,20 +36,20 @@ class StringLiteral implements Calculateable, SubFormula {
     }
     return StringLiteral::fromString($string);
   }
-  
+
   public static function fromString(string $string): Calculateable {
     $timeLiteral = TimeLiteral::fromString($string);
     if($timeLiteral != null) return $timeLiteral;
 
     $intervalLiteral = TimeIntervalLiteral::fromString($string);
     if($intervalLiteral != null) return $intervalLiteral;
-    
+
     return new StringLiteral($string);
   }
 
   /**
    * String concatination could pose security risks in some application
-   * 
+   *
    * {@inheritDoc}
    * @see \TimoLehnertz\formula\operator\Calculateable::add()
    */
@@ -74,7 +74,7 @@ class StringLiteral implements Calculateable, SubFormula {
   public function pow(Calculateable $power): Calculateable {
     throw new InvalidArgumentException("Cant multiply strings");
   }
-  
+
   public function getValue(): string {
     return $this->string;
   }
@@ -85,11 +85,11 @@ class StringLiteral implements Calculateable, SubFormula {
   public function setValue(string $value): void {
     $this->string = $value;
   }
-  
+
   public function calculate(): Calculateable {
     return $this;
   }
-  
+
   public function isTruthy(): bool {
     return true; // strings are always truthy
   }
