@@ -375,6 +375,11 @@ class Formula {
     return $array[0];
   }
   
+  public function lastOrNullFunc($array) {
+    if(sizeof($array) === 0) return null;
+    return end($array);
+  }
+  
   /**
    * @param float[] $values
    * @return number sum of all numeric members in $values 
@@ -420,6 +425,7 @@ class Formula {
     $this->setMethod("inRange", [$this, "inRangeFunc"]);
     $this->setMethod("reduce", [$this, "reduceFunc"]);
     $this->setMethod("firstOrNull", [$this, "firstOrNullFunc"]);
+    $this->setMethod("lastOrNull", [$this, "lastOrNullFunc"]);
     $this->setMethod("sum", [$this, "sumFunc"]);
     $this->setMethod("avg", [$this, "avgFunc"]);
   }

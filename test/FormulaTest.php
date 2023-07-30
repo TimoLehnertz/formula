@@ -300,6 +300,12 @@ class FormulaTest extends TestCase {
     
     $formula = new Formula('firstOrNull({})');
     $this->assertEquals(null, $formula->calculate());
+    
+    $formula = new Formula('lastOrNull({1,2,4,5})');
+    $this->assertEquals(5, $formula->calculate());
+    
+    $formula = new Formula('lastOrNull({})');
+    $this->assertEquals(null, $formula->calculate());
   }
   
   // from original repo at https://github.com/socialist/formula

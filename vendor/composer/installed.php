@@ -1,8 +1,8 @@
 <?php return array(
     'root' => array(
         'name' => 'timo-lehnertz/formula',
-        'pretty_version' => '1.0.28',
-        'version' => '1.0.28.0',
+        'pretty_version' => '1.0.31',
+        'version' => '1.0.31.0',
         'reference' => NULL,
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
@@ -29,9 +29,9 @@
             'dev_requirement' => true,
         ),
         'nikic/php-parser' => array(
-            'pretty_version' => 'v4.15.5',
-            'version' => '4.15.5.0',
-            'reference' => '11e2663a5bc9db5d714eedb4277ee300403b4a9e',
+            'pretty_version' => 'v4.16.0',
+            'version' => '4.16.0.0',
+            'reference' => '19526a33fb561ef417e822e85f08a00db4059c17',
             'type' => 'library',
             'install_path' => __DIR__ . '/../nikic/php-parser',
             'aliases' => array(),
@@ -56,9 +56,9 @@
             'dev_requirement' => true,
         ),
         'phpunit/php-code-coverage' => array(
-            'pretty_version' => '9.2.26',
-            'version' => '9.2.26.0',
-            'reference' => '443bc6912c9bd5b409254a40f4b0f4ced7c80ea1',
+            'pretty_version' => '9.2.27',
+            'version' => '9.2.27.0',
+            'reference' => 'b0a88255cb70d52653d80c890bd7f38740ea50d1',
             'type' => 'library',
             'install_path' => __DIR__ . '/../phpunit/php-code-coverage',
             'aliases' => array(),
@@ -263,8 +263,8 @@
             'dev_requirement' => true,
         ),
         'timo-lehnertz/formula' => array(
-            'pretty_version' => '1.0.28',
-            'version' => '1.0.28.0',
+            'pretty_version' => '1.0.31',
+            'version' => '1.0.31.0',
             'reference' => NULL,
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
