@@ -709,4 +709,17 @@ class FormulaTest extends TestCase {
     $formula = new Formula("'S1876'");
     $this->assertEquals('S1876', $formula->calculate());
   }
+
+  public function testAllMethodsSet() {
+    $formula = new Formula("testFunc1(testFunc2(testFunc3() + testFunc4(), testFunc4()))");
+    $this->assertFalse($formula->allMethodsSet());
+    $formula->setMethod('testFunc1', [$this, 'testAllMethodsSet']);
+    $formula->setMethod('testFunc2', [$this, 'testAllMethodsSet']);
+    $formula->setMethod('testFunc3', [$this, 'testAllMethodsSet']);
+    $this->assertFalse($formula->allMethodsSet());
+    $formula->setMethod('testFunc4', [$this, 'testAllMethodsSet']);
+    $this->assertTrue($formula->allMethodsSet());
+    $formula->resetMethod('testFunc4');
+    $this->assertFalse($formula->allMethodsSet());
+  }
 }

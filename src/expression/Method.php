@@ -36,7 +36,7 @@ class Method implements Expression, Parseable, Nestable, SubFormula {
    * @inheritdoc
    */
   public function calculate(): Calculateable {
-    if($this->method == null) throw new ExpressionNotFoundException("No method provided for $this->identifier!");
+    if($this->method === null) throw new ExpressionNotFoundException("No method provided for $this->identifier!");
     $parameters = $this->getParameterValues();
     $value = call_user_func_array($this->method, $parameters);
 //     if($value === null) throw new Exception("Return value of function $this->identifier was null");
@@ -109,6 +109,10 @@ class Method implements Expression, Parseable, Nestable, SubFormula {
    */
   public function setIdentifier(string $identifier): void {
     $this->identifier = $identifier;
+  }
+  
+  public function isSet(): bool {
+    return $this->method !== null;
   }
   
   /**

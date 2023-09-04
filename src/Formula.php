@@ -104,6 +104,17 @@ class Formula {
     }
   }
   
+  public function allMethodsSet(): bool {
+    foreach ($this->expression->getContent() as $content) {
+      if($content instanceof Method) {
+        if(!$content->isSet()) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+  
   /**
    * @param string $oldName
    * @param string $newName
