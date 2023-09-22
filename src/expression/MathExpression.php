@@ -355,7 +355,12 @@ class MathExpression implements Expression, Nestable, SubFormula {
    */
   public function calculate(): Calculateable {
     $expressionsAndOperatorsBackup = $this->getExpressionsAndOperatorsBackup();
-    $calculateable = $this->calculateRecursive();
+    try {      
+      $calculateable = $this->calculateRecursive();
+    } catch(\Exception $e) {
+      $this->expressionsAndOperators = $expressionsAndOperatorsBackup; // restore previous structure even in case of error
+      throw $e;
+    }
     $this->expressionsAndOperators = $expressionsAndOperatorsBackup;
     return $calculateable;
   }

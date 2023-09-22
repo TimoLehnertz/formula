@@ -722,4 +722,18 @@ class FormulaTest extends TestCase {
     $formula->resetMethod('testFunc4');
     $this->assertFalse($formula->allMethodsSet());
   }
+  
+  public function testSus(): void {
+    $formula = new Formula("s1+s2+s3+s4");
+    $formula->setVariable("s1", 12.810565985905);
+    $formula->setVariable("s2", 2.4790567336397);
+    $formula->setVariable("s4", 0);
+    $formula->setVariable("now", 1611270000);
+    try {
+      $formula->calculate();
+    } catch(\Exception $e) {
+      $this->assertEquals("Can't calculate. Variable s3 has no value", $e->getMessage());
+    }
+    $this->assertEquals('s1+s2+s3+s4', $formula->getFormula());
+  }
 }
