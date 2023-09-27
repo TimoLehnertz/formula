@@ -345,6 +345,40 @@ class MathExpression implements Expression, Nestable, SubFormula {
     array_splice($this->expressionsAndOperators, $bestOperator - 1, 3, [ $value ]);
     return $this->calculateRecursive();
   }
+  
+  private function getNodeRecursive($expressionsAndOperators): array {
+    if(sizeof($expressionsAndOperators) == 1) {
+      if(is_array($expressionsAndOperators[0])) {
+        return $expressionsAndOperators[0];
+      }
+      if($expressionsAndOperators[0] instanceof Expression) {        
+        return $expressionsAndOperators[0]->getNode();
+      } else {
+        throw new \Exception('Invalid order of expressions and operators');
+      }
+    }
+    // find lowest precedence operator
+    $minPrecedence = 1000;
+    $bestOperator = 1; // start with index 1 as this will be the first operator if no better operators are found
+    for($i = 0;$i < sizeof($expressionsAndOperators);$i++) {
+      $expressionsAndOperator = $expressionsAndOperators[$i];
+      if($expressionsAndOperator instanceof Operator) {
+        if($minPrecedence > $expressionsAndOperator->getPrecedence()) {
+          $minPrecedence = $expressionsAndOperator->getPrecedence();
+          $bestOperator = $i;
+        }
+      }
+    }
+    // execute highes priority operator and replace it and its expressions by the resulting value
+    $node = $expressionsAndOperators[$bestOperator]->getNode($expressionsAndOperators[$bestOperator - 1], $expressionsAndOperators[$bestOperator + 1]);
+    // replace Operator and neighbours by the result
+    array_splice($expressionsAndOperators, $bestOperator - 1, 3, [ $node ]);
+    return $this->getNodeRecursive($expressionsAndOperators);
+  }
+  
+  public function getNode(): array {
+    return $this->getNodeRecursive($this->expressionsAndOperators);
+  }
 
   /**
    * Will calculate the current value of this formula
@@ -355,7 +389,7 @@ class MathExpression implements Expression, Nestable, SubFormula {
    */
   public function calculate(): Calculateable {
     $expressionsAndOperatorsBackup = $this->getExpressionsAndOperatorsBackup();
-    try {      
+    try {
       $calculateable = $this->calculateRecursive();
     } catch(\Exception $e) {
       $this->expressionsAndOperators = $expressionsAndOperatorsBackup; // restore previous structure even in case of error

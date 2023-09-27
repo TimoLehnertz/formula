@@ -1,8 +1,8 @@
 <?php
 namespace TimoLehnertz\formula\operator;
 
+use TimoLehnertz\formula\expression\NoExpression;
 use TimoLehnertz\formula\expression\Number;
-use src\expression\NoExpression;
 
 /**
  *

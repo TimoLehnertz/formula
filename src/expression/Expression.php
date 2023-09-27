@@ -14,4 +14,6 @@ interface Expression {
      * @return float|string calculated value
      */
     public function calculate(): Calculateable;
+    
+    public function getNode();
 }

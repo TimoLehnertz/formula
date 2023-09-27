@@ -301,6 +301,10 @@ class Formula {
     return $merged;
   }
   
+  public function getFormulaNodeTree(): array {
+    return $this->expression->getNode();
+  }
+  
   public function minFunc(...$values) {
     $values = Formula::mergeArraysRecursive($values);
     return min($values);

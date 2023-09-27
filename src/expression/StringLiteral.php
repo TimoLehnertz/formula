@@ -93,6 +93,13 @@ class StringLiteral implements Calculateable, SubFormula {
   public function isTruthy(): bool {
     return true; // strings are always truthy
   }
+  
+  public function getNode() {
+    return [
+      'type' => 'string',
+      'string' => $this->string
+    ];
+  }
 
   public function toString(): string {
     return "'$this->string'";

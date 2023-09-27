@@ -165,6 +165,18 @@ class Method implements Expression, Parseable, Nestable, SubFormula {
     return true;
   }
 
+  public function getNode() {
+    $parameterNodes = [];
+    foreach ($this->parameters as $parameter) {
+      $parameterNodes []= $parameter->getNode();
+    }
+    return [
+      'type' => 'method',
+      'identifier' => $this->identifier,
+      'parameters' => $parameterNodes
+    ];
+  }
+  
   public function toString(): string {
     $parameters = '';
     $delimiter = '';

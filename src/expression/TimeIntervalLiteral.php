@@ -43,6 +43,13 @@ class TimeIntervalLiteral extends Number {
     $date->add($interval);
     return $date->getTimestamp();
   }
+  
+  public function getNode() {
+    return [
+      'type' => 'timeIntervalLiteral',
+      'stringRepresentation' => $this->stringRepresentation
+    ];
+  }
 
   /**
    * {@inheritDoc}

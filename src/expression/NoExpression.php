@@ -16,6 +16,12 @@ class NoExpression implements Expression, SubFormula {
     return new Number(0, true);
   }
   
+  public function getNode() {
+    return [
+      'type' => 'noExpression'
+    ];
+  }
+  
   public function toString(): string {
     return '';
   }

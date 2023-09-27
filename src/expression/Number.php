@@ -79,6 +79,13 @@ class Number implements Calculateable, SubFormula {
     return $this->value != 0;
   }
 
+  public function getNode() {
+    return [
+      'type' => 'number',
+      'value' => $this->getValue()
+    ];
+  }
+  
   /**
    * {@inheritDoc}
    * @see \TimoLehnertz\formula\SubFormula::toString()

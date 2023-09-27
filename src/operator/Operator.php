@@ -4,6 +4,7 @@ namespace TimoLehnertz\formula\operator;
 use TimoLehnertz\formula\SubFormula;
 use TimoLehnertz\formula\expression\Expression;
 use InvalidArgumentException;
+use TimoLehnertz\formula\expression\NoExpression;
 
 /**
  *
@@ -116,6 +117,33 @@ abstract class Operator implements SubFormula {
       case "<":   return new GreaterOperator();
       default: throw new \Exception("Invalid operator: $name"); // shouldnt happen as this gets sorted out in tokenizer stage
     }
+  }
+  
+  /**
+   * @param Expression|array|null $left
+   * @param Expression|array|null $right
+   * @return array node
+   */
+  public function getNode($left, $right): array {
+    $leftNode = $left;
+    $rightNode = $right;
+    if($left !== null && ($left instanceof Expression) && !($left instanceof NoExpression)) {
+      $leftNode = $left->getNode();
+    }
+    if($right !== null && ($right instanceof Expression) && !($right instanceof NoExpression)) {
+      $rightNode = $right->getNode();
+    }
+    return [
+      'type' => 'operator',
+      'operator' => $this->stringRepresentation,
+      'left' => $leftNode,
+      'right' => $rightNode,
+      'commutative' => $this->commutative,
+      'needsLeft' => $this->needsLeft,
+      'needsRight' => $this->needsRight,
+      'usesLeft' => $this->usesLeft,
+      'usesRight' => $this->usesRight
+    ];
   }
 
   public abstract function doCalculate(Calculateable $left, Calculateable $right): Calculateable;

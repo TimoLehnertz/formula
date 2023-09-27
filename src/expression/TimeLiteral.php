@@ -39,4 +39,11 @@ class TimeLiteral extends Number {
   public function toString(): string {
     return '"'.$this->stringRepresentation.'"';
   }
+  
+  public function getNode() {
+    return [
+      'type' => 'timeLiteral',
+      'stringRepresentation' => $this->stringRepresentation
+    ];
+  }
 }

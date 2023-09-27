@@ -81,4 +81,11 @@ class Variable implements Expression, Parseable, SubFormula {
   public function toString(): string {
     return $this->identifier;
   }
+  
+  public function getNode() {
+    return [
+      'type' => 'variable',
+      'identifier' => $this->identifier
+    ];
+  }
 }

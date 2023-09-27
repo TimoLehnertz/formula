@@ -195,4 +195,17 @@ class Vector implements Calculateable, Nestable, Parseable, SubFormula {
     }
     return $string.'}';
   }
+
+  public function getNode() {
+    $subNodes = [];
+    foreach ($this->elements as $element) {
+      $subNodes []= $element->getNode();
+    }
+    return [
+      'type' => 'vector',
+      'elements' => $subNodes
+    ];
+    
+  }
+
 }

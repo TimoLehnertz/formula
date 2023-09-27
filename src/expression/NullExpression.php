@@ -49,6 +49,12 @@ class NullExpression implements Calculateable, SubFormula {
   public function multiply(Calculateable $factor): Calculateable {
     $this->throw();
   }
+  
+  public function getNode() {
+    return [
+      'type' => 'null'
+    ];
+  }
 
   public function toString(): string {
     return 'null';

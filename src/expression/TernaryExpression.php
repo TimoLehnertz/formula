@@ -82,6 +82,15 @@ class TernaryExpression implements Expression, Nestable, SubFormula {
     if(!$this->rightExpression->validate($throwOnError)) return false;
     return true;
   }
+  
+  public function getNode() {
+    return [
+      'type' => 'ternary',
+      'condition' => $this->condition->getNode(),
+      'left' => $this->leftExpression->getNode(),
+      'right' => $this->rightExpression->getNode(),
+    ];
+  }
 
   public function toString(): string {
     return ''.$this->condition->toString().'?'.$this->leftExpression->toString().':'.$this->rightExpression->toString().'';
