@@ -56,7 +56,7 @@ class StringLiteral implements Calculateable, SubFormula {
   public function add(Calculateable $summand): Calculateable {
     $concatination = $summand->getValue();
     if(!is_string($concatination) && !is_numeric($concatination)) throw new InvalidArgumentException("Invalid string concatination");
-    return new StringLiteral($this->getValue().$concatination);
+    return StringLiteral::fromString($this->getValue().$concatination);
   }
 
   public function subtract(Calculateable $difference): Calculateable {

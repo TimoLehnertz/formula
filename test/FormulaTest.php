@@ -97,22 +97,20 @@ class FormulaTest extends TestCase {
    * Dateintervals are not 100% precise
    */
   public function testDates(): void {
-    $date = new DateTime(); // now
-    $str = '"'.$date->format(DateTime::ISO8601).'" + "P5M" - "P1M" + "P1M" - "P5M"';
+    $date = new DateTime((new \DateTimeImmutable())->format('Y-m-d')); // now
+    $str = '"'.$date->format('Y-m-d').'" + "P5M" - "P1M" + "P1M" - "P5M"';
     $formula = new Formula($str);
     $result = $formula->calculate();
     $this->assertEquals($date->getTimestamp(), $result);
 
-    $date = new DateTime(); // now
-    $str = '"'.$date->format(DateTime::ISO8601).'" + 10 * "P1M" - 10 * "P1M"';
+    $str = '"'.$date->format('Y-m-d').'" + 10 * "P1M" - 10 * "P1M"';
     $formula = new Formula($str);
     $result = $formula->calculate();
     $resDate = new DateTime();
     $resDate->setTimestamp($result);
     $this->assertEquals($date->getTimestamp(), intval($result));
 
-    $date = new DateTime(); // now
-    $str = '"'.$date->format(DateTime::ISO8601).'" - "'.$date->format(DateTime::ISO8601).'"';
+    $str = '"'.$date->format('Y-m-d').'" - "'.$date->format('Y-m-d').'"';
     $formula = new Formula($str);
     $result = $formula->calculate();
     $this->assertEquals($result, 0);
@@ -300,10 +298,10 @@ class FormulaTest extends TestCase {
 
     $formula = new Formula('firstOrNull({})');
     $this->assertEquals(null, $formula->calculate());
-    
+
     $formula = new Formula('lastOrNull({1,2,4,5})');
     $this->assertEquals(5, $formula->calculate());
-    
+
     $formula = new Formula('lastOrNull({})');
     $this->assertEquals(null, $formula->calculate());
   }
@@ -722,7 +720,7 @@ class FormulaTest extends TestCase {
     $formula->resetMethod('testFunc4');
     $this->assertFalse($formula->allMethodsSet());
   }
-  
+
   public function testSus(): void {
     $formula = new Formula("s1+s2+s3+s4");
     $formula->setVariable("s1", 12.810565985905);
@@ -735,5 +733,15 @@ class FormulaTest extends TestCase {
       $this->assertEquals("Can't calculate. Variable s3 has no value", $e->getMessage());
     }
     $this->assertEquals('s1+s2+s3+s4', $formula->getFormula());
+  }
+
+  public function testDateConcatination(): void {
+    $formula = new Formula("2022 + '-01-01'");
+    $result = $formula->calculate();
+    $this->assertEquals(1640991600, $result);
+
+    $formula = new Formula("'2022' + '-01-01'");
+    $result = $formula->calculate();
+    $this->assertEquals(1640991600, $result);
   }
 }
