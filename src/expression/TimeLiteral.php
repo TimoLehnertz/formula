@@ -26,7 +26,8 @@ class TimeLiteral extends Number {
     if(strlen(trim($string)) === 0) return null;
     if(strlen(trim($string)) < 5) return null;
     if(strtotime($string) === false) return null;
-    if(preg_match('/^[A-Za-z]\d+$/', $string)) return null;
+//     if(preg_match('/^[A-Za-z]\d+$/', $string)) return null;
+    if (!preg_match("/^\d{4}-\d{2}-\d{2}$/", $string)) return null;
     $dateObj = date_create_immutable($string);
     if($dateObj === false) return null;
     return new TimeLiteral($dateObj->getTimestamp(), $string);
