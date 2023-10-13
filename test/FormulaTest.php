@@ -859,6 +859,7 @@ class FormulaTest extends TestCase {
           'type' => 'null'
         ]
         ], $nodeTree);
+    echo json_encode($nodeTree, true);
 //     print_r($nodeTree);
   }
 }
