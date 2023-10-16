@@ -3,8 +3,8 @@ namespace TimoLehnertz\formula\operator;
 
 use TimoLehnertz\formula\SubFormula;
 use TimoLehnertz\formula\expression\Expression;
-use InvalidArgumentException;
 use TimoLehnertz\formula\expression\NoExpression;
+use InvalidArgumentException;
 
 /**
  *
@@ -19,40 +19,40 @@ abstract class Operator implements SubFormula {
    * @readonly
    */
   private int $precedence;
-  
+
   /**
    * Can left and right be interchanged
    * @readonly
    */
   private bool $commutative;
-  
+
   /**
    * Is lefthand expression required
    * @readonly
    */
   private bool $needsLeft;
-  
+
   /**
    * Is righthand expression required
    * @readonly
    */
   private bool $needsRight;
-  
+
   /**
    * Will use lefthand expression if available
    * @readonly
    */
   private bool $usesLeft;
-  
+
   /**
    * Will use righthand expression if available
    * @readonly
    */
   private bool $usesRight;
-  
-  private ?string $stringRepresentation;
-  
-  public function __construct(?string $stringRepresentation, int $precedence, bool $commutative, bool $needsLeft = true, bool $needsRight = true, bool $usesLeft = true, bool $usesRight = true) {
+
+  private string $stringRepresentation;
+
+  public function __construct(string $stringRepresentation, int $precedence, bool $commutative, bool $needsLeft = true, bool $needsRight = true, bool $usesLeft = true, bool $usesRight = true) {
     $this->precedence = $precedence;
     $this->commutative = $commutative;
     $this->needsLeft = $needsLeft;
@@ -61,27 +61,27 @@ abstract class Operator implements SubFormula {
     $this->usesRight = $usesRight;
     $this->stringRepresentation = $stringRepresentation;
   }
-  
+
   public function getPrecedence(): int {
     return $this->precedence;
   }
-  
+
   public function needsLeft(): bool {
     return $this->needsLeft;
   }
-  
+
   public function needsRight(): bool {
     return $this->needsRight;
   }
-  
+
   public function usesLeft(): bool {
     return $this->usesLeft;
   }
-  
+
   public function usesRight(): bool {
     return $this->usesRight;
   }
-  
+
   /**
    * @throws InvalidArgumentException
    */
@@ -96,7 +96,7 @@ abstract class Operator implements SubFormula {
       }
     }
   }
-  
+
   public static function fromString(string $name): Operator {
     switch($name) {
       case "+":   return new Increment();
@@ -118,7 +118,7 @@ abstract class Operator implements SubFormula {
       default: throw new \Exception("Invalid operator: $name"); // shouldnt happen as this gets sorted out in tokenizer stage
     }
   }
-  
+
   /**
    * @param Expression|array|null $left
    * @param Expression|array|null $right
@@ -147,7 +147,7 @@ abstract class Operator implements SubFormula {
   }
 
   public abstract function doCalculate(Calculateable $left, Calculateable $right): Calculateable;
-  
+
   public function toString(): string {
     return $this->stringRepresentation;
   }

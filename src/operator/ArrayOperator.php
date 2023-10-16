@@ -11,13 +11,13 @@ use TimoLehnertz\formula\expression\Vector;
 class ArrayOperator extends Operator implements Parseable, Nestable, SubFormula {
 
   private MathExpression $indexExpression;
-  
+
   public function __construct() {
-    parent::__construct(null, 2, false, true, false, true, false);
+    parent::__construct('[]', 2, false, true, false, true, false);
   }
-  
+
   /**
-   * 
+   *
    * {@inheritDoc}
    * @see \TimoLehnertz\formula\Parseable::parse()
    */
@@ -33,7 +33,7 @@ class ArrayOperator extends Operator implements Parseable, Nestable, SubFormula 
   }
 
   /**
-   * 
+   *
    * {@inheritDoc}
    * @see \TimoLehnertz\formula\operator\Operator::doCalculate()
    */
@@ -44,9 +44,9 @@ class ArrayOperator extends Operator implements Parseable, Nestable, SubFormula 
     $index = intVal($index);
     return $left->getElement($index)->calculate();
   }
-  
+
   public function getContent(): array {
-    if($this->indexExpression instanceof Nestable) {      
+    if($this->indexExpression instanceof Nestable) {
       return $this->indexExpression->getContent();
     }
     return $this->indexExpression;
@@ -55,7 +55,7 @@ class ArrayOperator extends Operator implements Parseable, Nestable, SubFormula 
   public function validate(bool $throwOnError): bool {
     return $this->indexExpression->validate($throwOnError);
   }
-  
+
   /**
    * {@inheritDoc}
    * @see \TimoLehnertz\formula\operator\Operator::toString()
