@@ -5,6 +5,7 @@ use TimoLehnertz\formula\ExpressionNotFoundException;
 use TimoLehnertz\formula\Nestable;
 use TimoLehnertz\formula\Parseable;
 use TimoLehnertz\formula\SubFormula;
+use TimoLehnertz\formula\expression\Expression;
 use TimoLehnertz\formula\expression\MathExpression;
 use TimoLehnertz\formula\expression\Vector;
 
@@ -54,6 +55,20 @@ class ArrayOperator extends Operator implements Parseable, Nestable, SubFormula 
 
   public function validate(bool $throwOnError): bool {
     return $this->indexExpression->validate($throwOnError);
+  }
+
+  /**
+   * @param Expression|array|null $left
+   * @param Expression|array|null $right
+   * @return array node
+   */
+  public function getNode($left, $right): array {
+    if(!($left instanceof Vector)) throw new ExpressionNotFoundException("Cant access array index of ".get_class($left));
+    return [
+      'type' => 'arrayOperator',
+      'vector' => $left->getNode(),
+      'index' => $this->indexExpression->getNode(),
+    ];
   }
 
   /**

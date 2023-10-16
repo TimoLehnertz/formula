@@ -734,130 +734,146 @@ class FormulaTest extends TestCase {
     }
     $this->assertEquals('s1+s2+s3+s4', $formula->getFormula());
   }
-  
+
   public function testNodes(): void {
     $formula = new Formula("getModuleComponentIndex()>=0?S1+sum(getMeasurements('s1889',getLastFilterInstallationTime(),0,'daily','interpolate'))/1000:null");
     $nodeTree = $formula->getFormulaNodeTree();
     $this->assertEquals([
-        'type' => 'ternary',
-        'condition' => 
+      'type' => 'ternary',
+      'condition' =>
+      [
+        'type' => 'operator',
+        'operator' => '>=',
+        'left' =>
+        [
+          'type' => 'method',
+          'identifier' => 'getModuleComponentIndex',
+          'parameters' =>
+          [
+          ]
+        ],
+        'right' =>
+        [
+          'type' => 'number',
+          'value' => 0
+        ],
+
+        'commutative' => 0,
+        'needsLeft' => 1,
+        'needsRight' => 1,
+        'usesLeft' => 1,
+        'usesRight' => 1,
+      ],
+
+      'left' =>
+      [
+        'type' => 'operator',
+        'operator' => '+',
+        'left' =>
+        [
+          'type' => 'variable',
+          'identifier' => 'S1'
+        ],
+
+        'right' =>
         [
           'type' => 'operator',
-          'operator' => '>=',
-          'left' => 
+          'operator' => '/',
+          'left' =>
           [
             'type' => 'method',
-            'identifier' => 'getModuleComponentIndex',
-            'parameters' => 
+            'identifier' => 'sum',
+            'parameters' =>
             [
+              0 =>
+              [
+                'type' => 'method',
+                'identifier' => 'getMeasurements',
+                'parameters' =>
+                [
+                  0 =>
+                  [
+                    'type' => 'string',
+                    'string' => 's1889'
+                  ],
+
+                  1 =>
+                  [
+                    'type' => 'method',
+                    'identifier' => 'getLastFilterInstallationTime',
+                    'parameters' =>
+                    [
+                    ]
+
+                  ],
+
+                  2 =>
+                  [
+                    'type' => 'number',
+                    'value' => 0
+                  ],
+
+                  3 =>
+                  [
+                    'type' => 'string',
+                    'string' => 'daily'
+                  ],
+
+                  4 =>
+                  [
+                    'type' => 'string',
+                    'string' => 'interpolate'
+                  ]
+
+                ]
+
+              ]
+
             ]
+
           ],
-          'right' => 
+
+          'right' =>
           [
             'type' => 'number',
-            'value' => 0
+            'value' => 1000
           ],
-          
+
           'commutative' => 0,
           'needsLeft' => 1,
           'needsRight' => 1,
           'usesLeft' => 1,
           'usesRight' => 1,
         ],
-        
-        'left' => 
-        [
-          'type' => 'operator',
-          'operator' => '+',
-          'left' => 
-          [
-            'type' => 'variable',
-            'identifier' => 'S1'
-          ],
-          
-          'right' => 
-          [
-            'type' => 'operator',
-            'operator' => '/',
-            'left' => 
-            [
-              'type' => 'method',
-              'identifier' => 'sum',
-              'parameters' => 
-              [
-                0 => 
-                [
-                  'type' => 'method',
-                  'identifier' => 'getMeasurements',
-                  'parameters' => 
-                  [
-                    0 => 
-                    [
-                      'type' => 'string',
-                      'string' => 's1889'
-                    ],
-                    
-                    1 => 
-                    [
-                      'type' => 'method',
-                      'identifier' => 'getLastFilterInstallationTime',
-                      'parameters' => 
-                      [
-                      ]
-                      
-                    ],
-                    
-                    2 => 
-                    [
-                      'type' => 'number',
-                      'value' => 0
-                    ],
-                    
-                    3 => 
-                    [
-                      'type' => 'string',
-                      'string' => 'daily'
-                    ],
-                    
-                    4 => 
-                    [
-                      'type' => 'string',
-                      'string' => 'interpolate'
-                    ]
-                    
-                  ]
-                  
-                ]
-                
-              ]
-              
-            ],
-            
-            'right' => 
-            [
-              'type' => 'number',
-              'value' => 1000
-            ],
-            
-            'commutative' => 0,
-            'needsLeft' => 1,
-            'needsRight' => 1,
-            'usesLeft' => 1,
-            'usesRight' => 1,
-          ],
-          
-          'commutative' => 1,
-          'needsLeft' => 1,
-          'needsRight' => 1,
-          'usesLeft' => 1,
-          'usesRight' => 1
-        ],
-        'right' => 
-        [
-          'type' => 'null'
-        ]
-      ], $nodeTree);
-    }
+
+        'commutative' => 1,
+        'needsLeft' => 1,
+        'needsRight' => 1,
+        'usesLeft' => 1,
+        'usesRight' => 1
+      ],
+      'right' =>
+      [
+        'type' => 'null'
+      ]
+    ], $nodeTree);
+  }
+
+  public function testVectorNodes(): void {
+    $formula = new Formula("{}[0]");
+    $nodeTree = $formula->getFormulaNodeTree();
+    $this->assertEquals([
+      'type' => 'arrayOperator',
+      'vector' => [
+        'type' => 'vector',
+        'elements' => [],
+      ],
+      'index' => [
+        'type' => 'number',
+        'value' => 0,
+      ]
+    ], $nodeTree);
+  }
 
   public function testDateConcatination(): void {
     $formula = new Formula("2022 + '-01-01'");
