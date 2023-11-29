@@ -63,7 +63,7 @@ class ArrayOperator extends Operator implements Parseable, Nestable, SubFormula 
    * @return array node
    */
   public function getNode($left, $right): array {
-    if(!($left instanceof Vector)) throw new ExpressionNotFoundException("Cant access array index of ".get_class($left));
+//     if(!($left instanceof Vector)) throw new ExpressionNotFoundException("Cant access array index of ".get_class($left));
     return [
       'type' => 'arrayOperator',
       'vector' => $left->getNode(),
