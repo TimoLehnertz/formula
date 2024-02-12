@@ -884,4 +884,24 @@ class FormulaTest extends TestCase {
     $result = $formula->calculate();
     $this->assertEquals(1640991600, $result);
   }
+
+  public function testFunc(): int {
+    return 1;
+  }
+
+  public function getMeasurementsFunc(): int {
+    return [1,2,3];
+  }
+
+  public function testSecondArgumentError(): void {
+    // ((getModuleComponentIndex()>=0)?(sum(getMeasurements("S1886", getLastFilterInstallationTime(), 0, "daily", "interpolate"))/1000):null)
+
+    $formula = new Formula('((getModuleComponentIndex()>=0)?(sum(getMeasurements("S1886", getLastFilterInstallationTime(), 0, "daily", "interpolate"))/1000):null)');
+    $formula->setMethod('getModuleComponentIndex', [$this, 'testFunc']);
+    $formula->setMethod('getModuleComponentIndex', [$this, 'getMeasurements']);
+    $formula->setMethod('getLastFilterInstallationTime', [$this, 'testFunc']);
+    $result = $formula->calculate();
+    var_dump($result);
+    $this->assertEquals(1640991600, );
+  }
 }
