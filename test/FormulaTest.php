@@ -874,6 +874,16 @@ class FormulaTest extends TestCase {
       ]
     ], $nodeTree);
   }
+  
+  public function dummyGetMeasurements(): array {
+    return [ 123 ];
+  }
+  
+  public function testFunctionReturnIndex(): void {
+    $formula = new Formula('getMeasurements()[0]');
+    $formula->setMethod('getMeasurements', [$this, 'dummyGetMeasurements']);
+    $this->assertEquals(123, $formula->calculate());
+  }
 
   public function testDateConcatination(): void {
     $formula = new Formula("2022 + '-01-01'");
