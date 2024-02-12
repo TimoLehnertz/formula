@@ -13,14 +13,14 @@ use TimoLehnertz\formula\tokens\Tokenizer;
  *
  */
 class Formula {
-  
+
   /**
    * String containing the original input to this formula
    *
    * @var string
    */
   protected ?string $source = '';
-  
+
   /**
    * Array of tokens that have been found in tokenizing stage
    *
@@ -32,7 +32,7 @@ class Formula {
    * @var MathExpression
    */
   private MathExpression $expression;
-  
+
   public function __construct(string $source) {
     $this->source = $source;
     $this->tokens = Formula::tokenize(Formula::clearComments($source));
@@ -41,7 +41,7 @@ class Formula {
     $this->validate();
     $this->initDefaultMethods();
   }
-  
+
   /**
    * Will set all variables with the given identifier to a value
    *
@@ -57,7 +57,7 @@ class Formula {
       }
     }
   }
-  
+
   public function resetVariable(string $identifier): void {
     foreach ($this->expression->getContent() as $content) {
       if($content instanceof Variable) {
@@ -67,7 +67,7 @@ class Formula {
       }
     }
   }
-  
+
   /**
    * Will set all methods with this identifier
    *
@@ -80,7 +80,7 @@ class Formula {
       }
     }
   }
-  
+
   public function resetMethod(string $identifier): void {
     foreach ($this->expression->getContent() as $content) {
       if($content instanceof Method) {
@@ -91,19 +91,19 @@ class Formula {
     }
     $this->initDefaultMethods(); // in case a buildin method got resetted
   }
-  
+
   public function resetAllVariables(): void {
     foreach ($this->getVariables() as $variableIdentifier) {
       $this->resetVariable($variableIdentifier);
     }
   }
-  
+
   public function resetAllMethods(): void {
     foreach ($this->getMethodIdentifiers() as $methodIdentifiers) {
       $this->resetMethod($methodIdentifiers);
     }
   }
-  
+
   public function allMethodsSet(): bool {
     foreach ($this->expression->getContent() as $content) {
       if($content instanceof Method) {
@@ -114,7 +114,7 @@ class Formula {
     }
     return true;
   }
-  
+
   /**
    * @param string $oldName
    * @param string $newName
@@ -126,7 +126,7 @@ class Formula {
       }
     }
   }
-  
+
   /**
    * @param string $oldName
    * @param string $newName
@@ -138,7 +138,7 @@ class Formula {
       }
     }
   }
-  
+
   /**
    * @param string $oldName
    * @param string $newName
@@ -151,7 +151,7 @@ class Formula {
     }
     $this->initDefaultMethods(); // in case a method got renamed to a buildin method
   }
-  
+
   /**
    * @param string $a
    * @param string $b
@@ -162,7 +162,7 @@ class Formula {
     if($caseSensitive) return $a === $b;
     return strcasecmp($a, $b) == 0;
   }
-  
+
   /**
    * Calculates and returnes the result of this formula
    * @return mixed
@@ -170,7 +170,7 @@ class Formula {
   public function calculate() {
     return $this->expression->calculate()->getValue();
   }
-  
+
   private function parse(): void {
     $index = 0;
     $this->expression->parse($this->tokens, $index);
@@ -178,7 +178,7 @@ class Formula {
       throw new ExpressionNotFoundException("Unexpected end of input", $this->source);
     }
   }
-  
+
   /**
    * Validate formula
    */
@@ -222,7 +222,7 @@ class Formula {
     }
     return $tokens;
   }
-  
+
   /**
    * Clear all comments in a string
    *
@@ -235,7 +235,7 @@ class Formula {
     ];
     return preg_replace($patterns, '', $source);
   }
-  
+
   /**
    * Gets all string literals
    * @return array<string>
@@ -247,7 +247,7 @@ class Formula {
     }
     return $strings;
   }
-  
+
   /**
    * Gets all method identifiers
    * @return array<string>
@@ -265,7 +265,7 @@ class Formula {
     }
     return $identifiers;
   }
-  
+
   /**
    * Gets all variable identifiers present in this formula
    * @return string[]
@@ -283,7 +283,7 @@ class Formula {
     }
     return $identifiers;
   }
-  
+
   /**
    * Merges an array of arrays into one flat array (Recursively)
    * @param array $arrays
@@ -300,65 +300,65 @@ class Formula {
     }
     return $merged;
   }
-  
+
   public function getFormulaNodeTree(): array {
     return $this->expression->getNode();
   }
-  
+
   public function minFunc(...$values) {
     $values = Formula::mergeArraysRecursive($values);
     return min($values);
   }
-  
+
   public function maxFunc(...$values) {
     $values = Formula::mergeArraysRecursive($values);
     return max($values);
   }
-  
+
   public function powFunc($base, $exp) {
     return pow($base, $exp);
   }
-  
+
   public function sqrtFunc(float $arg) {
     return sqrt($arg);
   }
-  
+
   public function ceilFunc(float $value) {
     return ceil($value);
   }
-  
+
   public function floorFunc(float $value) {
     return floor($value);
   }
-  
-  public function roundFunc(float $val, int $precision = null, int $mode = null) {
+
+  public function roundFunc(float $val, int $precision = 0, int $mode = PHP_ROUND_HALF_UP) {
     return round($val, $precision, $mode);
   }
-  
+
   public function sinFunc(float $arg) {
     return sin($arg);
   }
-  
+
   public function cosFunc(float $arg) {
     return cos($arg);
   }
-  
+
   public function tanFunc(float $arg) {
     return tan($arg);
   }
-  
+
   public function is_nanFunc(float $val) {
     return is_nan($val);
   }
-  
+
   public function absFunc(float $number) {
     return abs($number);
   }
-  
+
   public function asVectorFunc(...$values) {
     return $values;
   }
-  
+
   public function sizeofFunc(...$values) {
     $count = 0;
     foreach ($values as $value) {
@@ -370,11 +370,11 @@ class Formula {
     }
     return $count;
   }
-  
+
   public function inRangeFunc(float $value, float $min, float $max): bool {
     return ($min <= $value) && ($value <= $max);
   }
-  
+
   public function reduceFunc(array $values, array $filter): array {
     $result = [];
     foreach ($values as $value) {
@@ -384,20 +384,20 @@ class Formula {
     }
     return $result;
   }
-  
+
   public function firstOrNullFunc($array) {
     if(sizeof($array) === 0) return null;
     return $array[0];
   }
-  
+
   public function lastOrNullFunc($array) {
     if(sizeof($array) === 0) return null;
     return end($array);
   }
-  
+
   /**
    * @param float[] $values
-   * @return number sum of all numeric members in $values 
+   * @return number sum of all numeric members in $values
    */
   public function sumFunc(...$values) {
     $res = 0;
@@ -415,13 +415,13 @@ class Formula {
 
   /**
    * @param float[] $values
-   * @return number sum of all numeric members in $values 
+   * @return number sum of all numeric members in $values
    */
   public function avgFunc(...$values) {
     $sum = $this->sumFunc($values);
     return $sum / $this->sizeofFunc($values);
   }
-  
+
   private function initDefaultMethods(): void {
     $this->setMethod("min", [$this, "minFunc"]);
     $this->setMethod("max", [$this, "maxFunc"]);
@@ -444,14 +444,14 @@ class Formula {
     $this->setMethod("sum", [$this, "sumFunc"]);
     $this->setMethod("avg", [$this, "avgFunc"]);
   }
-  
+
   /**
    * @return string source string
    */
   public function getSource(): string {
     return $this->source;
   }
-  
+
   public function getFormula(): string {
     return $this->expression->toString();
   }

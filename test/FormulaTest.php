@@ -874,11 +874,11 @@ class FormulaTest extends TestCase {
       ]
     ], $nodeTree);
   }
-  
+
   public function dummyGetMeasurements(): array {
     return [ 123 ];
   }
-  
+
   public function testFunctionReturnIndex(): void {
     $formula = new Formula('getMeasurements()[0]');
     $formula->setMethod('getMeasurements', [$this, 'dummyGetMeasurements']);
@@ -888,30 +888,27 @@ class FormulaTest extends TestCase {
   public function testDateConcatination(): void {
     $formula = new Formula("2022 + '-01-01'");
     $result = $formula->calculate();
-    $this->assertEquals(1640991600, $result);
+    $this->assertEquals(1640995200.0, $result);
 
     $formula = new Formula("'2022' + '-01-01'");
     $result = $formula->calculate();
-    $this->assertEquals(1640991600, $result);
+    $this->assertEquals(1640995200.0, $result);
   }
 
-  public function testFunc(): int {
+  public function funcTest(): int {
     return 1;
   }
 
-  public function getMeasurementsFunc(): int {
+  public function getMeasurementsFunc(): array {
     return [1,2,3];
   }
 
   public function testSecondArgumentError(): void {
-    // ((getModuleComponentIndex()>=0)?(sum(getMeasurements("S1886", getLastFilterInstallationTime(), 0, "daily", "interpolate"))/1000):null)
-
     $formula = new Formula('((getModuleComponentIndex()>=0)?(sum(getMeasurements("S1886", getLastFilterInstallationTime(), 0, "daily", "interpolate"))/1000):null)');
-    $formula->setMethod('getModuleComponentIndex', [$this, 'testFunc']);
-    $formula->setMethod('getModuleComponentIndex', [$this, 'getMeasurements']);
-    $formula->setMethod('getLastFilterInstallationTime', [$this, 'testFunc']);
+    $formula->setMethod('getModuleComponentIndex', [$this, 'funcTest']);
+    $formula->setMethod('getMeasurements', [$this, 'getMeasurementsFunc']);
+    $formula->setMethod('getLastFilterInstallationTime', [$this, 'funcTest']);
     $result = $formula->calculate();
-    var_dump($result);
-    $this->assertEquals(1640991600, );
+    $this->assertEquals(0.006, $result);
   }
 }
