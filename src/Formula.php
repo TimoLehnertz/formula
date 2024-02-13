@@ -454,6 +454,14 @@ class Formula {
     return 0;
   }
 
+  public function earlyReturnIfNullFunc(mixed $value, mixed $ealryReturnValue = null) {
+    if($value === null) {
+      $this->earlyReturn($ealryReturnValue);
+    } else {
+      return $value;
+    }
+  }
+
   private function initDefaultMethods(): void {
     $this->setMethod("min", [$this, "minFunc"]);
     $this->setMethod("max", [$this, "maxFunc"]);
@@ -476,6 +484,7 @@ class Formula {
     $this->setMethod("sum", [$this, "sumFunc"]);
     $this->setMethod("avg", [$this, "avgFunc"]);
     $this->setMethod("earlyReturn", [$this, "earlyReturnFunc"]);
+    $this->setMethod("earlyReturnIfNull", [$this, "earlyReturnIfNullFunc"]);
   }
 
   /**

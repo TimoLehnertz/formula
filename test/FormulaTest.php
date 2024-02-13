@@ -955,6 +955,18 @@ class FormulaTest extends TestCase {
     $this->earlyReturnFormula = new Formula('100 + (a ? earlyReturn(10 + earlyReturn(0)) : 23)');
     $this->earlyReturnFormula->setVariable('a', true);
     $result = $this->earlyReturnFormula->calculate();
-    $this->assertEquals(0, $result); // earlyReturn(0) gets run first
+    $this->assertEquals(0, $result); // earlyReturn(0) gets evaluated first
+  }
+
+  public function testEarlyReturnIfNull(): void {
+    $this->earlyReturnFormula = new Formula('earlyReturnIfNull(null, 123)');
+    $this->earlyReturnFormula->setVariable('a', true);
+    $result = $this->earlyReturnFormula->calculate();
+    $this->assertEquals(123, $result);
+
+    $this->earlyReturnFormula = new Formula('earlyReturnIfNull(12, 123)');
+    $this->earlyReturnFormula->setVariable('a', true);
+    $result = $this->earlyReturnFormula->calculate();
+    $this->assertEquals(12, $result);
   }
 }

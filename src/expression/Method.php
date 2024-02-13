@@ -3,12 +3,12 @@ namespace TimoLehnertz\formula\expression;
 
 use TimoLehnertz\formula\ExpressionNotFoundException;
 use TimoLehnertz\formula\Formula;
+use TimoLehnertz\formula\FormulaEarlyReturnException;
 use TimoLehnertz\formula\Nestable;
 use TimoLehnertz\formula\Parseable;
 use TimoLehnertz\formula\ParsingException;
 use TimoLehnertz\formula\SubFormula;
 use TimoLehnertz\formula\operator\Calculateable;
-use TimoLehnertz\formula\FormulaEarlyReturnException;
 
 /**
  *
