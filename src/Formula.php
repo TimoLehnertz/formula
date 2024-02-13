@@ -21,6 +21,10 @@ class Formula {
    */
   protected ?string $source = '';
 
+  private bool $isEarlyReturn;
+
+  private mixed $earlyReturnValue;
+
   /**
    * Array of tokens that have been found in tokenizing stage
    *
@@ -40,6 +44,7 @@ class Formula {
     $this->parse();
     $this->validate();
     $this->initDefaultMethods();
+    $this->initMethods();
   }
 
   /**
@@ -168,7 +173,21 @@ class Formula {
    * @return mixed
    */
   public function calculate() {
-    return $this->expression->calculate()->getValue();
+    $this->isEarlyReturn = false;
+    try {
+      return $this->expression->calculate()->getValue();
+    } catch(FormulaEarlyReturnException $e) {
+      return $this->earlyReturnValue;
+    }
+  }
+
+  public function isEarlyReturn(): bool {
+    return $this->isEarlyReturn;
+  }
+
+  public function earlyReturn(mixed $returnValue): void {
+    $this->isEarlyReturn = true;
+    $this->earlyReturnValue = $returnValue;
   }
 
   private function parse(): void {
@@ -185,6 +204,14 @@ class Formula {
   private function validate(): void {
     $this->expression->setInsideBrackets(false); //for sure not needed
     $this->expression->validate(true);
+  }
+
+  private function initMethods(): void {
+    foreach ($this->expression->getContent() as $content) {
+      if($content instanceof Method) {
+        $content->setFormula($this);
+      }
+    }
   }
 
   /**
@@ -422,6 +449,11 @@ class Formula {
     return $sum / $this->sizeofFunc($values);
   }
 
+  public function earlyReturnFunc($returnValue) {
+    $this->earlyReturn($returnValue);
+    return 0;
+  }
+
   private function initDefaultMethods(): void {
     $this->setMethod("min", [$this, "minFunc"]);
     $this->setMethod("max", [$this, "maxFunc"]);
@@ -443,6 +475,7 @@ class Formula {
     $this->setMethod("lastOrNull", [$this, "lastOrNullFunc"]);
     $this->setMethod("sum", [$this, "sumFunc"]);
     $this->setMethod("avg", [$this, "avgFunc"]);
+    $this->setMethod("earlyReturn", [$this, "earlyReturnFunc"]);
   }
 
   /**

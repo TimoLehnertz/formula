@@ -2,16 +2,18 @@
 namespace TimoLehnertz\formula\expression;
 
 use TimoLehnertz\formula\ExpressionNotFoundException;
+use TimoLehnertz\formula\Formula;
 use TimoLehnertz\formula\Nestable;
 use TimoLehnertz\formula\Parseable;
 use TimoLehnertz\formula\ParsingException;
 use TimoLehnertz\formula\SubFormula;
 use TimoLehnertz\formula\operator\Calculateable;
+use TimoLehnertz\formula\FormulaEarlyReturnException;
 
 /**
  *
  * @author Timo Lehnertz
- * 
+ *
  */
 class Method implements Expression, Parseable, Nestable, SubFormula {
 
@@ -31,7 +33,9 @@ class Method implements Expression, Parseable, Nestable, SubFormula {
    * @var callable
    */
   private $method = null;
-  
+
+  private Formula|null $formula = null;
+
   /**
    * @inheritdoc
    */
@@ -39,10 +43,12 @@ class Method implements Expression, Parseable, Nestable, SubFormula {
     if($this->method === null) throw new ExpressionNotFoundException("No method provided for $this->identifier!");
     $parameters = $this->getParameterValues();
     $value = call_user_func_array($this->method, $parameters);
-//     if($value === null) throw new Exception("Return value of function $this->identifier was null");
+    if($this->formula !== null && $this->formula->isEarlyReturn()) {
+      throw new FormulaEarlyReturnException();
+    }
     return Method::calculateableFromValue($value);
   }
-  
+
   public static function calculateableFromValue($value) : Calculateable {
     if($value === null) return new NullExpression();
     if(is_numeric($value)) return new Number($value);
@@ -63,7 +69,7 @@ class Method implements Expression, Parseable, Nestable, SubFormula {
     }
     return StringLiteral::fromString($value);
   }
-  
+
   public function parse(array &$tokens, int &$index): bool {
     // identifier
     if($tokens[$index]->name != "I") return false;
@@ -84,17 +90,17 @@ class Method implements Expression, Parseable, Nestable, SubFormula {
       if(!$first && $token->name != ',') throw new ParsingException("", $token);
       if(!$first) $index++;
       $param = new MathExpression();
-      
+
       $param->parse($tokens, $index); // will throw on error
       if($param->size() == 0) throw new ExpressionNotFoundException("Invalid Method argument", $tokens, $index);
-      
+
       $index--;
       $this->parameters []= $param;
       $first = false;
     }
     throw new ExpressionNotFoundException("Unexpected end of input", $tokens, $index);
   }
-  
+
   /**
    * @psalm-mutation-free
    * @return string
@@ -102,7 +108,7 @@ class Method implements Expression, Parseable, Nestable, SubFormula {
   public function getIdentifier(): string {
     return $this->identifier;
   }
-  
+
   /**
    * @param string $identifier
    * @return string
@@ -110,11 +116,11 @@ class Method implements Expression, Parseable, Nestable, SubFormula {
   public function setIdentifier(string $identifier): void {
     $this->identifier = $identifier;
   }
-  
+
   public function isSet(): bool {
     return $this->method !== null;
   }
-  
+
   /**
    * Will return the calculated values of all parameters
    * @return array<mixed>
@@ -126,7 +132,7 @@ class Method implements Expression, Parseable, Nestable, SubFormula {
     }
     return $values;
   }
-  
+
   /**
    * {@inheritDoc}
    * @see \TimoLehnertz\formula\Nestable::getContent()
@@ -141,21 +147,21 @@ class Method implements Expression, Parseable, Nestable, SubFormula {
     }
     return $content;
   }
-  
+
   /**
    * @param callable $method
    */
   public function setMethod(callable $method): void {
     $this->method = $method;
   }
-  
+
   /**
    * Unsets this method value and will throw an exception if used in calculation
    */
   public function reset(): void {
     $this->method = null;
   }
-  
+
   public function validate(bool $throwOnError): bool {
     foreach ($this->parameters as $parameter) {
       if($parameter instanceof Nestable) {
@@ -176,7 +182,11 @@ class Method implements Expression, Parseable, Nestable, SubFormula {
       'parameters' => $parameterNodes
     ];
   }
-  
+
+  public function setFormula(Formula $formula): void {
+    $this->formula = $formula;
+  }
+
   public function toString(): string {
     $parameters = '';
     $delimiter = '';

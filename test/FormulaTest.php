@@ -911,4 +911,50 @@ class FormulaTest extends TestCase {
     $result = $formula->calculate();
     $this->assertEquals(0.006, $result);
   }
+
+  public function testNullElimination(): void {
+    $formula = new Formula('null == 1');
+    $result = $formula->calculate();
+    $this->assertEquals($result, 0);
+    $formula = new Formula('null == null');
+    $result = $formula->calculate();
+    $this->assertEquals($result, 1);
+  }
+
+  private Formula $earlyReturnFormula;
+
+  public function ealryReturnFunc(): int {
+    $this->earlyReturnFormula->earlyReturn(0);
+    return 0;
+  }
+
+  public function testEarlyReturn(): void {
+    $this->earlyReturnFormula = new Formula('100 + (a ? ealryReturnFunc() : 23)');
+    $this->earlyReturnFormula->setMethod('ealryReturnFunc', [$this, 'ealryReturnFunc']);
+    $this->earlyReturnFormula->setVariable('a', true);
+    $result = $this->earlyReturnFormula->calculate();
+    $this->assertEquals(0, $result);
+
+    $this->earlyReturnFormula->setVariable('a', false);
+    $result = $this->earlyReturnFormula->calculate();
+    $this->assertEquals(123, $result);
+  }
+
+  public function testEarlyReturnFunc(): void {
+    $this->earlyReturnFormula = new Formula('100 + (a ? earlyReturn(10) : 23)');
+    $this->earlyReturnFormula->setVariable('a', true);
+    $result = $this->earlyReturnFormula->calculate();
+    $this->assertEquals(10, $result);
+
+    $this->earlyReturnFormula->setVariable('a', false);
+    $result = $this->earlyReturnFormula->calculate();
+    $this->assertEquals(123, $result);
+  }
+
+  public function testNestedEarlyReturnFunc(): void {
+    $this->earlyReturnFormula = new Formula('100 + (a ? earlyReturn(10 + earlyReturn(0)) : 23)');
+    $this->earlyReturnFormula->setVariable('a', true);
+    $result = $this->earlyReturnFormula->calculate();
+    $this->assertEquals(0, $result); // earlyReturn(0) gets run first
+  }
 }
