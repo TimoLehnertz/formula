@@ -39,16 +39,17 @@ class MathExpression implements Expression, Nestable, SubFormula {
   private bool $validated = false;
 
   /**
+   *
    * @var array<Token> array of all tokens
    */
   private array $tokens = [];
-  
+
   private bool $insideBrackets;
-  
+
   public function __construct(bool $insideBrackets = false) {
     $this->insideBrackets = $insideBrackets;
   }
-  
+
   /**
    * Primary parsing function
    * Will parse this formula, create and parse all subformulas
@@ -100,11 +101,11 @@ class MathExpression implements Expression, Nestable, SubFormula {
           }
           break;
         case '{': // vector
-        	$vector = new Vector();
-        	$vector->parse($tokens, $index); // will throw on error
-        	$this->expressionsAndOperators[] = $vector;
-        	$index--; // prevent $index++
-        	break;
+          $vector = new Vector();
+          $vector->parse($tokens, $index); // will throw on error
+          $this->expressionsAndOperators[] = $vector;
+          $index--; // prevent $index++
+          break;
         case '[': // Array operator
           $arrayOperator = new ArrayOperator();
           $arrayOperator->parse($tokens, $index); // will throw on error
@@ -145,7 +146,7 @@ class MathExpression implements Expression, Nestable, SubFormula {
     $condition->expressionsAndOperators = $this->expressionsAndOperators;
     if($condition->size() == 0) throw new ExpressionNotFoundException("Invalid ternary condition", $tokens, $index);
     $condition->parsingDone = true;
-    
+
     $index++;
     if(sizeof($tokens) <= $index) throw new ExpressionNotFoundException("Unexpected end of input", $tokens, $index);
     // left expression
@@ -160,13 +161,15 @@ class MathExpression implements Expression, Nestable, SubFormula {
     $rightExpression = new MathExpression();
     $rightExpression->parse($tokens, $index);
     if($rightExpression->size() == 0) throw new ExpressionNotFoundException("Invalid ternary expression", $tokens, $index);
-    
+
     $ternaryExpression->condition = $condition;
     $ternaryExpression->leftExpression = $leftExpression;
     $ternaryExpression->rightExpression = $rightExpression;
-    
+
     // replace this MathExpressions content by the ternary Operator
-    $this->expressionsAndOperators = [$ternaryExpression];
+    $this->expressionsAndOperators = [
+      $ternaryExpression
+    ];
   }
 
   /**
@@ -188,19 +191,19 @@ class MathExpression implements Expression, Nestable, SubFormula {
   public function validate(bool $throwOnError): bool {
     if($this->validated) return true;
     // validate sub expressoins
-    foreach ($this->expressionsAndOperators as $expressionsAndOperator) {
+    foreach($this->expressionsAndOperators as $expressionsAndOperator) {
       if($expressionsAndOperator instanceof Nestable) {
         if(!$expressionsAndOperator->validate($throwOnError)) return false;
       }
     }
-    
+
     // 0 expressions
     if(sizeof($this->expressionsAndOperators) == 0) {
       if($throwOnError) throw new ExpressionNotFoundException("Empty expression is not allowed", $this->tokens);
     }
 
     // remove unnecessary brackets
-    foreach ($this->expressionsAndOperators as $expressionOrOperator) {
+    foreach($this->expressionsAndOperators as $expressionOrOperator) {
       if(!($expressionOrOperator instanceof MathExpression)) continue;
       if($this->size() === 1) {
         $expressionOrOperator->setInsideBrackets(false);
@@ -209,9 +212,9 @@ class MathExpression implements Expression, Nestable, SubFormula {
         $expressionOrOperator->setInsideBrackets(false);
       }
     }
-    
+
     // one expression
-    if(sizeof($this->expressionsAndOperators) == 1) { 
+    if(sizeof($this->expressionsAndOperators) == 1) {
       if(!($this->expressionsAndOperators[0] instanceof Expression)) {
         if($throwOnError) throw new ExpressionNotFoundException("Single Expression can not be an Operator", $this->tokens);
         return false;
@@ -221,12 +224,12 @@ class MathExpression implements Expression, Nestable, SubFormula {
       }
       return true;
     }
-    
+
     // n expressions
     // group operators that only affect one side with their expression to one new expression
     $leftExpression = null;
     $rightExpression = null;
-    for ($i = 0; $i < sizeof($this->expressionsAndOperators); $i++) {
+    for($i = 0;$i < sizeof($this->expressionsAndOperators);$i++) {
       $expression = $this->expressionsAndOperators[$i];
       $rightExpression = null;
       if($i < sizeof($this->expressionsAndOperators) - 1) {
@@ -235,13 +238,25 @@ class MathExpression implements Expression, Nestable, SubFormula {
       if($expression instanceof Operator) {
         if(!$expression->needsLeft() && ($leftExpression === null || $leftExpression instanceof Operator)) { // example: (-1), 1&&-1
           $mathExpression = new MathExpression();
-          $mathExpression->expressionsAndOperators = [new NoExpression(), $expression, $rightExpression];
-          array_splice($this->expressionsAndOperators, $i, 2, [$mathExpression]);
+          $mathExpression->expressionsAndOperators = [
+            new NoExpression(),
+            $expression,
+            $rightExpression
+          ];
+          array_splice($this->expressionsAndOperators, $i, 2, [
+            $mathExpression
+          ]);
           $expression = $mathExpression; // to have the correct $leftExpression later on
         } else if(!$expression->needsRight() && ($rightExpression === null || $rightExpression instanceof Operator)) {
           $mathExpression = new MathExpression();
-          $mathExpression->expressionsAndOperators = [$leftExpression, $expression, new NoExpression()];
-          array_splice($this->expressionsAndOperators, $i - 1, 2, [$mathExpression]);
+          $mathExpression->expressionsAndOperators = [
+            $leftExpression,
+            $expression,
+            new NoExpression()
+          ];
+          array_splice($this->expressionsAndOperators, $i - 1, 2, [
+            $mathExpression
+          ]);
           $i--;
           $expression = $mathExpression; // to have the correct $leftExpression later on
         }
@@ -251,7 +266,7 @@ class MathExpression implements Expression, Nestable, SubFormula {
     // check if all operators have sufficient expressions
     $leftExpression = null;
     $rightExpression = null;
-    for ($i = 0; $i < sizeof($this->expressionsAndOperators); $i++) {
+    for($i = 0;$i < sizeof($this->expressionsAndOperators);$i++) {
       $expression = $this->expressionsAndOperators[$i];
       $rightExpression = null;
       if($i < sizeof($this->expressionsAndOperators) - 1) {
@@ -263,7 +278,7 @@ class MathExpression implements Expression, Nestable, SubFormula {
       }
       $leftExpression = $expression;
     }
-    
+
     // Check that operators and expressions are always alternating. Also validate sub expressions recursivly
     $expectExpression = true;
     for($i = 0;$i < sizeof($this->expressionsAndOperators);$i++) {
@@ -271,7 +286,9 @@ class MathExpression implements Expression, Nestable, SubFormula {
       if($expressionOrOperator instanceof Expression && !$expectExpression) {
         // try inserting multiplication
         if(!(($expressionOrOperator instanceof Number) && ($this->expressionsAndOperators[$i - 1] instanceof Number))) { // not (this one and last one are a number)
-          array_splice($this->expressionsAndOperators, $i, 0, [ new Multiplication() ]);
+          array_splice($this->expressionsAndOperators, $i, 0, [
+            new Multiplication()
+          ]);
         } else {
           if($throwOnError) throw new ExpressionNotFoundException("Can't chain expressions without operators in between!", $this->tokens);
           return false;
@@ -291,13 +308,14 @@ class MathExpression implements Expression, Nestable, SubFormula {
     $this->validated = true;
     return true;
   }
-  
+
   /**
    * Size of expressions and operators
+   *
    * @return int
    */
   public function size(): int {
-  	return sizeof($this->expressionsAndOperators);
+    return sizeof($this->expressionsAndOperators);
   }
 
   /**
@@ -342,16 +360,18 @@ class MathExpression implements Expression, Nestable, SubFormula {
     // execute highes priority operator and replace it and its expressions by the resulting value
     $value = $this->expressionsAndOperators[$bestOperator]->calculate($this->expressionsAndOperators[$bestOperator - 1]->calculate(), $this->expressionsAndOperators[$bestOperator + 1]->calculate());
     // replace Operator and neighbours by the result
-    array_splice($this->expressionsAndOperators, $bestOperator - 1, 3, [ $value ]);
+    array_splice($this->expressionsAndOperators, $bestOperator - 1, 3, [
+      $value
+    ]);
     return $this->calculateRecursive();
   }
-  
+
   private function getNodeRecursive($expressionsAndOperators): array {
     if(sizeof($expressionsAndOperators) == 1) {
       if(is_array($expressionsAndOperators[0])) {
         return $expressionsAndOperators[0];
       }
-      if($expressionsAndOperators[0] instanceof Expression) {        
+      if($expressionsAndOperators[0] instanceof Expression) {
         return $expressionsAndOperators[0]->getNode();
       } else {
         throw new \Exception('Invalid order of expressions and operators');
@@ -372,10 +392,12 @@ class MathExpression implements Expression, Nestable, SubFormula {
     // execute highes priority operator and replace it and its expressions by the resulting value
     $node = $expressionsAndOperators[$bestOperator]->getNode($expressionsAndOperators[$bestOperator - 1], $expressionsAndOperators[$bestOperator + 1]);
     // replace Operator and neighbours by the result
-    array_splice($expressionsAndOperators, $bestOperator - 1, 3, [ $node ]);
+    array_splice($expressionsAndOperators, $bestOperator - 1, 3, [
+      $node
+    ]);
     return $this->getNodeRecursive($expressionsAndOperators);
   }
-  
+
   public function getNode(): array {
     return $this->getNodeRecursive($this->expressionsAndOperators);
   }
@@ -398,14 +420,15 @@ class MathExpression implements Expression, Nestable, SubFormula {
     $this->expressionsAndOperators = $expressionsAndOperatorsBackup;
     return $calculateable;
   }
-  
+
   /**
-   * {@inheritDoc}
+   *
+   * {@inheritdoc}
    * @see \TimoLehnertz\formula\Nestable::getContent()
    */
   public function getContent(): array {
     $content = [];
-    foreach ($this->expressionsAndOperators as $expressionOrOperator) {
+    foreach($this->expressionsAndOperators as $expressionOrOperator) {
       $content[] = $expressionOrOperator;
       if($expressionOrOperator instanceof Nestable) {
         $content = array_merge($content, $expressionOrOperator->getContent());
@@ -413,18 +436,18 @@ class MathExpression implements Expression, Nestable, SubFormula {
     }
     return $content;
   }
-  
+
   public function setInsideBrackets(bool $insideBrackets): void {
     $this->insideBrackets = $insideBrackets;
   }
-  
+
   public function toString(): string {
-    $string  = '';
-    foreach ($this->expressionsAndOperators as $expressionOrOperator) {
-        $string .= $expressionOrOperator->toString();
+    $string = '';
+    foreach($this->expressionsAndOperators as $expressionOrOperator) {
+      $string .= $expressionOrOperator->toString();
     }
     if($this->insideBrackets) {
-      return "($string)";      
+      return "($string)";
     } else {
       return $string;
     }

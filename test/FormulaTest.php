@@ -1,5 +1,4 @@
 <?php
-
 namespace test;
 
 use PHPUnit\Framework\TestCase;
@@ -13,7 +12,7 @@ class FormulaTest extends TestCase {
   public function testVariables(): void {
     $str = 'a+b+c+d+e';
     $formula = new Formula($str);
-    for ($i = 0; $i < 10; $i++) {
+    for($i = 0;$i < 10;$i++) {
       $a = rand(-1000, 1000);
       $b = rand(-1000, 1000);
       $c = rand(-1000, 1000);
@@ -38,7 +37,7 @@ class FormulaTest extends TestCase {
   public function testpow(): void {
     $str = 'pow(a,b)';
     $formula = new Formula($str);
-    for ($i = 0; $i < 1; $i++) {
+    for($i = 0;$i < 1;$i++) {
       $a = rand(0, 10);
       $b = rand(0, 10);
       $formula->setVariable('a', $a);
@@ -51,7 +50,7 @@ class FormulaTest extends TestCase {
   public function testMathRules(): void {
     $str = '(a+(b-c))*(a/d)*e+pow(a,b)*(b/d)-pow(a,e)';
     $formula = new Formula($str);
-    for ($i = 0; $i < 10; $i++) { // tested with 1000000
+    for($i = 0;$i < 10;$i++) { // tested with 1000000
       $a = rand(1, 10);
       $b = rand(-10, 10);
       $c = rand(-10, 10);
@@ -64,7 +63,7 @@ class FormulaTest extends TestCase {
       $formula->setVariable('d', $d);
       $formula->setVariable('e', $e);
       $formula->setVariable('f', $f);
-      $correct = round(($a+($b-$c))*($a/$d)*$e+pow($a,$b)*($b/$d)-pow($a,$e));
+      $correct = round(($a + ($b - $c)) * ($a / $d) * $e + pow($a, $b) * ($b / $d) - pow($a, $e));
       $calculated = $formula->calculate();
       $this->assertTrue(abs($calculated - $correct) < 1); // rounding errors...
     }
@@ -73,7 +72,7 @@ class FormulaTest extends TestCase {
   public function testFunctions(): void {
     $str = 'max(min(a,b),c)';
     $formula = new Formula($str);
-    for ($i = 0; $i < 10; $i++) {
+    for($i = 0;$i < 10;$i++) {
       $a = rand(-1000, 1000);
       $b = rand(-1000, 1000);
       $c = rand(-1000, 1000);
@@ -145,14 +144,27 @@ class FormulaTest extends TestCase {
 
   public function booleanDataProvider() {
     return [
-      [false, false],
-      [false, true],
-      [true, false],
-      [true, true]
+      [
+        false,
+        false
+      ],
+      [
+        false,
+        true
+      ],
+      [
+        true,
+        false
+      ],
+      [
+        true,
+        true
+      ]
     ];
   }
 
   /**
+   *
    * @dataProvider booleanDataProvider
    */
   public function testLogicalOperators($a, $b): void {
@@ -189,16 +201,21 @@ class FormulaTest extends TestCase {
     $this->assertEquals(!$a, $formula->calculate() == 0 ? false : true);
   }
 
-  public function ternaryDataProvider() : array {
+  public function ternaryDataProvider(): array {
     $arr = [];
-    for ($i = 0; $i < 1; $i++) {
-      $arr []= [rand(-1, -1), rand(-1, -1) ,rand(-1, -1)];
-//       $arr []= [rand(-100, 100), rand(-100, 100) ,rand(-100, 100)];
+    for($i = 0;$i < 1;$i++) {
+      $arr[] = [
+        rand(-1, -1),
+        rand(-1, -1),
+        rand(-1, -1)
+      ];
+      //       $arr []= [rand(-100, 100), rand(-100, 100) ,rand(-100, 100)];
     }
     return $arr;
-}
+  }
 
   /**
+   *
    * @dataProvider ternaryDataProvider
    */
   public function testTernary($a, $b, $c): void {
@@ -206,7 +223,7 @@ class FormulaTest extends TestCase {
     $this->assertEquals($formula->calculate(), $a < 0 ? $b : $c);
     $formula = new Formula("max($b, min($a < 0 ? $b : $c, $c))");
     $this->assertEquals($formula->calculate(), max($b, min($a < 0 ? $b : $c, $c)));
-//  testing Not operator
+    //  testing Not operator
     $formula = new Formula("max($b, min(!($a < 0) ? $b : $c, $c))");
     $this->assertEquals($formula->calculate(), max($b, min(!($a < 0) ? $b : $c, $c)));
   }
@@ -220,25 +237,40 @@ class FormulaTest extends TestCase {
 
   public function numberProvider(): array {
     return [
-      [-1],[5],[20],[-6],[0]
+      [
+        -1
+      ],
+      [
+        5
+      ],
+      [
+        20
+      ],
+      [
+        -6
+      ],
+      [
+        0
+      ]
     ];
   }
 
   /**
+   *
    * @dataProvider numberProvider
    */
   public function testBuildInFuncs($a): void {
     $formula = new Formula('min(2a, 0)');
     $formula->setVariable('a', $a);
-    $this->assertEquals($formula->calculate(), min(2*$a, 0));
+    $this->assertEquals($formula->calculate(), min(2 * $a, 0));
 
     $formula = new Formula('max(2a, 0)');
     $formula->setVariable('a', $a);
-    $this->assertEquals($formula->calculate(), max(2*$a, 0));
+    $this->assertEquals($formula->calculate(), max(2 * $a, 0));
 
     $formula = new Formula('sqrt(10+a)');
     $formula->setVariable('a', $a);
-    $this->assertEquals(round($formula->calculate()), round(sqrt(10+$a)));
+    $this->assertEquals(round($formula->calculate()), round(sqrt(10 + $a)));
 
     $formula = new Formula('pow(a, a)');
     $formula->setVariable('a', $a);
@@ -288,7 +320,10 @@ class FormulaTest extends TestCase {
     $this->assertEquals(1, $formula->calculate());
 
     $formula = new Formula('reduce({1,2,4,5}, {1,3,5})');
-    $this->assertEquals([1,5], $formula->calculate());
+    $this->assertEquals([
+      1,
+      5
+    ], $formula->calculate());
 
     $formula = new Formula('sum({1,2,true,false,{}})');
     $this->assertEquals(4, $formula->calculate());
@@ -343,35 +378,73 @@ class FormulaTest extends TestCase {
 
   public function testGetVariables() {
     $formula = new Formula('a + b + max(c, b ? d : e)');
-    $this->assertEquals($formula->getVariables(), ['a', 'b', 'c', 'd', 'e']);
+    $this->assertEquals($formula->getVariables(), [
+      'a',
+      'b',
+      'c',
+      'd',
+      'e'
+    ]);
   }
 
   public function testVectors(): void {
-  	$formula = new Formula('{1,2,3} + {1,2,3}');
-  	$this->assertEquals($formula->calculate(), [2,4,6]);
-  	$formula = new Formula('{1,2,3} + 5');
-  	$this->assertEquals($formula->calculate(), [6,7,8]);
+    $formula = new Formula('{1,2,3} + {1,2,3}');
+    $this->assertEquals($formula->calculate(), [
+      2,
+      4,
+      6
+    ]);
+    $formula = new Formula('{1,2,3} + 5');
+    $this->assertEquals($formula->calculate(), [
+      6,
+      7,
+      8
+    ]);
 
-  	$formula = new Formula('{1,2,3} - {1,2,3}');
-  	$this->assertEquals($formula->calculate(), [0,0,0]);
-  	$formula = new Formula('{1,2,3} - 5');
-  	$this->assertEquals($formula->calculate(), [-4,-3,-2]);
+    $formula = new Formula('{1,2,3} - {1,2,3}');
+    $this->assertEquals($formula->calculate(), [
+      0,
+      0,
+      0
+    ]);
+    $formula = new Formula('{1,2,3} - 5');
+    $this->assertEquals($formula->calculate(), [
+      -4,
+      -3,
+      -2
+    ]);
 
-  	$formula = new Formula('{1,2,3} * {1,2,3}');
-  	$this->assertEquals($formula->calculate(), [1,4,9]);
-  	$formula = new Formula('{1,2,3} * 5');
-  	$this->assertEquals($formula->calculate(), [5,10,15]);
+    $formula = new Formula('{1,2,3} * {1,2,3}');
+    $this->assertEquals($formula->calculate(), [
+      1,
+      4,
+      9
+    ]);
+    $formula = new Formula('{1,2,3} * 5');
+    $this->assertEquals($formula->calculate(), [
+      5,
+      10,
+      15
+    ]);
 
-  	$formula = new Formula('{1,2,3} / {1,2,3}');
-  	$this->assertEquals($formula->calculate(), [1,1,1]);
-  	$formula = new Formula('{10,15,20} / 5');
-  	$this->assertEquals($formula->calculate(), [2,3,4]);
+    $formula = new Formula('{1,2,3} / {1,2,3}');
+    $this->assertEquals($formula->calculate(), [
+      1,
+      1,
+      1
+    ]);
+    $formula = new Formula('{10,15,20} / 5');
+    $this->assertEquals($formula->calculate(), [
+      2,
+      3,
+      4
+    ]);
 
-  	$formula = new Formula('max({-10,15,20})');
-  	$this->assertEquals(20, $formula->calculate());
+    $formula = new Formula('max({-10,15,20})');
+    $this->assertEquals(20, $formula->calculate());
 
-  	$formula = new Formula('min({-10,15,20})');
-  	$this->assertEquals(-10, $formula->calculate());
+    $formula = new Formula('min({-10,15,20})');
+    $this->assertEquals(-10, $formula->calculate());
   }
 
   public function testVectorsOffsets(): void {
@@ -385,14 +458,28 @@ class FormulaTest extends TestCase {
     $formula = new Formula('{1,2,3}[0]');
     $this->assertEquals($formula->calculate(), 1);
     $formula = new Formula('4 + a[i]');
-    $formula->setVariable('a', [0,1,2,3,4,5]);
+    $formula->setVariable('a', [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ]);
     $formula->setVariable('i', 2);
     $this->assertEquals(6, $formula->calculate());
 
     $formula = new Formula('{1,2,3}[0]');
     $this->assertEquals($formula->calculate(), 1);
     $formula = new Formula('avg(a) + a[i]');
-    $formula->setVariable('a', [0,1,2,3,4,5]);
+    $formula->setVariable('a', [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ]);
     $formula->setVariable('i', 2);
     $this->assertEquals(4.5, $formula->calculate());
   }
@@ -435,9 +522,17 @@ class FormulaTest extends TestCase {
 
   public function testGetStringLiterals(): void {
     $formula = new Formula('strFunc("hallo", "welt", "Hallo", "Welt")');
-    $formula->setMethod('strFunc', [$this, "strFunc"]);
+    $formula->setMethod('strFunc', [
+      $this,
+      "strFunc"
+    ]);
     $this->assertEquals("Hallo welt", $formula->calculate());
-    $this->assertEquals(['hallo', 'welt', 'Hallo', 'Welt'], $formula->getStringLiterals());
+    $this->assertEquals([
+      'hallo',
+      'welt',
+      'Hallo',
+      'Welt'
+    ], $formula->getStringLiterals());
   }
 
   public function testRenameVariables(): void {
@@ -449,7 +544,7 @@ class FormulaTest extends TestCase {
     $formula->renameMethods('maxFunc', 'max', false);
     $formula->setVariable('c', 10);
     $formula->setVariable('d', 20);
-    $this->assertEquals(10+20+max(10,min(10, 20)), $formula->calculate());
+    $this->assertEquals(10 + 20 + max(10, min(10, 20)), $formula->calculate());
   }
 
   public function testRenameVariablesCaseInsensitive(): void {
@@ -460,7 +555,7 @@ class FormulaTest extends TestCase {
     $formula->renameMethods('maxFunc', 'max', false);
     $formula->setVariable('c', 10);
     $formula->setVariable('d', 20);
-    $this->assertEquals(10+20+max(10,min(10, 20)), $formula->calculate());
+    $this->assertEquals(10 + 20 + max(10, min(10, 20)), $formula->calculate());
   }
 
   public function testRenameStrings(): void {
@@ -477,22 +572,47 @@ class FormulaTest extends TestCase {
 
   public function provideFormulaStrings(): array {
     return [
-      ['1+1'],
-      ['a + b'],
-      ['max(50, 3, 100) + (a ? b : min(b,a))'],
-      ['"P1D" + "P2D"'],
-      ['{a,b,c}[2]'],
-      ['(1((1)1)2)'],
-      ['"Hallo welt"'],
-      ['a+b+max(a,min(a,b))'],
-      ['{1,2,a+max(a,b,c)} + {1,2,3}'],
-      ['(a+(b-c))*(a/d)*e+pow(a,b)*(b/d)-pow(a,e)'],
-      ['a&&b||c^d!=e>=f'],
-      ['null'],
+      [
+        '1+1'
+      ],
+      [
+        'a + b'
+      ],
+      [
+        'max(50, 3, 100) + (a ? b : min(b,a))'
+      ],
+      [
+        '"P1D" + "P2D"'
+      ],
+      [
+        '{a,b,c}[2]'
+      ],
+      [
+        '(1((1)1)2)'
+      ],
+      [
+        '"Hallo welt"'
+      ],
+      [
+        'a+b+max(a,min(a,b))'
+      ],
+      [
+        '{1,2,a+max(a,b,c)} + {1,2,3}'
+      ],
+      [
+        '(a+(b-c))*(a/d)*e+pow(a,b)*(b/d)-pow(a,e)'
+      ],
+      [
+        'a&&b||c^d!=e>=f'
+      ],
+      [
+        'null'
+      ]
     ];
   }
 
   /**
+   *
    * @dataProvider provideFormulaStrings
    */
   public function testGetFormula(string $formulaString): void {
@@ -521,7 +641,10 @@ class FormulaTest extends TestCase {
 
   public function testMethofNoArgs(): void {
     $formula1 = new Formula('methodTest()');
-    $formula1->setMethod('methodTest', [$this, 'methodTest']);
+    $formula1->setMethod('methodTest', [
+      $this,
+      'methodTest'
+    ]);
 
     $this->assertEquals(123, $formula1->calculate());
   }
@@ -549,7 +672,10 @@ class FormulaTest extends TestCase {
 
   public function testdummyArrayFunc(): void {
     $formula = new Formula('dummyArrayFunc(2, {"S3", "S4", "S10"})');
-    $formula->setMethod('dummyArrayFunc', [$this, 'dummyArrayFunc']);
+    $formula->setMethod('dummyArrayFunc', [
+      $this,
+      'dummyArrayFunc'
+    ]);
     $result = $formula->calculate();
     $this->assertEquals('S10', $result);
   }
@@ -574,14 +700,17 @@ class FormulaTest extends TestCase {
 
   public function testComplexTernary(): void {
     $formula = new Formula("((getModuleComponentIndex()>=1&&getModuleComponentIndex()<=2)?1:(getModuleComponentIndex()>2?2:-1))");
-    $formula->setMethod('getModuleComponentIndex', [$this, 'getModuleComponentIndexFunc']);
+    $formula->setMethod('getModuleComponentIndex', [
+      $this,
+      'getModuleComponentIndexFunc'
+    ]);
     $res = $formula->calculate();
     $this->assertEquals(-1, $res);
   }
 
   public function testSumFunc(): void {
     $res = (new Formula("sum({1,{{{2}},2},4}, 5, {6,7+8+9})"))->calculate();
-    $this->assertEquals(1+2+2+4+5+6+7+8+9, $res);
+    $this->assertEquals(1 + 2 + 2 + 4 + 5 + 6 + 7 + 8 + 9, $res);
 
     $this->expectException(\Exception::class);
     $this->expectExceptionMessage('Only numeric values or vectors are allowed for sum');
@@ -630,7 +759,10 @@ class FormulaTest extends TestCase {
     $formula->resetMethod('min');
     $this->assertEquals(1, $formula->calculate());
     $formula = new Formula("testFunc()");
-    $formula->setMethod('testFunc', [$this, 'mockFunction']);
+    $formula->setMethod('testFunc', [
+      $this,
+      'mockFunction'
+    ]);
     $this->assertEquals(1, $formula->calculate());
     $formula->resetMethod('testFunc');
     $this->expectException(ExpressionNotFoundException::class);
@@ -640,8 +772,14 @@ class FormulaTest extends TestCase {
 
   public function testResetAllMethods(): void {
     $formula = new Formula("testFunc1() + testFunc2()");
-    $formula->setMethod('testFunc1', [$this, 'mockFunction']);
-    $formula->setMethod('testFunc2', [$this, 'mockFunction']);
+    $formula->setMethod('testFunc1', [
+      $this,
+      'mockFunction'
+    ]);
+    $formula->setMethod('testFunc2', [
+      $this,
+      'mockFunction'
+    ]);
     $this->assertEquals(2, $formula->calculate());
     $formula->resetAllMethods();
     $this->expectException(ExpressionNotFoundException::class);
@@ -653,20 +791,21 @@ class FormulaTest extends TestCase {
     $formula = new Formula("a");
     try {
       $formula->calculate();
-    } catch (NoVariableValueException $e) {
+    } catch(NoVariableValueException $e) {
       $this->once();
       $this->assertEquals('a', $e->getMissingVariable());
     }
   }
 
   /**
+   *
    * @dataProvider booleanDataProvider
    */
   public function testOperatorOrder($a, $b): void {
     $formula = new Formula('a&&b==a||!b^a!=!b');
     $formula->setVariable('a', $a);
     $formula->setVariable('b', $b);
-    $this->assertEquals($a&&$b==$a||!$b^$a!=!$b, $formula->calculate() == 1);
+    $this->assertEquals($a && $b == $a || !$b ^ $a != !$b, $formula->calculate() == 1);
   }
 
   public function testNegativeNumber(): void {
@@ -700,9 +839,9 @@ class FormulaTest extends TestCase {
     $this->assertEquals(25, $formula->calculate());
   }
 
-/**
- * catching date_create_immutable('S1876') == DateTimeImmubale
- */
+  /**
+   * catching date_create_immutable('S1876') == DateTimeImmubale
+   */
   public function testGetMeasurementsFunction() {
     $formula = new Formula("'S1876'");
     $this->assertEquals('S1876', $formula->calculate());
@@ -711,11 +850,23 @@ class FormulaTest extends TestCase {
   public function testAllMethodsSet() {
     $formula = new Formula("testFunc1(testFunc2(testFunc3() + testFunc4(), testFunc4()))");
     $this->assertFalse($formula->allMethodsSet());
-    $formula->setMethod('testFunc1', [$this, 'testAllMethodsSet']);
-    $formula->setMethod('testFunc2', [$this, 'testAllMethodsSet']);
-    $formula->setMethod('testFunc3', [$this, 'testAllMethodsSet']);
+    $formula->setMethod('testFunc1', [
+      $this,
+      'testAllMethodsSet'
+    ]);
+    $formula->setMethod('testFunc2', [
+      $this,
+      'testAllMethodsSet'
+    ]);
+    $formula->setMethod('testFunc3', [
+      $this,
+      'testAllMethodsSet'
+    ]);
     $this->assertFalse($formula->allMethodsSet());
-    $formula->setMethod('testFunc4', [$this, 'testAllMethodsSet']);
+    $formula->setMethod('testFunc4', [
+      $this,
+      'testAllMethodsSet'
+    ]);
     $this->assertTrue($formula->allMethodsSet());
     $formula->resetMethod('testFunc4');
     $this->assertFalse($formula->allMethodsSet());
@@ -740,20 +891,15 @@ class FormulaTest extends TestCase {
     $nodeTree = $formula->getFormulaNodeTree();
     $this->assertEquals([
       'type' => 'ternary',
-      'condition' =>
-      [
+      'condition' => [
         'type' => 'operator',
         'operator' => '>=',
-        'left' =>
-        [
+        'left' => [
           'type' => 'method',
           'identifier' => 'getModuleComponentIndex',
-          'parameters' =>
-          [
-          ]
+          'parameters' => []
         ],
-        'right' =>
-        [
+        'right' => [
           'type' => 'number',
           'value' => 0
         ],
@@ -762,79 +908,59 @@ class FormulaTest extends TestCase {
         'needsLeft' => 1,
         'needsRight' => 1,
         'usesLeft' => 1,
-        'usesRight' => 1,
+        'usesRight' => 1
       ],
 
-      'left' =>
-      [
+      'left' => [
         'type' => 'operator',
         'operator' => '+',
-        'left' =>
-        [
+        'left' => [
           'type' => 'variable',
           'identifier' => 'S1'
         ],
 
-        'right' =>
-        [
+        'right' => [
           'type' => 'operator',
           'operator' => '/',
-          'left' =>
-          [
+          'left' => [
             'type' => 'method',
             'identifier' => 'sum',
-            'parameters' =>
-            [
-              0 =>
-              [
+            'parameters' => [
+              0 => [
                 'type' => 'method',
                 'identifier' => 'getMeasurements',
-                'parameters' =>
-                [
-                  0 =>
-                  [
+                'parameters' => [
+                  0 => [
                     'type' => 'string',
                     'string' => 's1889'
                   ],
 
-                  1 =>
-                  [
+                  1 => [
                     'type' => 'method',
                     'identifier' => 'getLastFilterInstallationTime',
-                    'parameters' =>
-                    [
-                    ]
-
+                    'parameters' => []
                   ],
 
-                  2 =>
-                  [
+                  2 => [
                     'type' => 'number',
                     'value' => 0
                   ],
 
-                  3 =>
-                  [
+                  3 => [
                     'type' => 'string',
                     'string' => 'daily'
                   ],
 
-                  4 =>
-                  [
+                  4 => [
                     'type' => 'string',
                     'string' => 'interpolate'
                   ]
-
                 ]
-
               ]
-
             ]
-
           ],
 
-          'right' =>
-          [
+          'right' => [
             'type' => 'number',
             'value' => 1000
           ],
@@ -843,7 +969,7 @@ class FormulaTest extends TestCase {
           'needsLeft' => 1,
           'needsRight' => 1,
           'usesLeft' => 1,
-          'usesRight' => 1,
+          'usesRight' => 1
         ],
 
         'commutative' => 1,
@@ -852,8 +978,7 @@ class FormulaTest extends TestCase {
         'usesLeft' => 1,
         'usesRight' => 1
       ],
-      'right' =>
-      [
+      'right' => [
         'type' => 'null'
       ]
     ], $nodeTree);
@@ -866,33 +991,38 @@ class FormulaTest extends TestCase {
       'type' => 'arrayOperator',
       'vector' => [
         'type' => 'vector',
-        'elements' => [],
+        'elements' => []
       ],
       'index' => [
         'type' => 'number',
-        'value' => 0,
+        'value' => 0
       ]
     ], $nodeTree);
   }
 
   public function dummyGetMeasurements(): array {
-    return [ 123 ];
+    return [
+      123
+    ];
   }
 
   public function testFunctionReturnIndex(): void {
     $formula = new Formula('getMeasurements()[0]');
-    $formula->setMethod('getMeasurements', [$this, 'dummyGetMeasurements']);
+    $formula->setMethod('getMeasurements', [
+      $this,
+      'dummyGetMeasurements'
+    ]);
     $this->assertEquals(123, $formula->calculate());
   }
 
   public function testDateConcatination(): void {
     $formula = new Formula("2022 + '-01-01'");
     $result = $formula->calculate();
-    $this->assertEquals(1640995200.0, $result);
+    $this->assertEquals(1640991600, $result);
 
     $formula = new Formula("'2022' + '-01-01'");
     $result = $formula->calculate();
-    $this->assertEquals(1640995200.0, $result);
+    $this->assertEquals(1640991600, $result);
   }
 
   public function funcTest(): int {
@@ -900,14 +1030,27 @@ class FormulaTest extends TestCase {
   }
 
   public function getMeasurementsFunc(): array {
-    return [1,2,3];
+    return [
+      1,
+      2,
+      3
+    ];
   }
 
   public function testSecondArgumentError(): void {
     $formula = new Formula('((getModuleComponentIndex()>=0)?(sum(getMeasurements("S1886", getLastFilterInstallationTime(), 0, "daily", "interpolate"))/1000):null)');
-    $formula->setMethod('getModuleComponentIndex', [$this, 'funcTest']);
-    $formula->setMethod('getMeasurements', [$this, 'getMeasurementsFunc']);
-    $formula->setMethod('getLastFilterInstallationTime', [$this, 'funcTest']);
+    $formula->setMethod('getModuleComponentIndex', [
+      $this,
+      'funcTest'
+    ]);
+    $formula->setMethod('getMeasurements', [
+      $this,
+      'getMeasurementsFunc'
+    ]);
+    $formula->setMethod('getLastFilterInstallationTime', [
+      $this,
+      'funcTest'
+    ]);
     $result = $formula->calculate();
     $this->assertEquals(0.006, $result);
   }
@@ -930,7 +1073,10 @@ class FormulaTest extends TestCase {
 
   public function testEarlyReturn(): void {
     $this->earlyReturnFormula = new Formula('100 + (a ? ealryReturnFunc() : 23)');
-    $this->earlyReturnFormula->setMethod('ealryReturnFunc', [$this, 'ealryReturnFunc']);
+    $this->earlyReturnFormula->setMethod('ealryReturnFunc', [
+      $this,
+      'ealryReturnFunc'
+    ]);
     $this->earlyReturnFormula->setVariable('a', true);
     $result = $this->earlyReturnFormula->calculate();
     $this->assertEquals(0, $result);
@@ -968,5 +1114,11 @@ class FormulaTest extends TestCase {
     $this->earlyReturnFormula->setVariable('a', true);
     $result = $this->earlyReturnFormula->calculate();
     $this->assertEquals(12, $result);
+  }
+
+  public function testModeTreNegativeNumber(): void {
+    $formula = new Formula('-1');
+    $nodeTree = $formula->getFormulaNodeTree();
+    $this->assertEquals('noExpression', $nodeTree['left']['type']);
   }
 }

@@ -9,43 +9,49 @@ use InvalidArgumentException;
 /**
  *
  * @author Timo Lehnertz
- *
+ *        
  */
 abstract class Operator implements SubFormula {
 
   /**
    * precedence of this operator over other operators, lower is higher priority
    * source https://en.cppreference.com/w/cpp/language/operator_precedence
+   *
    * @readonly
    */
   private int $precedence;
 
   /**
    * Can left and right be interchanged
+   *
    * @readonly
    */
   private bool $commutative;
 
   /**
    * Is lefthand expression required
+   *
    * @readonly
    */
   private bool $needsLeft;
 
   /**
    * Is righthand expression required
+   *
    * @readonly
    */
   private bool $needsRight;
 
   /**
    * Will use lefthand expression if available
+   *
    * @readonly
    */
   private bool $usesLeft;
 
   /**
    * Will use righthand expression if available
+   *
    * @readonly
    */
   private bool $usesRight;
@@ -83,6 +89,7 @@ abstract class Operator implements SubFormula {
   }
 
   /**
+   *
    * @throws InvalidArgumentException
    */
   public function calculate(Expression $left, Expression $right): Calculateable {
@@ -99,27 +106,45 @@ abstract class Operator implements SubFormula {
 
   public static function fromString(string $name): Operator {
     switch($name) {
-      case "+":   return new Increment();
-      case "-":   return new Subtraction();
-      case "*":   return new Multiplication();
-      case "/":   return new Division();
-      case "^":   return new XorOperator();
-      case "&&":  return new AndOperator();
-      case "||":  return new OrOperator();
-      case "!=":  return new NotEqualsOperator();
-      case "!":   return new NotOperator();
-      case "==":  return new EqualsOperator();
-      case "<":  return new SmallerOperator();
-      case ">":  return new GreaterOperator();
-      case "<=":  return new SmallerEqualsOperator();
-      case "<":   return new SmallerOperator();
-      case ">=":  return new GreaterEqualsOperator();
-      case "<":   return new GreaterOperator();
-      default: throw new \Exception("Invalid operator: $name"); // shouldnt happen as this gets sorted out in tokenizer stage
+      case "+":
+        return new Increment();
+      case "-":
+        return new Subtraction();
+      case "*":
+        return new Multiplication();
+      case "/":
+        return new Division();
+      case "^":
+        return new XorOperator();
+      case "&&":
+        return new AndOperator();
+      case "||":
+        return new OrOperator();
+      case "!=":
+        return new NotEqualsOperator();
+      case "!":
+        return new NotOperator();
+      case "==":
+        return new EqualsOperator();
+      case "<":
+        return new SmallerOperator();
+      case ">":
+        return new GreaterOperator();
+      case "<=":
+        return new SmallerEqualsOperator();
+      case "<":
+        return new SmallerOperator();
+      case ">=":
+        return new GreaterEqualsOperator();
+      case "<":
+        return new GreaterOperator();
+      default:
+        throw new \Exception("Invalid operator: $name"); // shouldnt happen as this gets sorted out in tokenizer stage
     }
   }
 
   /**
+   *
    * @param Expression|array|null $left
    * @param Expression|array|null $right
    * @return array node
@@ -127,10 +152,10 @@ abstract class Operator implements SubFormula {
   public function getNode($left, $right): array {
     $leftNode = $left;
     $rightNode = $right;
-    if($left !== null && ($left instanceof Expression) && !($left instanceof NoExpression)) {
+    if($left !== null && ($left instanceof Expression)) {
       $leftNode = $left->getNode();
     }
-    if($right !== null && ($right instanceof Expression) && !($right instanceof NoExpression)) {
+    if($right !== null && ($right instanceof Expression)) {
       $rightNode = $right->getNode();
     }
     return [
