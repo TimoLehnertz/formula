@@ -45,6 +45,10 @@ use ReflectionProperty;
 use ReflectionType;
 use const false;
 use const true;
+use TimoLehnertz\formula\type\EnumInstanceType;
+use TimoLehnertz\formula\type\EnumTypeType;
+use TimoLehnertz\formula\type\EnumInstanceValue;
+use TimoLehnertz\formula\type\EnumTypeValue;
 
 /**
  * @author Timo Lehnertz
@@ -98,7 +102,9 @@ class Scope {
           case 'callable':
             return new FunctionType(new OuterFunctionArgumentListType([new OuterFunctionArgument(new MixedType(), true, false)], true), new MixedType());
         }
-      } else {
+      } else if(enum_exists($reflectionType->getName())) {
+        return new EnumInstanceType(new EnumTypeType(new \ReflectionEnum($reflectionType->getName())));
+      } else if(class_exists($reflectionType->getName())) {
         return Scope::reflectionClassToType(new \ReflectionClass($reflectionType->getName()));
       }
     } else if($reflectionType instanceof \ReflectionUnionType) {
@@ -213,10 +219,14 @@ class Scope {
       return [new DateTimeImmutableType(),new DateTimeImmutableValue($value)];
     } else if($value instanceof \DateInterval) {
       return [new DateIntervalType(),new DateIntervalValue($value)];
+    } else if($value instanceof \UnitEnum) {
+      return [new EnumInstanceType(new EnumTypeType(new \ReflectionEnum($value::class))),new EnumInstanceValue($value)];
+    } else if(is_string($value) && enum_exists($value)) {
+      $reflection = new \ReflectionEnum($value);
+      return [new EnumTypeType($reflection),new EnumTypeValue($reflection)];
     } else if(is_string($value) && class_exists($value)) {
       $reflection = new \ReflectionClass($value);
       $classType = Scope::reflectionClassToType($reflection);
-
       if($reflection->getConstructor() === null) {
         $constructorFunctionType = new FunctionType(new OuterFunctionArgumentListType([], false), new VoidType());
       } else {

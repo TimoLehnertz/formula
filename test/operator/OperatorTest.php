@@ -3,7 +3,6 @@ namespace TimoLehnertz\formula\operator;
 
 use PHPUnit\Framework\TestCase;
 use TimoLehnertz\formula\Formula;
-use TimoLehnertz\formula\procedure\Scope;
 use TimoLehnertz\formula\FormulaValidationException;
 
 class OperatorTest extends TestCase {

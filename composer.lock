@@ -4,45 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9b5cff3bd521b7176f11623101875e07",
+    "content-hash": "c6c68f424bd427d067fd32c8e10a6433",
     "packages": [
-        {
-            "name": "psalm/phar",
-            "version": "5.23.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/psalm/phar.git",
-                "reference": "a4673bcae70e0ccd30e7aa30c1d3ca605d264d59"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/psalm/phar/zipball/a4673bcae70e0ccd30e7aa30c1d3ca605d264d59",
-                "reference": "a4673bcae70e0ccd30e7aa30c1d3ca605d264d59",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.1 || ^8.0"
-            },
-            "conflict": {
-                "vimeo/psalm": "*"
-            },
-            "bin": [
-                "psalm.phar"
-            ],
-            "type": "library",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "Composer-based Psalm Phar",
-            "support": {
-                "issues": "https://github.com/psalm/phar/issues",
-                "source": "https://github.com/psalm/phar/tree/5.23.0"
-            },
-            "time": "2024-03-09T19:43:54+00:00"
-        }
-    ],
-    "packages-dev": [
         {
             "name": "doctrine/instantiator",
             "version": "2.0.0",
@@ -769,6 +732,41 @@
                 }
             ],
             "time": "2023-01-14T12:32:24+00:00"
+        },
+        {
+            "name": "psalm/phar",
+            "version": "5.23.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/psalm/phar.git",
+                "reference": "a4673bcae70e0ccd30e7aa30c1d3ca605d264d59"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/psalm/phar/zipball/a4673bcae70e0ccd30e7aa30c1d3ca605d264d59",
+                "reference": "a4673bcae70e0ccd30e7aa30c1d3ca605d264d59",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1 || ^8.0"
+            },
+            "conflict": {
+                "vimeo/psalm": "*"
+            },
+            "bin": [
+                "psalm.phar"
+            ],
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Composer-based Psalm Phar",
+            "support": {
+                "issues": "https://github.com/psalm/phar/issues",
+                "source": "https://github.com/psalm/phar/tree/5.23.0"
+            },
+            "time": "2024-03-09T19:43:54+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -1784,6 +1782,7 @@
             "time": "2024-03-03T12:36:25+00:00"
         }
     ],
+    "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": [],
