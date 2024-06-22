@@ -31,6 +31,8 @@ use TimoLehnertz\formula\type\classes\PHPClassInstanceValue;
 use TimoLehnertz\formula\type\functions\FunctionType;
 use TimoLehnertz\formula\type\functions\OuterFunctionArgument;
 use TimoLehnertz\formula\type\functions\OuterFunctionArgumentListType;
+use TimoLehnertz\formula\ValueUnsetException;
+
 use const false;
 
 class ScopeTest extends TestCase {
@@ -209,8 +211,8 @@ class ScopeTest extends TestCase {
     $scope->definePHP(true, 'i', 1);
     $this->assertEquals(1, $scope->get('i')->toPHPValue());
     $scope->unset('i');
-    $this->expectException(FormulaRuntimeException::class);
-    $this->expectExceptionMessage('Value has been read before initilization');
+    $this->expectException(ValueUnsetException::class);
+    $this->expectExceptionMessage('Property i is unset');
     $scope->get('i');
   }
 
@@ -232,8 +234,8 @@ class ScopeTest extends TestCase {
   public function testReadUninitilized(): void {
     $scope = new Scope();
     $scope->define(true, new IntegerType(), 'i');
-    $this->expectException(FormulaRuntimeException::class);
-    $this->expectExceptionMessage('Value has been read before initilization');
+    $this->expectException(ValueUnsetException::class);
+    $this->expectExceptionMessage('Property i is unset');
     $scope->get('i');
   }
 

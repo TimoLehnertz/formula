@@ -7,12 +7,16 @@ namespace TimoLehnertz\formula\procedure;
 use TimoLehnertz\formula\FormulaRuntimeException;
 use TimoLehnertz\formula\type\Type;
 use TimoLehnertz\formula\type\Value;
+use TimoLehnertz\formula\ValueUnsetException;
+
 use const false;
 
 /**
  * @author Timo Lehnertz
  */
 class DefinedValue implements ValueContainer {
+
+  private readonly string $name;
 
   private readonly bool $final;
 
@@ -22,9 +26,10 @@ class DefinedValue implements ValueContainer {
 
   private bool $used = false;
 
-  public function __construct(bool $final, Type $type, ?Value $initialValue) {
+  public function __construct(bool $final, Type $type, string $name, ?Value $initialValue) {
     $this->final = $final;
     $this->type = $type->setFinal($this->final);
+    $this->name = $name;
     $this->value = $initialValue;
     $this->value?->setContainer($this->final ? null : $this);
   }
@@ -44,7 +49,7 @@ class DefinedValue implements ValueContainer {
 
   public function get(): Value {
     if ($this->value === null) {
-      throw new FormulaRuntimeException('Value has been read before initilization');
+      throw new ValueUnsetException($this->name);
     }
     return $this->value;
   }

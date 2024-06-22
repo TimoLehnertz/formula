@@ -139,7 +139,7 @@ class Scope {
     if (isset($this->defined[$identifier])) {
       throw new FormulaRuntimeException('Can\'t redefine ' . $identifier);
     }
-    $this->defined[$identifier] = new DefinedValue($final, $type, $value);
+    $this->defined[$identifier] = new DefinedValue($final, $type, $identifier, $value);
   }
 
   public function get(string $identifier): Value {
