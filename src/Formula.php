@@ -1,4 +1,5 @@
 <?php
+
 namespace TimoLehnertz\formula;
 
 use function PHPUnit\Framework\assertEquals;
@@ -38,16 +39,16 @@ class Formula {
   public function __construct(string $source, ?Scope $parentScope = null, ?FormulaSettings $formulaSettings = null) {
     $this->source = $source;
     $this->defaultScope = new DefaultScope();
-    if($formulaSettings === null) {
+    if ($formulaSettings === null) {
       $formulaSettings = FormulaSettings::buildDefaultSettings();
     }
     $this->formulaSettings = $formulaSettings;
     $this->parentScope = $parentScope ?? new Scope();
     $firstToken = Tokenizer::tokenize($source);
-    if($firstToken !== null) {
+    if ($firstToken !== null) {
       $firstToken = $firstToken->skipComment();
     }
-    if($firstToken === null) {
+    if ($firstToken === null) {
       throw new TokenisationException('Invalid formula', 0, 0);
     }
     $parsedContent = (new CodeBlockOrExpressionParser(true))->parse($firstToken, true, true);
@@ -82,13 +83,13 @@ class Formula {
   }
 
   public function prettyprintFormula(?PrettyPrintOptions $prettyprintOptions = null): string {
-    if($prettyprintOptions === null) {
+    if ($prettyprintOptions === null) {
       $prettyprintOptions = PrettyPrintOptions::buildDefault();
     }
     return $this->content->toString($prettyprintOptions);
   }
 
   public function getScope(): Scope {
-    return $this->scope;
+    return $this->parentScope;
   }
 }

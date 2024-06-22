@@ -1,5 +1,7 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace TimoLehnertz\formula\type\functions;
 
 use TimoLehnertz\formula\type\Type;
@@ -21,7 +23,7 @@ class OuterFunctionArgument implements FormulaPart {
 
   public readonly bool $varg;
 
-  public function __construct(Type $type, bool $optional, bool $varg, ?string $name = null) {
+  public function __construct(Type $type, bool $optional = false, bool $varg = false, ?string $name = null) {
     $this->type = $type;
     $this->optional = $optional;
     $this->name = $name;
@@ -29,7 +31,7 @@ class OuterFunctionArgument implements FormulaPart {
   }
 
   public function buildNodeInterfaceType(): array {
-    return ['type' => $this->type->buildNodeInterfaceType(),'optional' => $this->optional];
+    return ['type' => $this->type->buildNodeInterfaceType(), 'optional' => $this->optional];
   }
 
   public function equals(OuterFunctionArgument $other): bool {
@@ -38,11 +40,11 @@ class OuterFunctionArgument implements FormulaPart {
 
   public function toString(PrettyPrintOptions $prettyPrintOptions): string {
     $str = $this->type->toString($prettyPrintOptions);
-    if($this->varg) {
+    if ($this->varg) {
       $str .= '...';
     }
-    if($this->name !== null) {
-      $str .= ' '.$this->name;
+    if ($this->name !== null) {
+      $str .= ' ' . $this->name;
     }
     return $str;
   }

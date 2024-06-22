@@ -1,7 +1,10 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace TimoLehnertz\formula\type\functions;
 
+use BadFunctionCallException;
 use TimoLehnertz\formula\FormulaValidationException;
 use TimoLehnertz\formula\nodes\NodeInterfaceType;
 use TimoLehnertz\formula\operator\ImplementableOperator;
@@ -23,36 +26,36 @@ class OuterFunctionArgumentListType extends Type {
   /**
    * @var array<OuterFunctionArgument>
    */
-  public function __construct(array $arguments, bool $isVArgs) {
+  public function __construct(array $arguments, bool $isVArgs = false) {
     parent::__construct();
     $this->arguments = $arguments;
     $this->isVArgs = $isVArgs;
     // check that optional parameters are at the end
     $optional = false;
-    for($i = 0;$i < count($arguments);$i++) {
+    for ($i = 0; $i < count($arguments); $i++) {
       /** @var OuterFunctionArgument $argument */
       $argument = $arguments[$i];
-      if($optional && !$argument->optional) {
+      if ($optional && !$argument->optional) {
         throw new FormulaValidationException('Not optional parameter cannot follow optional parameter');
       }
-      if($argument->optional) {
-        if($isVArgs && $i < count($arguments) - 1) {
+      if ($argument->optional) {
+        if ($isVArgs && $i < count($arguments) - 1) {
           throw new FormulaValidationException('Optional parameter can\'t be followed by VArgs');
         }
         $optional = true;
-        if($i === count($arguments) - 1 && $isVArgs && !$argument->optional) {
+        if ($i === count($arguments) - 1 && $isVArgs && !$argument->optional) {
           throw new FormulaValidationException('VArg parameter must be optional');
         }
       }
     }
     // check that vargs are valid
-    if($isVArgs && count($arguments) === 0) {
+    if ($isVArgs && count($arguments) === 0) {
       throw new \BadMethodCallException('Vargs argument must have at least one argument');
     }
   }
 
   public function getMaxArgumentCount(): int {
-    if($this->isVArgs) {
+    if ($this->isVArgs) {
       return PHP_INT_MAX;
     } else {
       return count($this->arguments);
@@ -62,8 +65,8 @@ class OuterFunctionArgumentListType extends Type {
   public function getMinArgumentCount(): int {
     $count = 0;
     /** @var OuterFunctionArgument $argument */
-    foreach($this->arguments as $argument) {
-      if($argument->optional) {
+    foreach ($this->arguments as $argument) {
+      if ($argument->optional) {
         break;
       }
       $count++;
@@ -72,26 +75,26 @@ class OuterFunctionArgumentListType extends Type {
   }
 
   public function getArgumentType(int $index): ?Type {
-    if(isset($this->arguments[$index])) {
+    if (isset($this->arguments[$index])) {
       return $this->arguments[$index]->type;
-    } else if($this->isVArgs) {
+    } else if ($this->isVArgs) {
       return $this->arguments[count($this->arguments) - 1]->type;
     }
   }
 
   protected function typeAssignableBy(Type $type): bool {
-    if(!($type instanceof OuterFunctionArgumentListType)) {
+    if (!($type instanceof OuterFunctionArgumentListType)) {
       return false;
     }
     // check argument count
-    if(count($type->arguments) > $this->getMaxArgumentCount() || count($type->arguments) < $this->getMinArgumentCount()) {
+    if (count($type->arguments) > $this->getMaxArgumentCount() || count($type->arguments) < $this->getMinArgumentCount()) {
       return false;
     }
     // check invalid types
-    for($i = 0;$i < count($type->arguments);$i++) {
+    for ($i = 0; $i < count($type->arguments); $i++) {
       $sourceType = $type->arguments[$i]->type;
       $targetType = $this->getArgumentType($i);
-      if(!$targetType->assignableBy($sourceType)) {
+      if (!$targetType->assignableBy($sourceType)) {
         return false;
       }
     }
@@ -99,14 +102,14 @@ class OuterFunctionArgumentListType extends Type {
   }
 
   public function equals(Type $type): bool {
-    if(!($type instanceof OuterFunctionArgumentListType)) {
+    if (!($type instanceof OuterFunctionArgumentListType)) {
       return false;
     }
-    if($this->isVArgs !== $type->isVArgs || count($this->arguments) !== count($type->arguments)) {
+    if ($this->isVArgs !== $type->isVArgs || count($this->arguments) !== count($type->arguments)) {
       return false;
     }
-    for($i = 0;$i < count($type->arguments);$i++) {
-      if(!$type->arguments[$i]->equals($this->arguments[$i])) {
+    for ($i = 0; $i < count($type->arguments); $i++) {
+      if (!$type->arguments[$i]->equals($this->arguments[$i])) {
         return false;
       }
     }
@@ -116,11 +119,11 @@ class OuterFunctionArgumentListType extends Type {
   public function getIdentifier(bool $isNested = false): string {
     $identifier = '';
     $delimiter = '';
-    for($i = 0;$i < count($this->arguments);$i++) {
-      $identifier .= $delimiter.$this->arguments[$i]->toString(PrettyPrintOptions::buildDefault());
+    for ($i = 0; $i < count($this->arguments); $i++) {
+      $identifier .= $delimiter . $this->arguments[$i]->toString(PrettyPrintOptions::buildDefault());
       $delimiter = ',';
     }
-    return '('.$identifier.')';
+    return '(' . $identifier . ')';
   }
 
   protected function getTypeCompatibleOperands(ImplementableOperator $operator): array {
@@ -134,9 +137,27 @@ class OuterFunctionArgumentListType extends Type {
   public function buildNodeInterfaceType(): NodeInterfaceType {
     $args = [];
     /** @var OuterFunctionArgument $argument */
-    foreach($this->arguments as $argument) {
+    foreach ($this->arguments as $argument) {
       $args[] = $argument->buildNodeInterfaceType();
     }
-    return new NodeInterfaceType('OuterFunctionArgumentList', ['arguments' => $args,'isVargs' => $this->isVArgs]);
+    return new NodeInterfaceType('OuterFunctionArgumentList', ['arguments' => $args, 'isVargs' => $this->isVArgs]);
+  }
+
+  /**
+   * @param array<string, Type> $arguments
+   */
+  public function mergeArgumentTypes(array $types): OuterFunctionArgumentListType {
+    $newArgs = [];
+    foreach ($this->arguments as $argument) {
+      if ($argument->name === null) {
+        throw new \BadMethodCallException('Cant merge unnamed arguments');
+      }
+      if (isset($types[$argument->name])) {
+        $newArgs[] = new OuterFunctionArgument($types[$argument->name], $argument->optional, $argument->varg, $argument->name);
+      } else {
+        $newArgs[] = $argument;
+      }
+    }
+    return new OuterFunctionArgumentListType($newArgs, $this->isVArgs);
   }
 }

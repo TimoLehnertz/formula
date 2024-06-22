@@ -1,10 +1,12 @@
 <?php
+
 namespace test\procedure;
 
 use PHPUnit\Framework\TestCase;
 use function PHPUnit\Framework\assertInstanceOf;
 use TimoLehnertz\formula\Formula;
 use TimoLehnertz\formula\FormulaRuntimeException;
+use TimoLehnertz\formula\FormulaValidationException;
 use TimoLehnertz\formula\nodes\NodeTreeScope;
 use TimoLehnertz\formula\procedure\Scope;
 use TimoLehnertz\formula\type\ArrayType;
@@ -120,20 +122,20 @@ class ScopeTest extends TestCase {
   }
 
   public function testConvertPHPObject(): void {
-    $object = new PHPTestClass(1, 2, [1,2]);
+    $object = new PHPTestClass(1, 2, [1, 2]);
     $res = Scope::convertPHPVar($object);
     // @formatter:off
     $expectedClassType = new ClassType(
-        new ClassType(null, ParentClass::class, [
-          'i' => new FieldType(false, new IntegerType()),
-        ]),
-        PHPTestClass::class,
-        [
-          'publicReadonlyInt' => new FieldType(true, new IntegerType()),
-          'publicArray' => new FieldType(false, new ArrayType(new MixedType(),new MixedType())),
-          'add' => new FieldType(true, new FunctionType(new OuterFunctionArgumentListType([new OuterFunctionArgument(new IntegerType(), false, false), new OuterFunctionArgument(new IntegerType(), false, false)], false), new IntegerType()))
-        ]
-      );
+      new ClassType(null, ParentClass::class, [
+        'i' => new FieldType(false, new IntegerType()),
+      ]),
+      PHPTestClass::class,
+      [
+        'publicReadonlyInt' => new FieldType(true, new IntegerType()),
+        'publicArray' => new FieldType(false, new ArrayType(new MixedType(), new MixedType())),
+        'add' => new FieldType(true, new FunctionType(new OuterFunctionArgumentListType([new OuterFunctionArgument(new IntegerType(), false, false), new OuterFunctionArgument(new IntegerType(), false, false)], false), new IntegerType()))
+      ]
+    );
     // @formatter:on
     $this->assertTrue($expectedClassType->equals($res[0]));
     $value = $res[1];
@@ -143,11 +145,11 @@ class ScopeTest extends TestCase {
 
   public function testPHPObject(): void {
     $scope = new Scope();
-    $scope->definePHP(true, 'phpObject', new PHPTestClass(1, 2, [1,2]));
+    $scope->definePHP(true, 'phpObject', new PHPTestClass(1, 2, [1, 2]));
     $formula = new Formula('phpObject.publicReadonlyInt', $scope);
     $this->assertEquals(1, $formula->calculate()->toPHPValue());
     $formula = new Formula('phpObject.publicArray', $scope);
-    $this->assertEquals([1,2], $formula->calculate()->toPHPValue());
+    $this->assertEquals([1, 2], $formula->calculate()->toPHPValue());
     $formula = new Formula('phpObject.add(1,2)', $scope);
     $this->assertEquals(3, $formula->calculate()->toPHPValue());
     $formula = new Formula('phpObject.i', $scope);
@@ -229,6 +231,17 @@ class ScopeTest extends TestCase {
     $expectedNode = new NodeTreeScope($parentNode, []);
 
     $this->assertEquals($expectedNode, $node);
+  }
+
+  public function testMergeArguments(): void {
+    $function = function (mixed $a) {
+      return $a;
+    };
+    $scope = new Scope();
+    $scope->definePHP(false, 'func', $function, ['a' => new IntegerType]);
+    $this->expectException(FormulaValidationException::class);
+    $this->expectExceptionMessage('1:0 Validation error: Unable to convert boolean to int');
+    new Formula("func(false)", $scope);
   }
 }
 
