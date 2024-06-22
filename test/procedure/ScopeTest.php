@@ -195,6 +195,13 @@ class ScopeTest extends TestCase {
     $scope->assignPHP('i', 2);
   }
 
+  public function testIgnoreFinal(): void {
+    $scope = new Scope();
+    $scope->definePHP(true, 'i', 0);
+    $scope->assignPHP('i', 2, true);
+    $this->assertEquals(2, $scope->get('i')->toPHPValue());
+  }
+
   public function testReadUninitilized(): void {
     $scope = new Scope();
     $scope->define(true, new IntegerType(), 'i');

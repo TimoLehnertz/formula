@@ -9,6 +9,8 @@ use TimoLehnertz\formula\type\IntegerType;
 use const false;
 use TimoLehnertz\formula\tokens\TokenisationException;
 use TimoLehnertz\formula\PrettyPrintOptions;
+use TimoLehnertz\formula\FormulaRuntimeException;
+use Vtiful\Kernel\Format;
 
 class FormulaTest extends TestCase {
 
@@ -91,272 +93,53 @@ class FormulaTest extends TestCase {
     $this->assertEquals($result->toPHPValue(), 0);
   }
 
-  //   //   /**
-  //   //    * Dateintervals are not 100% precise
-  //   //    */
-  //   //   public function testDates(): void {
-  //   //     $date = new DateTime(); // now
-  //   //     $str = '"'.$date->format(DateTime::ISO8601).'" + "P5M" - "P1M" + "P1M" - "P5M"';
-  //   //     $formula = new Formula($str);
-  //   //     $result = $formula->calculate();
-  //   //     $this->assertEquals($date->getTimestamp(), $result);
+  // from original repo at https://github.com/socialist/formula
+  public function testAllResults() {
+    $parser = new Formula('2 * 2.65');
+    $this->assertEquals('5.3', $parser->calculate()->toPHPValue());
 
-  //   //     $date = new DateTime(); // now
-  //   //     $str = '"'.$date->format(DateTime::ISO8601).'" + 10 * "P1M" - 10 * "P1M"';
-  //   //     $formula = new Formula($str);
-  //   //     $result = $formula->calculate();
-  //   //     $resDate = new DateTime();
-  //   //     $resDate->setTimestamp($result);
-  //   //     $this->assertEquals($date->getTimestamp(), intval($result));
+    $parser = new Formula('2 * 2.65 + 25');
+    $this->assertEquals('30.3', $parser->calculate()->toPHPValue());
 
-  //   //     $date = new DateTime(); // now
-  //   //     $str = '"'.$date->format(DateTime::ISO8601).'" - "'.$date->format(DateTime::ISO8601).'"';
-  //   //     $formula = new Formula($str);
-  //   //     $result = $formula->calculate();
-  //   //     $this->assertEquals($result, 0);
-  //   //   }
-  //   public function testNotClosedBracket(): void {
-  //     $this->expectException(ParsingException::class);
-  //     $this->expectExceptionMessage('Parsing failed. Message: unexpected end of input');
-  //     new Formula('(1*5');
-  //   }
+    $parser = new Formula('2 * 2.65 + 25 / 3');
+    $this->assertEquals(round('13.63'), round($parser->calculate()->toPHPValue()));
 
-  //   public function booleanDataProvider() {
-  //     return [[false,false],[false,true],[true,false],[true,true]];
-  //   }
+    $parser = new Formula('2 + 3 * 2.65 + 25');
+    $this->assertEquals('34.95', $parser->calculate()->toPHPValue());
 
-  //   /**
-  //    * @dataProvider booleanDataProvider
-  //    */
-  //   public function testLogicalOperators($a, $b): void {
-  //     $aStr = $a ? "true" : "false";
-  //     $bStr = $b ? "true" : "false";
-  //     $formula = new Formula("$aStr&&$bStr");
-  //     $this->assertEquals($a && $b, $formula->calculate()->toPHPValue() == 0 ? false : true);
+    $parser = new Formula('2 + 3 * 2.65 + 25 - 26');
+    $this->assertEqualsWithDelta('8.95', $parser->calculate()->toPHPValue(), 0.0001);
 
-  //     $formula = new Formula("$aStr||$bStr");
-  //     $this->assertEquals($a || $b, $formula->calculate()->toPHPValue() == 0 ? false : true);
+    $parser = new Formula('2 + 3 - 4 * 2.65 + 25 - 26');
+    $this->assertEqualsWithDelta('-6.6', $parser->calculate()->toPHPValue(), 0.0001);
 
-  //     $formula = new Formula("$aStr==$bStr");
-  //     $this->assertEquals($a == $b, $formula->calculate()->toPHPValue() == 0 ? false : true);
+    $parser = new Formula('( 15 + 235 ) * 2.65');
+    $this->assertEquals('662.5', $parser->calculate()->toPHPValue());
 
-  //     $formula = new Formula("$aStr!=$bStr");
-  //     $this->assertEquals($a != $b, $formula->calculate()->toPHPValue() == 0 ? false : true);
+    $parser = new Formula('( 2 + ( 3 - 4 ) ) * 2.65 + 25 - 26');
+    $this->assertEqualsWithDelta('1.65', $parser->calculate()->toPHPValue(), 0.0001);
 
-  //     $formula = new Formula("!$aStr");
-  //     $this->assertEquals(!$a, $formula->calculate()->toPHPValue() == 0 ? false : true);
-  //   }
+    $parser = new Formula('( 2 + ( 3 - 4 ) ) * ( 2.65 + ( 25 - 26 ) )');
+    $this->assertEquals('1.65', $parser->calculate()->toPHPValue());
 
-  //   public function ternaryDataProvider(): array {
-  //     $arr = [];
-  //     for($i = 0;$i < 1;$i++) {
-  //       $arr[] = [rand(-100, 100),rand(-100, 100),rand(-100, 100)];
-  //     }
-  //     return $arr;
-  //   }
+    $parser = new Formula('( 2 + ( 3 * 235 - 4 ) ) + 25');
+    $this->assertEquals('728', $parser->calculate()->toPHPValue());
+  }
 
-  //   /**
-  //    * @dataProvider ternaryDataProvider
-  //    */
-  //   public function testTernary($a, $b, $c): void {
-  //     $formula = new Formula("$a < 0 ? $b : $c");
-  //     $this->assertEquals($formula->calculate()->toPHPValue(), $a < 0 ? $b : $c);
-  //     $formula = new Formula("max($b, min($a < 0 ? $b : $c, $c))");
-  //     $this->assertEquals($formula->calculate()->toPHPValue(), max($b, min($a < 0 ? $b : $c, $c)));
-  //     //  testing Not operator
-  //     $formula = new Formula("max($b, min(!($a < 0) ? $b : $c, $c))");
-  //     $this->assertEquals($formula->calculate()->toPHPValue(), max($b, min(!($a < 0) ? $b : $c, $c)));
-  //   }
+  public function testVectoroutOfBounds1(): void {
+    $this->expectException(FormulaRuntimeException::class);
+    $this->expectExceptionMessage('Array key 3 does not exist');
+    (new Formula('{1,2,3}[3]+1'))->calculate();
+  }
 
-  //   //   public function numberProvider(): array {
-  //   //     return [[-1],[5],[20],[-6],[0]];
-  //   //   }
-
-  //   //   /**
-  //   //    * @dataProvider numberProvider
-  //   //    */
-  //   //   public function testBuildInFuncs($a): void {
-  //   //     $formula = new Formula('min(2*a, 0)');
-  //   //     $formula->setVariable('a', $a);
-  //   //     $this->assertEquals($formula->calculate(), min(2 * $a, 0));
-
-  //   //     $formula = new Formula('max(2a, 0)');
-  //   //     $formula->setVariable('a', $a);
-  //   //     $this->assertEquals($formula->calculate(), max(2 * $a, 0));
-
-  //   //     $formula = new Formula('sqrt(10+a)');
-  //   //     $formula->setVariable('a', $a);
-  //   //     $this->assertEquals(round($formula->calculate()), round(sqrt(10 + $a)));
-
-  //   //     $formula = new Formula('pow(a, a)');
-  //   //     $formula->setVariable('a', $a);
-  //   //     $this->assertEquals(round($formula->calculate()), round(pow($a, $a)));
-
-  //   //     $formula = new Formula('floor(a * 0.3)');
-  //   //     $formula->setVariable('a', $a);
-  //   //     $this->assertEquals($formula->calculate(), floor($a * 0.3));
-
-  //   //     $formula = new Formula('ceil(a * 0.3)');
-  //   //     $formula->setVariable('a', $a);
-  //   //     $this->assertEquals($formula->calculate(), ceil($a * 0.3));
-
-  //   //     $formula = new Formula('round(a * 0.3)');
-  //   //     $formula->setVariable('a', $a);
-  //   //     $this->assertEquals($formula->calculate(), round($a * 0.3));
-
-  //   //     $formula = new Formula('sin(a)');
-  //   //     $formula->setVariable('a', $a);
-  //   //     $this->assertEquals(round($formula->calculate()), round(sin($a)));
-
-  //   //     $formula = new Formula('cos(a)');
-  //   //     $formula->setVariable('a', $a);
-  //   //     $this->assertEquals(round($formula->calculate()), round(cos($a)));
-
-  //   //     $formula = new Formula('tan(a)');
-  //   //     $formula->setVariable('a', $a);
-  //   //     $this->assertEquals(round($formula->calculate()), round(tan($a)));
-
-  //   //     $formula = new Formula('tan(a)');
-  //   //     $formula->setVariable('a', $a);
-  //   //     $this->assertEquals(round($formula->calculate()), round(tan($a)));
-
-  //   //     $formula = new Formula('abs(a)');
-  //   //     $formula->setVariable('a', $a);
-  //   //     $this->assertEquals(round($formula->calculate()), abs($a));
-
-  //   //     $formula = new Formula('asVector(1,2,3,4)[2]');
-  //   //     $this->assertEquals(3, $formula->calculate());
-
-  //   //     $formula = new Formula('sizeof({1,2,3,4,{true,false}},"Test",2,true)');
-  //   //     $this->assertEquals(9, $formula->calculate());
-
-  //   //     $formula = new Formula('inRange(1,2,3)');
-  //   //     $this->assertEquals(0, $formula->calculate());
-  //   //     $formula = new Formula('inRange(2,2,3)');
-  //   //     $this->assertEquals(1, $formula->calculate());
-
-  //   //     $formula = new Formula('reduce({1,2,4,5}, {1,3,5})');
-  //   //     $this->assertEquals([1,5], $formula->calculate());
-
-  //   //     $formula = new Formula('sum({1,2,true,false,{}})');
-  //   //     $this->assertEquals(4, $formula->calculate());
-
-  //   //     $formula = new Formula('firstOrNull({1,2,4,5})');
-  //   //     $this->assertEquals(1, $formula->calculate());
-
-  //   //     $formula = new Formula('firstOrNull({})');
-  //   //     $this->assertEquals(null, $formula->calculate());
-  //   //   }
-
-  //   //   // from original repo at https://github.com/socialist/formula
-  //   //   public function testAllResults() {
-  //   //     $parser = new Formula('2 * 2.65');
-  //   //     $this->assertEquals('5.3', $parser->calculate()->toPHPValue());
-
-  //   //     $parser = new Formula('2 * 2.65 + 25');
-  //   //     $this->assertEquals('30.3', $parser->calculate()->toPHPValue());
-
-  //   //     $parser = new Formula('2 * 2.65 + 25 / 3');
-  //   //     $this->assertEquals(round('13.63'), round($parser->calculate()->toPHPValue()));
-
-  //   //     $parser = new Formula('2 + 3 * 2.65 + 25');
-  //   //     $this->assertEquals('34.95', $parser->calculate()->toPHPValue());
-
-  //   //     $parser = new Formula('2 + 3 * 2.65 + 25 - 26');
-  //   //     $this->assertEqualsWithDelta('8.95', $parser->calculate()->toPHPValue(), 0.0001);
-
-  //   //     $parser = new Formula('2 + 3 - 4 * 2.65 + 25 - 26');
-  //   //     $this->assertEqualsWithDelta('-6.6', $parser->calculate()->toPHPValue(), 0.0001);
-
-  //   //     $parser = new Formula('( 15 + 235 ) * 2.65');
-  //   //     $this->assertEquals('662.5', $parser->calculate()->toPHPValue());
-
-  //   //     $parser = new Formula('( 2 + ( 3 - 4 ) ) * 2.65 + 25 - 26');
-  //   //     $this->assertEqualsWithDelta('1.65', $parser->calculate()->toPHPValue(), 0.0001);
-
-  //   //     $parser = new Formula('( 2 + ( 3 - 4 ) ) * ( 2.65 + ( 25 - 26 ) )');
-  //   //     $this->assertEquals('1.65', $parser->calculate()->toPHPValue());
-
-  //   //     $parser = new Formula('( 2 + ( 3 * 235 - 4 ) ) + 25');
-  //   //     $this->assertEquals('728', $parser->calculate()->toPHPValue());
-  //   //   }
-
-  //   //   public function testGetVariables() {
-  //   //     $formula = new Formula('a + b + max(c, b ? d : e)');
-  //   //     $this->assertEquals($formula->getVariables(), ['a', 'b', 'c', 'd', 'e']);
-  //   //   }
-
-  //   //   public function testVectors(): void {
-  //   //   	$formula = new Formula('{1,2,3} + {1,2,3}');
-  //   //   	$this->assertEquals($formula->calculate(), [2,4,6]);
-  //   //   	$formula = new Formula('{1,2,3} + 5');
-  //   //   	$this->assertEquals($formula->calculate(), [6,7,8]);
-
-  //   //   	$formula = new Formula('{1,2,3} - {1,2,3}');
-  //   //   	$this->assertEquals($formula->calculate(), [0,0,0]);
-  //   //   	$formula = new Formula('{1,2,3} - 5');
-  //   //   	$this->assertEquals($formula->calculate(), [-4,-3,-2]);
-
-  //   //   	$formula = new Formula('{1,2,3} * {1,2,3}');
-  //   //   	$this->assertEquals($formula->calculate(), [1,4,9]);
-  //   //   	$formula = new Formula('{1,2,3} * 5');
-  //   //   	$this->assertEquals($formula->calculate(), [5,10,15]);
-
-  //   //   	$formula = new Formula('{1,2,3} / {1,2,3}');
-  //   //   	$this->assertEquals($formula->calculate(), [1,1,1]);
-  //   //   	$formula = new Formula('{10,15,20} / 5');
-  //   //   	$this->assertEquals($formula->calculate(), [2,3,4]);
-
-  //   //   	$formula = new Formula('max({-10,15,20})');
-  //   //   	$this->assertEquals(20, $formula->calculate());
-
-  //   //   	$formula = new Formula('min({-10,15,20})');
-  //   //   	$this->assertEquals(-10, $formula->calculate());
-  //   //   }
-
-  //   //   public function testVectorsOffsets(): void {
-  //   //     $formula = new Formula('{1,2,3}[0]');
-  //   //     $this->assertEquals($formula->calculate(), 1);
-  //   //     $formula = new Formula('{1,2,3}[max(a,b)]');
-  //   //     $formula->setVariable('a', 2);
-  //   //     $formula->setVariable('b', -1);
-  //   //     $this->assertEquals(3, $formula->calculate());
-
-  //   //     $formula = new Formula('{1,2,3}[0]');
-  //   //     $this->assertEquals($formula->calculate(), 1);
-  //   //     $formula = new Formula('4 + a[i]');
-  //   //     $formula->setVariable('a', [0,1,2,3,4,5]);
-  //   //     $formula->setVariable('i', 2);
-  //   //     $this->assertEquals(6, $formula->calculate());
-
-  //   //     $formula = new Formula('{1,2,3}[0]');
-  //   //     $this->assertEquals($formula->calculate(), 1);
-  //   //     $formula = new Formula('avg(a) + a[i]');
-  //   //     $formula->setVariable('a', [0,1,2,3,4,5]);
-  //   //     $formula->setVariable('i', 2);
-  //   //     $this->assertEquals(4.5, $formula->calculate());
-  //   //   }
-
-  //   //   public function testVectorInvalidIndex(): void {
-  //   //     $this->expectException(ExpressionNotFoundException::class);
-  //   //     $this->expectExceptionMessage('123 Is no valid array index');
-  //   //     $formula = new Formula('{1,2,3}["123"]');
-  //   //     $formula->calculate();
-  //   //   }
-
-  //   //   public function testVectoroutOfBounds1(): void {
-  //   //     $this->expectException(\OutOfBoundsException::class);
-  //   //     $this->expectExceptionMessage('3 not in range 0 - 3');
-  //   //     $formula = new Formula('{1,2,3}[3]');
-  //   //     $formula->calculate();
-  //   //   }
-
-  //   //   public function testVectoroutOfBounds2(): void {
-  //   //     $this->expectException(\OutOfBoundsException::class);
-  //   //     $this->expectExceptionMessage('-1 not in range 0 - 3');
-  //   //     $formula = new Formula('{1,2,3}[-1]');
-  //   //     $formula->calculate();
-  //   //   }
+  public function restRecalculate(): void {
+    $scope = new Scope();
+    $scope->definePHP(false, 'i', 1);
+    $formula = new Formula('i+1');
+    $this->assertEquals(2, $formula->calculate()->toPHPValue());
+    $scope->assignPHP(false, 'i', 2);
+    $this->assertEquals(3, $formula->calculate()->toPHPValue());
+  }
 
   //   //   public function testUnexpectedEndOfInputException(): void {
   //   //     $this->expectException(ExpressionNotFoundException::class);

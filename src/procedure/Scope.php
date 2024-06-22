@@ -106,6 +106,8 @@ class Scope {
         return new EnumInstanceType(new EnumTypeType(new \ReflectionEnum($reflectionType->getName())));
       } else if(class_exists($reflectionType->getName())) {
         return Scope::reflectionClassToType(new \ReflectionClass($reflectionType->getName()));
+      } else if(interface_exists($reflectionType->getName())) {
+        return Scope::reflectionClassToType(new \ReflectionClass($reflectionType->getName()));
       }
     } else if($reflectionType instanceof \ReflectionUnionType) {
       $types = [];
@@ -314,16 +316,16 @@ class Scope {
     throw new FormulaRuntimeException('Unsupported php type');
   }
 
-  public function assignPHP(string $identifier, mixed $value): void {
+  public function assignPHP(string $identifier, mixed $value, bool $ignoreFinal = false): void {
     $res = Scope::convertPHPVar($value);
-    $this->assign($identifier, $res[1]);
+    $this->assign($identifier, $res[1], $ignoreFinal);
   }
 
-  public function assign(string $identifier, Value $value): void {
+  public function assign(string $identifier, Value $value, bool $ignoreFinal = false): void {
     if(isset($this->defined[$identifier])) {
-      $this->defined[$identifier]->assign($value);
+      $this->defined[$identifier]->assign($value, $ignoreFinal);
     } else if($this->parent !== null) {
-      $this->parent->assign($identifier, $value);
+      $this->parent->assign($identifier, $value, $ignoreFinal);
     } else {
       throw new FormulaRuntimeException($identifier.' is not defined');
     }

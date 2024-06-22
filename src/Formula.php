@@ -87,4 +87,8 @@ class Formula {
     }
     return $this->content->toString($prettyprintOptions);
   }
+
+  public function getScope(): Scope {
+    return $this->scope;
+  }
 }

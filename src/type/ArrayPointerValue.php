@@ -29,7 +29,7 @@ class ArrayPointerValue extends Value implements ValueContainer {
   }
 
   public function copy(): Value {
-    throw new FormulaRuntimeException(null, 'Array key '.$this->index.' does not exist');
+    throw new FormulaRuntimeException('Array key '.$this->index.' does not exist');
   }
 
   public function valueEquals(Value $other): bool {
@@ -37,7 +37,7 @@ class ArrayPointerValue extends Value implements ValueContainer {
   }
 
   protected function valueOperate(ImplementableOperator $operator, ?Value $other): Value {
-    throw new FormulaBugException('Invalid operator!');
+    throw new FormulaRuntimeException('Array key '.$this->index.' does not exist');
   }
 
   public function toPHPValue(): mixed {
@@ -49,6 +49,6 @@ class ArrayPointerValue extends Value implements ValueContainer {
   }
 
   public function toString(): string {
-    throw new FormulaBugException(null, 'Array key '.$this->index.' does not exist');
+    throw new FormulaRuntimeException('Array key '.$this->index.' does not exist');
   }
 }

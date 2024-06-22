@@ -5,6 +5,7 @@ namespace TimoLehnertz\formula\procedure;
 use TimoLehnertz\formula\FormulaRuntimeException;
 use TimoLehnertz\formula\type\Type;
 use TimoLehnertz\formula\type\Value;
+use const false;
 
 /**
  * @author Timo Lehnertz
@@ -24,8 +25,8 @@ class DefinedValue implements ValueContainer {
     $this->value?->setContainer($this->final ? null : $this);
   }
 
-  public function assign(Value $value): void {
-    if($this->final) {
+  public function assign(Value $value, bool $ignoreFinal = false): void {
+    if($this->final && !$ignoreFinal) {
       throw new FormulaRuntimeException('Cant mutate immutable value');
     }
     $this->value?->setContainer(null);
