@@ -14,9 +14,11 @@ class DefinedValue implements ValueContainer {
 
   private readonly bool $final;
 
-  public readonly Type $type;
+  private readonly Type $type;
 
   private ?Value $value = null;
+
+  private bool $used = false;
 
   public function __construct(bool $final, Type $type, ?Value $initialValue) {
     $this->final = $final;
@@ -39,5 +41,17 @@ class DefinedValue implements ValueContainer {
       throw new FormulaRuntimeException('Value has been read before initilization');
     }
     return $this->value;
+  }
+
+  public function getType(): Type {
+    return $this->type;
+  }
+
+  public function setUsed(bool $used): void {
+    $this->used = $used;
+  }
+
+  public function isUsed(): bool {
+    return $this->used;
   }
 }

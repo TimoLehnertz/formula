@@ -146,13 +146,22 @@ class Scope {
     }
   }
 
-  public function getType(string $identifier): Type {
+  public function use(string $identifier): Type {
     if(isset($this->defined[$identifier])) {
-      return $this->defined[$identifier]->type;
+      $this->defined[$identifier]->setUsed(true);
+      return $this->defined[$identifier]->getType();
     } else if($this->parent !== null) {
-      return $this->parent->getType($identifier);
+      return $this->parent->use($identifier);
     } else {
       throw new FormulaRuntimeException($identifier.' is not defined');
+    }
+  }
+
+  public function isUsed(string $identifier): bool {
+    if(isset($this->defined[$identifier])) {
+      return $this->defined[$identifier]->isUsed();
+    } else {
+      throw new \BadMethodCallException($identifier.' is not defined');
     }
   }
 
@@ -339,7 +348,7 @@ class Scope {
     $definedValues = [];
     /** @var DefinedValue $definedValue */
     foreach($this->defined as $identifier => $definedValue) {
-      $definedValues[$identifier] = $definedValue->type->buildNodeInterfaceType();
+      $definedValues[$identifier] = $definedValue->getType()->buildNodeInterfaceType();
     }
     return new NodeTreeScope($this->parent?->toNodeTreeScope() ?? null, $definedValues);
   }

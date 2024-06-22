@@ -3,14 +3,13 @@ namespace test;
 
 use PHPUnit\Framework\TestCase;
 use TimoLehnertz\formula\Formula;
+use TimoLehnertz\formula\FormulaRuntimeException;
+use TimoLehnertz\formula\PrettyPrintOptions;
 use TimoLehnertz\formula\procedure\Scope;
+use TimoLehnertz\formula\tokens\TokenisationException;
 use TimoLehnertz\formula\type\FloatType;
 use TimoLehnertz\formula\type\IntegerType;
 use const false;
-use TimoLehnertz\formula\tokens\TokenisationException;
-use TimoLehnertz\formula\PrettyPrintOptions;
-use TimoLehnertz\formula\FormulaRuntimeException;
-use Vtiful\Kernel\Format;
 
 class FormulaTest extends TestCase {
 
@@ -132,13 +131,24 @@ class FormulaTest extends TestCase {
     (new Formula('{1,2,3}[3]+1'))->calculate();
   }
 
-  public function restRecalculate(): void {
+  public function testRecalculate(): void {
     $scope = new Scope();
     $scope->definePHP(false, 'i', 1);
-    $formula = new Formula('i+1');
+    $formula = new Formula('i+1', $scope);
     $this->assertEquals(2, $formula->calculate()->toPHPValue());
-    $scope->assignPHP(false, 'i', 2);
+    $scope->assignPHP('i', 2);
     $this->assertEquals(3, $formula->calculate()->toPHPValue());
+  }
+
+  public function testIsUsed(): void {
+    $scope = new Scope();
+    $scope->definePHP(false, 'i', 1);
+    new Formula('1+1', $scope);
+    $this->assertFalse($scope->isUsed('i'));
+    $scope = new Scope();
+    $scope->definePHP(false, 'i', 1);
+    new Formula('1+i', $scope);
+    $this->assertTrue($scope->isUsed('i'));
   }
 
   //   //   public function testUnexpectedEndOfInputException(): void {

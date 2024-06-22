@@ -52,7 +52,7 @@ class ScopeTest extends TestCase {
     $scope = new Scope();
     $scope->definePHP(false, 'i', 0);
     $value = $scope->get('i');
-    $type = $scope->getType('i');
+    $type = $scope->use('i');
     $this->assertInstanceOf(IntegerValue::class, $value);
     $this->assertInstanceOf(IntegerType::class, $type);
   }
@@ -64,7 +64,7 @@ class ScopeTest extends TestCase {
     $childScope = $parentScope->buildChild();
 
     $value = $childScope->get('i');
-    $type = $childScope->getType('i');
+    $type = $childScope->use('i');
     $this->assertInstanceOf(IntegerValue::class, $value);
     $this->assertInstanceOf(IntegerType::class, $type);
   }
@@ -80,7 +80,15 @@ class ScopeTest extends TestCase {
     $scope = new Scope();
     $this->expectException(FormulaRuntimeException::class);
     $this->expectExceptionMessage('i is not defined');
-    $scope->getType('i');
+    $scope->use('i');
+  }
+
+  public function testIsDefined(): void {
+    $scope = new Scope();
+    $scope->definePHP(true, 'i', 1);
+    $this->assertFalse($scope->isUsed('i'));
+    $scope->use('i');
+    $this->assertTrue($scope->isUsed('i'));
   }
 
   public function phpVarProvider(): array {

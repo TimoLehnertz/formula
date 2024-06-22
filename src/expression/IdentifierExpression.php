@@ -20,7 +20,7 @@ class IdentifierExpression implements Expression {
   }
 
   public function validate(Scope $scope): Type {
-    return $scope->getType($this->identifier);
+    return $scope->use($this->identifier);
   }
 
   public function run(Scope $scope): Value {
