@@ -197,6 +197,23 @@ class ScopeTest extends TestCase {
     $scope->assignPHP('i', 0);
   }
 
+  public function testUnsetUndefined(): void {
+    $scope = new Scope();
+    $this->expectException(FormulaRuntimeException::class);
+    $this->expectExceptionMessage('i is not defined');
+    $scope->unset('i');
+  }
+
+  public function testUnset(): void {
+    $scope = new Scope();
+    $scope->definePHP(true, 'i', 1);
+    $this->assertEquals(1, $scope->get('i')->toPHPValue());
+    $scope->unset('i');
+    $this->expectException(FormulaRuntimeException::class);
+    $this->expectExceptionMessage('Value has been read before initilization');
+    $scope->get('i');
+  }
+
   public function testFinal(): void {
     $scope = new Scope();
     $scope->definePHP(true, 'i', 0);

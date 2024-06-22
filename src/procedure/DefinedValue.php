@@ -1,5 +1,7 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace TimoLehnertz\formula\procedure;
 
 use TimoLehnertz\formula\FormulaRuntimeException;
@@ -28,7 +30,7 @@ class DefinedValue implements ValueContainer {
   }
 
   public function assign(Value $value, bool $ignoreFinal = false): void {
-    if($this->final && !$ignoreFinal) {
+    if ($this->final && !$ignoreFinal) {
       throw new FormulaRuntimeException('Cant mutate immutable value');
     }
     $this->value?->setContainer(null);
@@ -36,8 +38,12 @@ class DefinedValue implements ValueContainer {
     $this->value->setContainer($this);
   }
 
+  public function unset(): void {
+    $this->value = null;
+  }
+
   public function get(): Value {
-    if($this->value === null) {
+    if ($this->value === null) {
       throw new FormulaRuntimeException('Value has been read before initilization');
     }
     return $this->value;

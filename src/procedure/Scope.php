@@ -346,6 +346,16 @@ class Scope {
     }
   }
 
+  public function unset(string $identifier): void {
+    if (isset($this->defined[$identifier])) {
+      $this->defined[$identifier]->unset();
+    } else if ($this->parent !== null) {
+      $this->parent->unset($identifier);
+    } else {
+      throw new FormulaRuntimeException($identifier . ' is not defined');
+    }
+  }
+
   public function setParent(Scope $parent): void {
     $this->parent = $parent;
   }
