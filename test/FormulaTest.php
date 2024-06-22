@@ -1,4 +1,5 @@
 <?php
+
 namespace test;
 
 use PHPUnit\Framework\TestCase;
@@ -51,7 +52,7 @@ class FormulaTest extends TestCase {
     $str = 'a+b+c+d+e';
     $formula = new Formula($str, $scope);
     $this->assertInstanceOf(FloatType::class, $formula->getReturnType());
-    for($i = 0;$i < 10;$i++) {
+    for ($i = 0; $i < 10; $i++) {
       $a = rand(-1000, 1000);
       $b = rand(-1000, 1000);
       $c = rand(-1000, 1000);
@@ -72,7 +73,7 @@ class FormulaTest extends TestCase {
     $scope->definePHP(false, 'a', 1);
     $scope->definePHP(false, 'b', 1);
     $formula = new Formula($str, $scope);
-    for($i = 0;$i < 1;$i++) {
+    for ($i = 0; $i < 1; $i++) {
       $a = rand(0, 10);
       $b = rand(0, 10);
       $scope->assignPHP('a', $a);
@@ -149,6 +150,11 @@ class FormulaTest extends TestCase {
     $scope->definePHP(false, 'i', 1);
     new Formula('1+i', $scope);
     $this->assertTrue($scope->isUsed('i'));
+  }
+
+  public function testGetSource(): void {
+    $formula = new Formula('1+2+3');
+    $this->assertEquals('1+2+3', $formula->getSource());
   }
 
   //   //   public function testUnexpectedEndOfInputException(): void {

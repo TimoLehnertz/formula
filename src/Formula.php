@@ -92,4 +92,8 @@ class Formula {
   public function getScope(): Scope {
     return $this->parentScope;
   }
+
+  public function getSource(): string {
+    return $this->source;
+  }
 }
