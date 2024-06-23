@@ -56,6 +56,18 @@ class DateIntervalValue extends Value {
   }
 
   protected function valueOperate(ImplementableOperator $operator, ?Value $other): Value {
+    switch ($operator->getID()) {
+      case ImplementableOperator::TYPE_UNARY_PLUS:
+        return $this->copy();
+      case ImplementableOperator::TYPE_UNARY_MINUS:
+        $new = clone $this->value;
+        if($new->invert === 0) {
+          $new->invert = 1;
+        } else {
+          $new->invert = 0;
+        }
+        return new DateIntervalValue($new);
+    }
     throw new FormulaBugException('Invalid operation');
   }
 

@@ -192,7 +192,19 @@ class TypeTest extends TestCase {
     /**
      * DateIntervalType
      */
-    $tests[] = ['DateInterval', new DateIntervalType(), new DateIntervalType(), new IntegerType(), new DateIntervalType(), new IntegerType(), 'DateInterval', [], new DateIntervalValue(new \DateInterval('P1Y1M1DT1H1M1S')), 'P1Y1M1DT1H1M1S', true, new DateIntervalValue(new \DateInterval('P1Y1M1DT1H1M1S')), new DateIntervalValue(new \DateInterval('P0D')), true];
+    $operators = [];
+    // Operator unary +
+    $compatibleOperands = [];
+    $compatibleOperands[] = new CompatibleOperator(null, new DateIntervalType(), null, new DateIntervalValue(new \DateInterval('P1Y1M1DT1H1M1S')));
+    $operators[] = new OperatorTestMeta(ImplementableOperator::TYPE_UNARY_PLUS, $compatibleOperands);
+    // Operator unary -
+    $invertedInterval = new \DateInterval('P1Y1M1DT1H1M1S');
+    $invertedInterval->invert = 1;
+    $compatibleOperands = [];
+    $compatibleOperands[] = new CompatibleOperator(null, new DateIntervalType(), null, new DateIntervalValue($invertedInterval));
+    $operators[] = new OperatorTestMeta(ImplementableOperator::TYPE_UNARY_MINUS, $compatibleOperands);
+
+    $tests[] = ['DateInterval', new DateIntervalType(), new DateIntervalType(), new IntegerType(), new DateIntervalType(), new IntegerType(), 'DateInterval', $operators, new DateIntervalValue(new \DateInterval('P1Y1M1DT1H1M1S')), 'P1Y1M1DT1H1M1S', true, new DateIntervalValue(new \DateInterval('P1Y1M1DT1H1M1S')), new DateIntervalValue(new \DateInterval('P0D')), true];
 
     /**
      * OuterFunctionArgumentListType

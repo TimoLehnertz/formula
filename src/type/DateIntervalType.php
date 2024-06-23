@@ -1,10 +1,10 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace TimoLehnertz\formula\type;
 
-use TimoLehnertz\formula\nodes\NodeInterfaceType;
 use TimoLehnertz\formula\operator\ImplementableOperator;
-use const false;
 
 /**
  * @author Timo Lehnertz
@@ -32,6 +32,12 @@ class DateIntervalType extends Type {
   }
 
   protected function getTypeOperatorResultType(ImplementableOperator $operator, ?Type $otherType): ?Type {
+    switch ($operator->getID()) {
+      case ImplementableOperator::TYPE_UNARY_PLUS:
+        return new DateIntervalType();
+      case ImplementableOperator::TYPE_UNARY_MINUS:
+        return new DateIntervalType();
+    }
     return null;
   }
 }

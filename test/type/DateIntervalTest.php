@@ -53,4 +53,11 @@ class DateIntervalTest extends TestCase {
     $this->assertInstanceOf(DateIntervalType::class, $formula->getReturnType());
     $this->assertEquals(new \DateInterval('P1D'), $formula->calculate()->toPHPValue());
   }
+
+  public function testUnaryMinus(): void {
+    $formula = new Formula('"2024-01-02" + -"P1D"');
+    $this->assertEquals(new \DateTimeImmutable('2024-01-01'), $formula->calculate()->toPHPValue());
+    $formula = new Formula('"2024-01-02" + -(-"P1D")');
+    $this->assertEquals(new \DateTimeImmutable('2024-01-03'), $formula->calculate()->toPHPValue());
+  }
 }

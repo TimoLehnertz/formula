@@ -25,9 +25,7 @@ class TypeToNodeTest extends TestCase {
               [
                 'identifier' => 'i',
                 'final' => false,
-                'type' => [
-                  'typeName' => 'IntegerType'
-                ]
+                'type' => 'int'
               ]
             ],
             'parentType' => null,
@@ -47,7 +45,7 @@ class TypeToNodeTest extends TestCase {
                     'name' => null,
                     'optional' => false,
                     'type' => [
-                      'typeName' => 'IntegerType'
+                      'typeName'=> 'IntegerType'
                     ]
                   ],
                 ],
