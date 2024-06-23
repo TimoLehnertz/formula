@@ -128,9 +128,9 @@ class Scope {
    * @param OuterFunctionArgumentListType|array<string, Type>|null|null $argumentType
    * @param ?callable(OuterFunctionArgumentListType): ?Type $specificFunctionReturnType
    */
-  public function definePHP(bool $final, string $identifier, mixed $value = '__undefined__', OuterFunctionArgumentListType|array|null $argumentType = null, ?callable $specificFunctionReturnType = null): void {
+  public function definePHP(bool $final, string $identifier, mixed $value = '__undefined__', OuterFunctionArgumentListType|array|null $argumentType = null, ?Type $generalReturnType = null, ?callable $specificFunctionReturnType = null): void {
     if ($value !== '__undefined__') {
-      $value = Scope::convertPHPVar($value, false, $argumentType, $specificFunctionReturnType);
+      $value = Scope::convertPHPVar($value, false, $argumentType, $generalReturnType, $specificFunctionReturnType);
     }
     $this->define($final, $value[0], $identifier, $value[1]);
   }
@@ -175,7 +175,7 @@ class Scope {
    * @param OuterFunctionArgumentListType|array<string, Type>|null|null $argumentType
    * @param ?callable(OuterFunctionArgumentListType): ?Type $specificFunctionReturnType
    */
-  private static function reflectionFunctionToType(ReflectionFunctionAbstract $reflection, OuterFunctionArgumentListType|array|null $argumentType = null, ?callable $specificFunctionReturnType = null): FunctionType {
+  private static function reflectionFunctionToType(ReflectionFunctionAbstract $reflection, OuterFunctionArgumentListType|array|null $argumentType = null, ?Type $generalReturnType = null, ?callable $specificFunctionReturnType = null): FunctionType {
     $reflectionReturnType = $reflection->getReturnType();
     if ($reflectionReturnType !== null) {
       $returnType = Scope::reflectionTypeToFormulaType($reflectionReturnType);
@@ -200,7 +200,7 @@ class Scope {
         $outArgumentType = $outArgumentType->mergeArgumentTypes($argumentType);
       }
     }
-    return new FunctionType($outArgumentType, $returnType, $specificFunctionReturnType);
+    return new FunctionType($outArgumentType, $generalReturnType ?? $returnType, $specificFunctionReturnType);
   }
 
   private static array $phpClassTypes = [];
@@ -239,7 +239,7 @@ class Scope {
    * @param ?callable(OuterFunctionArgumentListType): ?Type $specificFunctionReturnType
    * @return array [Type, Value]
    */
-  public static function convertPHPVar(mixed $value, bool $onlyValue = false, OuterFunctionArgumentListType|array|null $argumentType = null, ?callable $specificFunctionReturnType = null): array {
+  public static function convertPHPVar(mixed $value, bool $onlyValue = false, OuterFunctionArgumentListType|array|null $argumentType = null, ?Type $generalReturnType = null, ?callable $specificFunctionReturnType = null): array {
     if ($value instanceof Value) {
       return [null, $value];
     } else if ($value instanceof \DateTimeImmutable) {
@@ -286,7 +286,7 @@ class Scope {
       } else {
         $reflection = new \ReflectionFunction($value);
       }
-      $functionType = Scope::reflectionFunctionToType($reflection, $argumentType, $specificFunctionReturnType);
+      $functionType = Scope::reflectionFunctionToType($reflection, $argumentType, $generalReturnType, $specificFunctionReturnType);
       $functionBody = new PHPFunctionBody($value, $functionType->generalReturnType instanceof VoidType);
       return [$functionType, new FunctionValue($functionBody)];
     } else if (is_array($value)) {

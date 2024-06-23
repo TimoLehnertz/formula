@@ -45,10 +45,10 @@ class DefaultScope extends Scope {
     $this->definePHP(true, "asVector", [DefaultScope::class, "asVectorFunc"]);
     $this->definePHP(true, "sizeof", [DefaultScope::class, "sizeofFunc"]);
     $this->definePHP(true, "inRange", [DefaultScope::class, "inRangeFunc"]);
-    $this->definePHP(true, "reduce", [DefaultScope::class, "reduceFunc"], null, function (OuterFunctionArgumentListType $args): ?Type {
+    $this->definePHP(true, "reduce", [DefaultScope::class, "reduceFunc"], null, null, function (OuterFunctionArgumentListType $args): ?Type {
       return $args->getArgumentType(0);
     });
-    $this->definePHP(true, "firstOrNull", [DefaultScope::class, "firstOrNullFunc"], null, function (OuterFunctionArgumentListType $args): ?Type {
+    $this->definePHP(true, "firstOrNull", [DefaultScope::class, "firstOrNullFunc"], null, null, function (OuterFunctionArgumentListType $args): ?Type {
       $type = $args->getArgumentType(0);
       if ($type instanceof ArrayType) {
         if ($type->getElementsType() instanceof NeverType) {
@@ -63,11 +63,11 @@ class DefaultScope extends Scope {
     $this->definePHP(true, "sum", [DefaultScope::class, "sumFunc"]);
     $this->definePHP(true, "avg", [DefaultScope::class, "avgFunc"]);
     $callbackType = new FunctionType(new OuterFunctionArgumentListType([new OuterFunctionArgument(new MixedType())]), new BooleanType());
-    $this->definePHP(true, "array_filter", [DefaultScope::class, "array_filterFunc"], ['callback' => $callbackType], function (OuterFunctionArgumentListType $args): ?Type {
+    $this->definePHP(true, "array_filter", [DefaultScope::class, "array_filterFunc"], ['callback' => $callbackType], null, function (OuterFunctionArgumentListType $args): ?Type {
       return $args->getArgumentType(0);
     });
 
-    $this->definePHP(true, "earlyReturnIfNull", [DefaultScope::class, "earlyReturnIfNullFunc"], null, function (OuterFunctionArgumentListType $args): ?Type {
+    $this->definePHP(true, "earlyReturnIfNull", [DefaultScope::class, "earlyReturnIfNullFunc"], null, null, function (OuterFunctionArgumentListType $args): ?Type {
       $type = $args->getArgumentType(0);
       if ($type instanceof CompoundType) {
         return $type->eliminateType(new NullType());
