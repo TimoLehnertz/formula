@@ -29,6 +29,19 @@ abstract class NumberValueHelper {
     }
   }
 
+  public static function getImplementedOperators(): array {
+    return [
+      new ImplementableOperator(ImplementableOperator::TYPE_ADDITION),
+      new ImplementableOperator(ImplementableOperator::TYPE_SUBTRACTION),
+      new ImplementableOperator(ImplementableOperator::TYPE_MULTIPLICATION),
+      new ImplementableOperator(ImplementableOperator::TYPE_DIVISION),
+      new ImplementableOperator(ImplementableOperator::TYPE_LESS),
+      new ImplementableOperator(ImplementableOperator::TYPE_GREATER),
+      new ImplementableOperator(ImplementableOperator::TYPE_MODULO),
+      new ImplementableOperator(ImplementableOperator::TYPE_TYPE_CAST),
+    ];
+  }
+
   public static function getTypeCompatibleOperands(IntegerType|FloatType $self, ImplementableOperator $operator): array {
     switch($operator->getID()) {
       case ImplementableOperator::TYPE_ADDITION:
@@ -141,7 +154,7 @@ abstract class NumberValueHelper {
       case ImplementableOperator::TYPE_LESS:
         return new BooleanValue($self->toPHPValue() < $other->toPHPValue());
       default:
-        throw new FormulaBugException('Invalid operation '.$self->getType()->getIdentifier().' '.$operator->toString(PrettyPrintOptions::buildDefault()).' '.($other !== null ? $other->getType()->getIdentifier() : ''));
+        throw new FormulaBugException('Invalid operation number '.$operator->toString(PrettyPrintOptions::buildDefault()));
     }
   }
 }

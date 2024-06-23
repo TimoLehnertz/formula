@@ -20,14 +20,12 @@ class ConstantExpressionTest extends TestCase {
     /**
      * Validate
      */
-    /** @var FloatType $type */
     $type = $expression->validate(new Scope());
     $this->assertInstanceOf(FloatType::class, $type);
 
     /**
      * Run
      */
-    /** @var FloatValue $type */
     $result = $expression->run(new Scope());
     $this->assertInstanceOf(FloatValue::class, $result);
     $this->assertEquals(123.4, $result->toPHPValue());

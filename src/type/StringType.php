@@ -44,8 +44,4 @@ class StringType extends ClassType {
       return parent::getTypeOperatorResultType($operator, $otherType);
     }
   }
-
-  public function buildNodeInterfaceType(): NodeInterfaceType {
-    return new NodeInterfaceType('String');
-  }
 }

@@ -38,15 +38,15 @@ abstract class Type implements OperatorMeta, FormulaPart {
             throw new FormulaBugException('Cast operator has to expect TypeType');
           }
         }
-        $array[] = new TypeType(new BooleanType(false), false);
-        $array[] = new TypeType(new StringType(false), false);
+        $array[] = new TypeType(new BooleanType());
+        $array[] = new TypeType(new StringType());
         break;
       case ImplementableOperator::TYPE_LOGICAL_AND:
-        return [new BooleanType(false)];
+        return [new BooleanType()];
       case ImplementableOperator::TYPE_LOGICAL_OR:
-        return [new BooleanType(false)];
+        return [new BooleanType()];
       case ImplementableOperator::TYPE_LOGICAL_XOR:
-        return [new BooleanType(false)];
+        return [new BooleanType()];
     }
     return $array;
   }
@@ -119,5 +119,8 @@ abstract class Type implements OperatorMeta, FormulaPart {
     return $this->getIdentifier();
   }
 
-  public abstract function buildNodeInterfaceType(): NodeInterfaceType;
+  /**
+   * @return array<ImplementableOperator>
+   */
+  public abstract function getImplementedOperators(): array;
 }

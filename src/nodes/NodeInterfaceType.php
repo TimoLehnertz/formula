@@ -2,17 +2,21 @@
 declare(strict_types = 1);
 namespace TimoLehnertz\formula\nodes;
 
+use TimoLehnertz\formula\type\Type;
+
 /**
  * @author Timo Lehnertz
  */
 class NodeInterfaceType {
 
-  public readonly string $name;
+  private readonly Type $type;
 
-  public readonly array $additionalInfo;
+  public function __construct(Type $type) {
+    $this->type = $type;
+  }
 
-  public function __construct(string $name, array $additionalInfo = []) {
-    $this->name = $name;
-    $this->additionalInfo = $additionalInfo;
+  public function toArray(): array {
+    // $compatibleOperators = $this->type->get
+    return ['identifier' => $this->type->getIdentifier(), 'compatibleOperands' => []];
   }
 }

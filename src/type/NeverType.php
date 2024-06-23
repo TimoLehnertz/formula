@@ -23,7 +23,11 @@ class NeverType extends Type {
   }
 
   public function getIdentifier(bool $isNested = false): string {
-    return 'never';
+    return 'NeverType';
+  }
+
+  public function getImplementedOperators(): array {
+    return [];
   }
 
   protected function getTypeOperatorResultType(ImplementableOperator $operator, ?Type $otherType): ?Type {
@@ -32,9 +36,5 @@ class NeverType extends Type {
 
   protected function getTypeCompatibleOperands(ImplementableOperator $operator): array {
     return [];
-  }
-
-  public function buildNodeInterfaceType(): NodeInterfaceType {
-    return new NodeInterfaceType('mixed');
   }
 }

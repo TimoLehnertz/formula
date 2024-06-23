@@ -1,7 +1,10 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace TimoLehnertz\formula\type;
 
+use TimoLehnertz\formula\FormulaBugException;
 use TimoLehnertz\formula\nodes\NodeInterfaceType;
 use TimoLehnertz\formula\operator\ImplementableOperator;
 use TimoLehnertz\formula\type\classes\ClassType;
@@ -23,7 +26,7 @@ class ArrayType extends ClassType implements IteratableType {
   }
 
   protected function typeAssignableBy(Type $type): bool {
-    if(!($type instanceof ArrayType)) {
+    if (!($type instanceof ArrayType)) {
       return false;
     }
     $keysCompatible = $this->keyType->assignableBy($type->keyType, true) || ($type->keyType instanceof NeverType);
@@ -32,22 +35,37 @@ class ArrayType extends ClassType implements IteratableType {
   }
 
   public function equals(Type $type): bool {
-    if(!($type instanceof ArrayType)) {
+    if (!($type instanceof ArrayType)) {
       return false;
     }
     return $this->keyType->equals($type->keyType) && $this->elementsType->equals($type->elementsType);
   }
 
   public function getIdentifier(bool $isNested = false): string {
-    if($this->keyType instanceof IntegerType) {
-      return $this->elementsType->getIdentifier(true).'[]';
+    if ($this->keyType instanceof IntegerType) {
+      return $this->elementsType->getIdentifier(true) . '[]';
     } else {
-      return 'array<'.$this->keyType->getIdentifier().','.$this->elementsType->getIdentifier().'>';
+      return 'array<' . $this->keyType->getIdentifier() . ',' . $this->elementsType->getIdentifier() . '>';
     }
   }
 
+  public function getImplementedOperators(): array {
+    return [
+      new ImplementableOperator(ImplementableOperator::TYPE_ARRAY_ACCESS),
+      new ImplementableOperator(ImplementableOperator::TYPE_MEMBER_ACCESS),
+      new ImplementableOperator(ImplementableOperator::TYPE_ADDITION),
+      new ImplementableOperator(ImplementableOperator::TYPE_SUBTRACTION),
+      new ImplementableOperator(ImplementableOperator::TYPE_MULTIPLICATION),
+      new ImplementableOperator(ImplementableOperator::TYPE_DIVISION),
+      new ImplementableOperator(ImplementableOperator::TYPE_UNARY_PLUS),
+      new ImplementableOperator(ImplementableOperator::TYPE_UNARY_MINUS),
+      new ImplementableOperator(ImplementableOperator::TYPE_MODULO),
+      new ImplementableOperator(ImplementableOperator::TYPE_TYPE_CAST),
+    ];
+  }
+
   protected function getTypeCompatibleOperands(ImplementableOperator $operator): array {
-    switch($operator->getID()) {
+    switch ($operator->getID()) {
       case ImplementableOperator::TYPE_ARRAY_ACCESS:
         return [$this->keyType];
       case ImplementableOperator::TYPE_MEMBER_ACCESS:
@@ -59,11 +77,14 @@ class ArrayType extends ClassType implements IteratableType {
       case ImplementableOperator::TYPE_UNARY_PLUS:
       case ImplementableOperator::TYPE_UNARY_MINUS:
       case ImplementableOperator::TYPE_MODULO:
-        return [...$this->elementsType->getCompatibleOperands($operator),new ArrayType($this->keyType, ...$this->elementsType->getCompatibleOperands($operator))];
+        return [...$this->elementsType->getCompatibleOperands($operator), new ArrayType($this->keyType, ...$this->elementsType->getCompatibleOperands($operator))];
       case ImplementableOperator::TYPE_TYPE_CAST:
         $elementCasts = $this->elementsType->getCompatibleOperands($operator);
         $arrayCasts = [];
-        foreach($elementCasts as $elementCast) {
+        foreach ($elementCasts as $elementCast) {
+          if (!($elementCast instanceof TypeType)) {
+            throw new FormulaBugException('Invalid cast');
+          }
           $arrayCasts[] = new TypeType(new ArrayType($this->keyType, $elementCast->getType()));
         }
         return $arrayCasts;
@@ -72,9 +93,9 @@ class ArrayType extends ClassType implements IteratableType {
   }
 
   protected function getTypeOperatorResultType(ImplementableOperator $operator, ?Type $otherType): ?Type {
-    switch($operator->getID()) {
+    switch ($operator->getID()) {
       case ImplementableOperator::TYPE_ARRAY_ACCESS:
-        if($otherType !== null && $this->keyType->assignableBy($otherType)) {
+        if ($otherType !== null && $this->keyType->assignableBy($otherType)) {
           return $this->elementsType;
         }
         break;
@@ -87,28 +108,24 @@ class ArrayType extends ClassType implements IteratableType {
       case ImplementableOperator::TYPE_UNARY_PLUS:
       case ImplementableOperator::TYPE_UNARY_MINUS:
       case ImplementableOperator::TYPE_MODULO:
-        if($otherType instanceof ArrayType) {
+        if ($otherType instanceof ArrayType) {
           $otherType = $otherType->elementsType;
         }
         $result = $this->elementsType->getOperatorResultType($operator, $otherType);
-        if($result !== null) {
+        if ($result !== null) {
           return new ArrayType($this->keyType, $result);
         }
         break;
       case ImplementableOperator::TYPE_TYPE_CAST:
-        if(($otherType instanceof TypeType) && $otherType->getType() instanceof ArrayType) {
+        if (($otherType instanceof TypeType) && $otherType->getType() instanceof ArrayType) {
           $result = $this->elementsType->getOperatorResultType($operator, new TypeType($otherType->getType()->elementsType));
-          if($result !== null) {
+          if ($result !== null) {
             return new ArrayType($this->keyType, $result);
           }
         }
         break;
     }
     return null;
-  }
-
-  public function buildNodeInterfaceType(): NodeInterfaceType {
-    return new NodeInterfaceType('array', ['keyType' => $this->keyType->buildNodeInterfaceType(),'elementsType' => $this->elementsType->buildNodeInterfaceType()]);
   }
 
   public function getKeyType(): Type {

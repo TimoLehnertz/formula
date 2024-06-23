@@ -2,7 +2,6 @@
 declare(strict_types = 1);
 namespace TimoLehnertz\formula\type\classes;
 
-use TimoLehnertz\formula\nodes\NodeInterfaceType;
 use TimoLehnertz\formula\operator\ImplementableOperator;
 use TimoLehnertz\formula\type\MemberAccsessType;
 use TimoLehnertz\formula\type\Type;
@@ -56,26 +55,15 @@ class ClassType extends Type {
     if(!($type instanceof ClassType)) {
       return false;
     }
-    if($this->identifier !== $type->identifier) {
-      return false;
-    }
-    if(count($this->fields) !== count($type->fields)) {
-      return false;
-    }
-    /** @var FieldType $field */
-    foreach($this->fields as $identifier => $field) {
-      if(!isset($type->fields[$identifier])) {
-        return false;
-      }
-      if(!$field->equals($type->fields[$identifier])) {
-        return false;
-      }
-    }
-    return true;
+    return $this->identifier === $type->identifier;
   }
 
   public function getIdentifier(bool $isNested = false): string {
     return 'classType('.$this->identifier.')';
+  }
+
+  public function getImplementedOperators(): array {
+    return [new ImplementableOperator(ImplementableOperator::TYPE_MEMBER_ACCESS)];
   }
 
   protected function getTypeCompatibleOperands(ImplementableOperator $operator): array {
@@ -103,9 +91,5 @@ class ClassType extends Type {
         return $this->fields[$otherType->getMemberIdentifier()]->type;
     }
     return null;
-  }
-
-  public function buildNodeInterfaceType(): NodeInterfaceType {
-    return new NodeInterfaceType('ClassType');
   }
 }

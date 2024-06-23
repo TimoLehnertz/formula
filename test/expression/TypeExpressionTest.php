@@ -4,13 +4,8 @@ namespace TimoLehnertz\formula\expression;
 use PHPUnit\Framework\TestCase;
 use TimoLehnertz\formula\PrettyPrintOptions;
 use TimoLehnertz\formula\procedure\Scope;
-use TimoLehnertz\formula\type\BooleanType;
-use TimoLehnertz\formula\type\BooleanValue;
 use TimoLehnertz\formula\type\FloatType;
 use TimoLehnertz\formula\type\FloatValue;
-use TimoLehnertz\formula\type\IntegerType;
-use TimoLehnertz\formula\type\IntegerValue;
-use TimoLehnertz\formula\type\CompoundType;
 use TimoLehnertz\formula\type\TypeType;
 use TimoLehnertz\formula\type\TypeValue;
 
@@ -20,28 +15,27 @@ class TypeExpressionTest extends TestCase {
     /**
      * Setup
      */
-    $type = new IntegerType();
+    $type = new FloatType();
     $expression = new TypeExpression($type);
 
     /**
      * Validate
      */
-    /** @var TypeType $returnType */
-    $returnType = $expression->validate(new Scope());
-    $this->assertInstanceOf(TypeType::class, $returnType);
-    $this->assertEquals($type, $returnType->getType());
+    $type = $expression->validate(new Scope());
+    $this->assertInstanceOf(TypeType::class, $type);
 
     /**
      * Run
      */
+    /** @var TypeValue $result */
     $result = $expression->run(new Scope());
     $this->assertInstanceOf(TypeValue::class, $result);
-    $this->assertEquals($type, $result->getValue());
+    $this->assertInstanceOf(FloatType::class, $result->getValue());
 
     /**
      * ToString
      */
-    $this->assertEquals('int', $expression->toString(PrettyPrintOptions::buildDefault()));
+    $this->assertEquals((new FloatType())->getIdentifier(), $expression->toString(PrettyPrintOptions::buildDefault()));
 
     /**
      * Node
@@ -49,6 +43,6 @@ class TypeExpressionTest extends TestCase {
     $node = $expression->buildNode(new Scope());
     $this->assertEquals('TypeExpression', $node->nodeType);
     $this->assertCount(0, $node->connectedInputs);
-    $this->assertEquals(['type' => $type->buildNodeInterfaceType()], $node->info);
+    $this->assertEquals(['type' => (new FloatType())->buildNodeInterfaceType()], $node->info);
   }
 }

@@ -49,6 +49,10 @@ class FunctionType extends Type {
     return 'function'.$this->arguments->getIdentifier().' -> '.$this->generalReturnType->getIdentifier();
   }
 
+  public function getImplementedOperators(): array {
+    return [new ImplementableOperator(ImplementableOperator::TYPE_CALL)];
+  }
+
   protected function getTypeCompatibleOperands(ImplementableOperator $operator): array {
     if($operator->getID() === ImplementableOperator::TYPE_CALL) {
       return [$this->arguments];
@@ -68,9 +72,5 @@ class FunctionType extends Type {
       }
     }
     return null;
-  }
-
-  public function buildNodeInterfaceType(): NodeInterfaceType {
-    return new NodeInterfaceType('function', ['arguments' => $this->arguments->buildNodeInterfaceType(),'returnType' => $this->generalReturnType->buildNodeInterfaceType()]);
   }
 }

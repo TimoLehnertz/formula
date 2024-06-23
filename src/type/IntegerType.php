@@ -23,7 +23,11 @@ class IntegerType extends Type {
   }
 
   public function getIdentifier(bool $nested = false): string {
-    return 'int';
+    return 'IntegerType';
+  }
+
+  public function getImplementedOperators(): array {
+    return NumberValueHelper::getImplementedOperators();
   }
 
   protected function getTypeCompatibleOperands(ImplementableOperator $operator): array {
@@ -32,9 +36,5 @@ class IntegerType extends Type {
 
   protected function getTypeOperatorResultType(ImplementableOperator $operator, ?Type $otherType): ?Type {
     return NumberValueHelper::getTypeOperatorResultType($this, $operator, $otherType);
-  }
-
-  public function buildNodeInterfaceType(): NodeInterfaceType {
-    return new NodeInterfaceType('integer');
   }
 }

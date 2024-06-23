@@ -5,6 +5,7 @@ namespace test\type;
 use PHPUnit\Framework\TestCase;
 use TimoLehnertz\formula\FormulaBugException;
 use TimoLehnertz\formula\operator\ImplementableOperator;
+use TimoLehnertz\formula\statement\Frequency;
 use TimoLehnertz\formula\type\ArrayType;
 use TimoLehnertz\formula\type\ArrayValue;
 use TimoLehnertz\formula\type\BooleanType;
@@ -46,6 +47,10 @@ use TimoLehnertz\formula\type\classes\ClassTypeType;
 use TimoLehnertz\formula\type\classes\ConstructorType;
 use TimoLehnertz\formula\type\classes\ClassTypeValue;
 use TimoLehnertz\formula\type\classes\ConstructorValue;
+use TimoLehnertz\formula\type\EnumInstanceType;
+use TimoLehnertz\formula\type\EnumInstanceValue;
+use TimoLehnertz\formula\type\EnumTypeType;
+use TimoLehnertz\formula\type\EnumTypeValue;
 
 class TypeTest extends TestCase {
 
@@ -300,8 +305,31 @@ class TypeTest extends TestCase {
     $compatibleOperands = [];
     $compatibleOperands[] = new CompatibleOperator(null, $constructorType, null, $constructor);
     $operators[] = new OperatorTestMeta(ImplementableOperator::TYPE_NEW, $compatibleOperands);
-
+    
     $tests[] = [$classTypeValue, $classTypeType, $classTypeType, new IntegerType(), $classTypeType, new IntegerType(), 'ClassTypeType', $operators, $classTypeValue, 'classType', true, null, new IntegerValue(1), false];
+    
+    /**
+     * EnumInstanceType
+     */
+    $operators = [];
+    $enumType = new EnumTypeType(new \ReflectionEnum(Frequency::class));
+    $tests[] = [Frequency::ALWAYS, new EnumInstanceType($enumType), new EnumInstanceType($enumType), new IntegerType(), new EnumInstanceType($enumType), new IntegerType(), 'enumInstance(enum('.Frequency::class.'))', $operators, new EnumInstanceValue(Frequency::ALWAYS), 'ALWAYS', true, new EnumInstanceValue(Frequency::ALWAYS), new EnumInstanceValue(Frequency::NEVER), true];
+
+    /**
+     * EnumTypeType
+     */
+    $enumTypeType = new EnumTypeType(new \ReflectionEnum(Frequency::class));
+    $enumTypeValue = new EnumTypeValue(new \ReflectionEnum(Frequency::class));
+    $operators = [];
+    // Operator .
+    $compatibleOperands = [];
+    $compatibleOperands[] = new CompatibleOperator(new MemberAccsessType('ALWAYS'), new EnumInstanceType($enumTypeType), new MemberAccsessValue('ALWAYS'), new EnumInstanceValue(Frequency::ALWAYS));
+    $compatibleOperands[] = new CompatibleOperator(new MemberAccsessType('SOMETIMES'), new EnumInstanceType($enumTypeType), new MemberAccsessValue('SOMETIMES'), new EnumInstanceValue(Frequency::SOMETIMES));
+    $compatibleOperands[] = new CompatibleOperator(new MemberAccsessType('NEVER'), new EnumInstanceType($enumTypeType), new MemberAccsessValue('NEVER'), new EnumInstanceValue(Frequency::NEVER));
+    $operators[] = new OperatorTestMeta(ImplementableOperator::TYPE_MEMBER_ACCESS, $compatibleOperands);
+
+
+    $tests[] = [$enumTypeValue, $enumTypeType, $enumTypeType, new IntegerType(), $enumTypeType, new IntegerType(), 'enum('.Frequency::class.')', $operators, $enumTypeValue, 'EnumType', true, null, new IntegerValue(1), true];
 
     return $tests;
   }
@@ -349,7 +377,7 @@ class TypeTest extends TestCase {
         $this->assertCount(0, $compatible);
       } else {
         if (!CompoundType::buildFromTypes($compatible)->equals(CompoundType::buildFromTypes($expectedCompatible))) {
-          var_dump($compatible, $expectedCompatible);
+          var_dump($expectedCompatible, $compatible);
         }
         $this->assertTrue(CompoundType::buildFromTypes($compatible)->equals(CompoundType::buildFromTypes($expectedCompatible)));
       }

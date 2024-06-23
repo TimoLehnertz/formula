@@ -18,8 +18,8 @@ class ClassTypeType extends Type {
     $this->constructorType = $constructorType;
   }
 
-  public function buildNodeInterfaceType(): NodeInterfaceType {
-    throw new NodesNotSupportedException('ClassTypeType');
+  public function getImplementedOperators(): array {
+    return [new ImplementableOperator(ImplementableOperator::TYPE_NEW)];
   }
 
   protected function getTypeCompatibleOperands(ImplementableOperator $operator): array {

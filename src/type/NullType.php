@@ -1,5 +1,7 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace TimoLehnertz\formula\type;
 
 use TimoLehnertz\formula\nodes\NodeInterfaceType;
@@ -23,18 +25,18 @@ class NullType extends Type {
   }
 
   public function getIdentifier(bool $isNested = false): string {
-    return 'null';
+    return 'NullType';
   }
 
-  protected function getTypeOperatorResultType(ImplementableOperator $operator, ?Type $otherType): ?Type {
-    return null;
+  public function getImplementedOperators(): array {
+    return [];
   }
 
   protected function getTypeCompatibleOperands(ImplementableOperator $operator): array {
     return [];
   }
 
-  public function buildNodeInterfaceType(): NodeInterfaceType {
-    return new NodeInterfaceType('null');
+  protected function getTypeOperatorResultType(ImplementableOperator $operator, ?Type $otherType): ?Type {
+    return null;
   }
 }

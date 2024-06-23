@@ -23,6 +23,6 @@ class MemberAccsessExpression extends IdentifierExpression {
   }
 
   public function buildNode(Scope $scope): Node {
-    return new Node('MemberAccsessExpression', [], ['identifier' => $this->identifier]);
+    return new Node('MemberAccsessExpression', [], ['identifier' => $this->getIdentifier()]);
   }
 }

@@ -126,21 +126,16 @@ class OuterFunctionArgumentListType extends Type {
     return '(' . $identifier . ')';
   }
 
+  public function getImplementedOperators(): array {
+    return [];
+  }
+
   protected function getTypeCompatibleOperands(ImplementableOperator $operator): array {
     return [];
   }
 
   protected function getTypeOperatorResultType(ImplementableOperator $operator, ?Type $otherType): ?Type {
     return null;
-  }
-
-  public function buildNodeInterfaceType(): NodeInterfaceType {
-    $args = [];
-    /** @var OuterFunctionArgument $argument */
-    foreach ($this->arguments as $argument) {
-      $args[] = $argument->buildNodeInterfaceType();
-    }
-    return new NodeInterfaceType('OuterFunctionArgumentList', ['arguments' => $args, 'isVargs' => $this->isVArgs]);
   }
 
   /**

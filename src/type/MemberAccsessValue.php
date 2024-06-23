@@ -12,9 +12,6 @@ class MemberAccsessValue extends Value {
 
   private string $memberIdentifier;
 
-  /**
-   * @param array<array-key, Value>
-   */
   public function __construct(string $memberIdentifier) {
     $this->memberIdentifier = $memberIdentifier;
   }

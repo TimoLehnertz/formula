@@ -19,8 +19,8 @@ class DateIntervalType extends Type {
     return $type instanceof DateIntervalType;
   }
 
-  public function buildNodeInterfaceType(): NodeInterfaceType {
-    return new NodeInterfaceType('DateIntervalType');
+  public function getImplementedOperators(): array {
+    return [];
   }
 
   protected function getTypeCompatibleOperands(ImplementableOperator $operator): array {
@@ -28,7 +28,7 @@ class DateIntervalType extends Type {
   }
 
   public function getIdentifier(bool $nested = false): string {
-    return 'DateInterval';
+    return 'DateIntervalType';
   }
 
   protected function getTypeOperatorResultType(ImplementableOperator $operator, ?Type $otherType): ?Type {

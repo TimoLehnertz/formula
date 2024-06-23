@@ -2,7 +2,6 @@
 declare(strict_types = 1);
 namespace TimoLehnertz\formula\type;
 
-use TimoLehnertz\formula\nodes\NodeInterfaceType;
 use TimoLehnertz\formula\type\classes\ClassType;
 use TimoLehnertz\formula\type\classes\FieldType;
 use ReflectionEnumBackedCase;
@@ -21,23 +20,15 @@ class EnumTypeType extends ClassType {
     foreach($reflection->getCases() as $enumCase) {
       $fields[$enumCase->getName()] = new FieldType(true, new EnumInstanceType($this));
     }
-    parent::__construct(null, 'Enum', $fields);
+    parent::__construct(null, $reflection->getName(), $fields);
     $this->reflection = $reflection;
   }
 
   protected function typeAssignableBy(Type $type): bool {
-    return false;
-  }
-
-  public function equals(Type $type): bool {
-    return $type instanceof EnumTypeType && $this->reflection->getName() === $type->reflection->getName();
+    return $this->equals($type);
   }
 
   public function getIdentifier(bool $isNested = false): string {
-    return 'enum('.$this->reflection->getName().')';
-  }
-
-  public function buildNodeInterfaceType(): NodeInterfaceType {
-    return new NodeInterfaceType('EnumTypeType');
+    return 'EnumTypeType('.$this->reflection->getName().')';
   }
 }

@@ -21,10 +21,11 @@ class EnumTypeValue extends ClassInstanceValue {
       $fields[$enumCase->getName()] = new FieldValue(new EnumInstanceValue($enumCase->getValue()));
     }
     parent::__construct($fields);
+    $this->reflection = $reflection;
   }
 
   public function valueEquals(Value $other): bool {
-    return $other instanceof EnumTypeValue && $this->reflection->getName() === $other->getName();
+    return $other instanceof EnumTypeValue && $this->reflection->getName() === $other->reflection->getName();
   }
 
   public function copy(): Value {

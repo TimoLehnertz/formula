@@ -10,6 +10,9 @@ use TimoLehnertz\formula\operator\ImplementableOperator;
  */
 class CompoundType extends Type {
 
+  /**
+   * @var array<Type>
+   */
   private readonly array $types;
 
   private function __construct(array $types) {
@@ -49,6 +52,33 @@ class CompoundType extends Type {
     } else {
       return new CompoundType($uniqueTypes);
     }
+  }
+
+  public function getImplementedOperators(): array {
+    $implemented = [];
+    foreach ($this->types[0]->getImplementedOperators() as $implementedOperator) {
+      $implemented[$implementedOperator->getID()] = true;
+    }
+    foreach ($this->types as $type) {
+      foreach ($implemented as $key => $value) {
+        $implemented[$key] = false;
+      }
+      foreach ($type->getImplementedOperators() as $implementedOperator) {
+        $implemented[$implementedOperator->getID()] = true;
+      }
+      $newImplemented = [];
+      foreach ($implemented as $key => $value) {
+        if($value) {
+          $newImplemented[$key] = false;
+        }
+      }
+      $implemented = $newImplemented;
+    }
+    $operators = [];
+    foreach (array_keys($implemented) as $operatorID) {
+      $operators[] = new ImplementableOperator($operatorID);
+    }
+    return $operators;
   }
 
   protected function getTypeCompatibleOperands(ImplementableOperator $operator): array {
@@ -155,15 +185,6 @@ class CompoundType extends Type {
       }
     }
     return CompoundType::buildFromTypes($newTypes);
-  }
-
-  public function buildNodeInterfaceType(): NodeInterfaceType {
-    $types = [];
-    /** @var Type $type */
-    foreach($this->types as $type) {
-      $types[] = $type->buildNodeInterfaceType();
-    }
-    return new NodeInterfaceType('compound', ['types' => $types]);
   }
 
   public function setFinal(bool $final): Type {

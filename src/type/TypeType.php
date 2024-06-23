@@ -33,15 +33,15 @@ class TypeType extends Type {
     return 'TypeType('.$this->type->getIdentifier().')';
   }
 
+  public function getImplementedOperators(): array {
+    return [];
+  }
+
   protected function getTypeCompatibleOperands(ImplementableOperator $operator): array {
     return [];
   }
 
   protected function getTypeOperatorResultType(ImplementableOperator $operator, ?Type $otherType): ?Type {
     return null;
-  }
-
-  public function buildNodeInterfaceType(): NodeInterfaceType {
-    return new NodeInterfaceType('TypeType', ['type' => $this->type->buildNodeInterfaceType()]);
   }
 }

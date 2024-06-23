@@ -30,7 +30,7 @@ class EnumInstanceValue extends Value {
   }
 
   public function toString(): string {
-    return $this->name->name();
+    return $this->unitEnum->name;
   }
 
   public function copy(): Value {
