@@ -5,7 +5,6 @@ use PHPUnit\Framework\TestCase;
 use TimoLehnertz\formula\PrettyPrintOptions;
 use TimoLehnertz\formula\procedure\Scope;
 use TimoLehnertz\formula\type\FloatType;
-use TimoLehnertz\formula\type\FloatValue;
 use TimoLehnertz\formula\type\TypeType;
 use TimoLehnertz\formula\type\TypeValue;
 

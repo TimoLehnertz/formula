@@ -170,6 +170,32 @@ class FormulaTest extends TestCase {
     $this->expectException(FormulaValidationException::class);
     $this->expectExceptionMessage('1:0 Validation error: Unable to convert DateTimeImmutable to float');
     new Formula('"2024-01-01"', null, new FloatType());
+
+  }
+
+  public function testDoubleTernary(): void {
+    $formula = new Formula('false ? 1 : false ? true : 123');
+    $this->assertEquals(123, $formula->calculate()->toPHPValue());
+  }
+
+  public function testAdvanced(): void {
+    $src = 'getModuleComponentIndex()==1 ? S1875-S362 : getModuleComponentIndex()>1 ? getMeasurementAtComponentIndex(getModuleComponentIndex()-1,{S362ID,S363ID,S364ID,S365ID,S366ID},MeasurementInterpolation.OFF) -S362 : null';
+    $scope = new Scope();
+    $scope->definePHP(true, 'S1875', 1);
+    $scope->definePHP(true, 'S362', 1);
+    $scope->definePHP(true, 'S362ID', 1);
+    $scope->definePHP(true, 'S363ID', 1);
+    $scope->definePHP(true, 'S364ID', 1);
+    $scope->definePHP(true, 'S365ID', 1);
+    $scope->definePHP(true, 'S366ID', 1);
+    $scope->definePHP(true, 'getModuleComponentIndex', function (): ?int {
+      return 0;
+    });
+    $scope->definePHP(true, 'getMeasurementAtComponentIndex', function (int $componentIndex, array $sensorIDs, ?MeasurementInterpolation $interpolation = null): ?int {
+      return 1;
+    });
+    $scope->definePHP(true, 'MeasurementInterpolation', MeasurementInterpolation::class);
+    $formula = new Formula($src, $scope);
   }
 
   //   //   public function testUnexpectedEndOfInputException(): void {
@@ -450,4 +476,16 @@ class FormulaTest extends TestCase {
   //   //     $formula->setVariable('s564', 1);
   //   //     $this->assertEquals(null, $formula->calculate());
   //   //   }
+}
+
+
+enum MeasurementInterpolation: string {
+
+  case OFF = 'O';
+
+  case TO_ZERO = 'Z';
+
+  case FILL = 'F';
+
+  case LINEAR = 'L';
 }

@@ -32,7 +32,6 @@ class ExpressionParser extends Parser {
     }
   }
 
-  // @formatter:off
   private static array $expressionEndingTokens = [
     Token::COMMA => true,
     Token::BRACKETS_CLOSED => true,
@@ -43,7 +42,6 @@ class ExpressionParser extends Parser {
     Token::QUESTIONMARK => true,
   ];
 
-  // @formatter:on
   protected function parsePart(Token $firstToken): ParserReturn {
     if($this->forceBrackets && $firstToken->id !== Token::BRACKETS_OPEN) {
       throw new ParsingSkippedException();
@@ -56,22 +54,13 @@ class ExpressionParser extends Parser {
         $token = $token->requireNext();
       }
     }
-    $ternaryCondition = null;
-    $ternaryLeftExpression = null;
     $expressionsAndOperators = [];
     $variantParser = new VariantParser($this->name, [new OperatorParser(),new ConstantExpressionParser(),new ArrayParser(),new IdentifierParser(),new ExpressionParser(true, false),new FunctionParser(false)]);
     while($token !== null) {
       // Ternary
-      if($ternaryCondition === null && $token->id === Token::QUESTIONMARK) {
+      if($token->id === Token::QUESTIONMARK) {
         $ternaryCondition = $this->transform($expressionsAndOperators, $token);
-        $expressionsAndOperators = [];
-        $token = $token->requireNext();
-      }
-      // Still ternary
-      if($ternaryCondition !== null && $ternaryLeftExpression === null && $token->id === Token::COlON) {
-        $ternaryLeftExpression = $this->transform($expressionsAndOperators, $token);
-        $expressionsAndOperators = [];
-        $token = $token->requireNext();
+        return (new TernaryParser($ternaryCondition))->parse($token);
       }
       if(isset(ExpressionParser::$expressionEndingTokens[$token->id])) {
         break;
@@ -90,12 +79,6 @@ class ExpressionParser extends Parser {
       $token = $token->next();
     }
     $result = $this->transform($expressionsAndOperators, $token);
-    if($ternaryCondition !== null) {
-      if($ternaryLeftExpression === null) {
-        throw new ParsingException(ParsingException::ERROR_INCOMPLETE_TERNARY, $token);
-      }
-      $result = new TernaryExpression($ternaryCondition, $ternaryLeftExpression, $result);
-    }
     if($inBrackets) {
       $result = new BracketExpression($result);
     }
