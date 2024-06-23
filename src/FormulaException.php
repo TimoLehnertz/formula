@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace TimoLehnertz\formula;
 
 /**
+ * Superclass for all possible exceptions in formula 
  * @author Timo Lehnertz
  */
-class FormulaBugException extends FormulaException {
+class FormulaException extends \Exception {
 
   public function __construct(string $message) {
     parent::__construct($message);

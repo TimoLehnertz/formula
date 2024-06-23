@@ -1,5 +1,7 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace TimoLehnertz\formula;
 
 use TimoLehnertz\formula\statement\Statement;
@@ -7,14 +9,14 @@ use TimoLehnertz\formula\statement\Statement;
 /**
  * @author Timo Lehnertz
  */
-class FormulaStatementException extends \Exception {
+class FormulaStatementException extends FormulaException {
 
   private static ?Statement $currentStatement = null;
 
   public function __construct(string $message) {
-    if(FormulaStatementException::$currentStatement !== null && FormulaStatementException::$currentStatement->firstToken !== null) {
+    if (FormulaStatementException::$currentStatement !== null && FormulaStatementException::$currentStatement->firstToken !== null) {
       $token = FormulaStatementException::$currentStatement->firstToken;
-      parent::__construct(($token->line + 1).':'.$token->position.' '.$message);
+      parent::__construct(($token->line + 1) . ':' . $token->position . ' ' . $message);
     } else {
       parent::__construct($message);
     }

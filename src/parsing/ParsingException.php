@@ -1,13 +1,16 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace TimoLehnertz\formula\parsing;
 
+use TimoLehnertz\formula\FormulaException;
 use TimoLehnertz\formula\tokens\Token;
 
 /**
  * @author Timo Lehnertz
  */
-class ParsingException extends \Exception {
+class ParsingException extends FormulaException {
 
   public const ERROR_UNEXPECTED_END_OF_INPUT = 1;
 
@@ -42,16 +45,16 @@ class ParsingException extends \Exception {
   private static Token $currentToken;
 
   /**
-   * @param ParsingException::ERROR_* $parsingErrorCode
+   * @param ParsingException::ERROR_* extends int $parsingErrorCode
    */
   public function __construct(int $parsingErrorCode, ?Token $token = null, ?string $additionalInfo = null) {
     $this->parsingErrorCode = $parsingErrorCode;
     $this->token = $token ?? ParsingException::$currentToken;
     $this->additionalInfo = $additionalInfo;
     $this->parser = ParsingException::$currentParser;
-    $message = 'Syntax error in '.$this->parser->name.': '.($this->token->line + 1).':'.($this->token->position + 1).' '.$this->token->value.' . Message: '.static::codeToMessage($parsingErrorCode);
-    if($additionalInfo !== null) {
-      $message .= '. '.$additionalInfo;
+    $message = 'Syntax error in ' . $this->parser->name . ': ' . ($this->token->line + 1) . ':' . ($this->token->position + 1) . ' ' . $this->token->value . ' . Message: ' . static::codeToMessage($parsingErrorCode);
+    if ($additionalInfo !== null) {
+      $message .= '. ' . $additionalInfo;
     }
     parent::__construct($message);
   }
@@ -62,7 +65,7 @@ class ParsingException extends \Exception {
   }
 
   private static function codeToMessage(int $parsingErrorCode): string {
-    switch($parsingErrorCode) {
+    switch ($parsingErrorCode) {
       case static::ERROR_UNEXPECTED_END_OF_INPUT:
         return 'Unexpected end of input';
       case static::ERROR_TOO_MANY_DELIMITERS:
@@ -84,7 +87,7 @@ class ParsingException extends \Exception {
       case static::ERROR_VARG_NOT_LAST:
         return 'Varg argument must be last';
       default:
-        throw new \UnexpectedValueException($parsingErrorCode.' is no valid ParsingErrorCode');
+        throw new \UnexpectedValueException($parsingErrorCode . ' is no valid ParsingErrorCode');
     }
   }
 }
