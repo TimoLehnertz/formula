@@ -98,7 +98,7 @@ class ClassType extends Type {
     foreach ($this->fields as $identifier => $field) {
       $fields [] = [
         'identifier' => $identifier,
-        'type' => $field->type->getInterfaceType(),
+        'type' => $field->type->getIdentifier(),
         'final' => $field->final,
       ];
     }
