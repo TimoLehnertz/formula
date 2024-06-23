@@ -28,6 +28,8 @@ use TimoLehnertz\formula\type\Value;
 use TimoLehnertz\formula\type\classes\ClassType;
 use TimoLehnertz\formula\type\classes\FieldType;
 use TimoLehnertz\formula\type\classes\PHPClassInstanceValue;
+use TimoLehnertz\formula\type\DateIntervalType;
+use TimoLehnertz\formula\type\DateTimeImmutableType;
 use TimoLehnertz\formula\type\functions\FunctionType;
 use TimoLehnertz\formula\type\functions\OuterFunctionArgument;
 use TimoLehnertz\formula\type\functions\OuterFunctionArgumentListType;
@@ -267,6 +269,22 @@ class ScopeTest extends TestCase {
     $this->expectException(FormulaValidationException::class);
     $this->expectExceptionMessage('1:0 Validation error: Unable to convert boolean to int');
     new Formula("func(false)", $scope);
+  }
+
+  public function testDateTimeReturn(): void {
+    $scope = new Scope();
+    $scope->definePHP(true,"func", function(): \DateTimeImmutable {return new \DateTimeImmutable("2024-01-01");});
+    $formula = new Formula('func()', $scope);
+    $this->assertInstanceOf(DateTimeImmutableType::class, $formula->getReturnType());
+    $this->assertEquals(new \DateTimeImmutable("2024-01-01"), $formula->calculate()->toPHPValue());
+  }
+
+  public function testDateIntervalReturn(): void {
+    $scope = new Scope();
+    $scope->definePHP(true,"func", function(): \DateInterval {return new \DateInterval("P1D");});
+    $formula = new Formula('"2024-01-01" + func()', $scope);
+    $this->assertInstanceOf(DateTimeImmutableType::class, $formula->getReturnType());
+    $this->assertEquals(new \DateTimeImmutable("2024-01-02"), $formula->calculate()->toPHPValue());
   }
 }
 

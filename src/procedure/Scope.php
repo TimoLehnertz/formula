@@ -110,6 +110,11 @@ class Scope {
       } else if (enum_exists($reflectionType->getName())) {
         return new EnumInstanceType(new EnumTypeType(new \ReflectionEnum($reflectionType->getName())));
       } else if (class_exists($reflectionType->getName())) {
+        if($reflectionType->getName() === \DateInterval::class) {
+          return new DateIntervalType();
+        } else if($reflectionType->getName() === \DateTimeImmutable::class) {
+          return new DateTimeImmutableType();
+        }
         return Scope::reflectionClassToType(new \ReflectionClass($reflectionType->getName()));
       } else if (interface_exists($reflectionType->getName())) {
         return Scope::reflectionClassToType(new \ReflectionClass($reflectionType->getName()));
