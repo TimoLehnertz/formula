@@ -128,8 +128,8 @@ class Scope {
    * @param OuterFunctionArgumentListType|array<string, Type>|null|null $argumentType
    * @param ?callable(OuterFunctionArgumentListType): ?Type $specificFunctionReturnType
    */
-  public function definePHP(bool $final, string $identifier, mixed $value = null, OuterFunctionArgumentListType|array|null $argumentType = null, ?callable $specificFunctionReturnType = null): void {
-    if ($value !== null) {
+  public function definePHP(bool $final, string $identifier, mixed $value = '__undefined__', OuterFunctionArgumentListType|array|null $argumentType = null, ?callable $specificFunctionReturnType = null): void {
+    if ($value !== '__undefined__') {
       $value = Scope::convertPHPVar($value, false, $argumentType, $specificFunctionReturnType);
     }
     $this->define($final, $value[0], $identifier, $value[1]);

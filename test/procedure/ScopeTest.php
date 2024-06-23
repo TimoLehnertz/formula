@@ -216,6 +216,12 @@ class ScopeTest extends TestCase {
     $scope->get('i');
   }
 
+  public function testDefinePHPNull(): void {
+    $scope = new Scope();
+    $scope->definePHP(true, 'i', null);
+    $this->assertInstanceOf(NullType::class, $scope->use('i'));
+  }
+
   public function testFinal(): void {
     $scope = new Scope();
     $scope->definePHP(true, 'i', 0);
