@@ -5,8 +5,12 @@ namespace test\type;
 use PHPUnit\Framework\TestCase;
 use TimoLehnertz\formula\type\classes\ClassType;
 use TimoLehnertz\formula\type\classes\FieldType;
+use TimoLehnertz\formula\type\functions\FunctionType;
+use TimoLehnertz\formula\type\functions\OuterFunctionArgument;
+use TimoLehnertz\formula\type\functions\OuterFunctionArgumentListType;
 use TimoLehnertz\formula\type\IntegerType;
 use TimoLehnertz\formula\type\Type;
+use TimoLehnertz\formula\type\VoidType;
 
 class TypeToNodeTest extends TestCase {
 
@@ -15,16 +19,43 @@ class TypeToNodeTest extends TestCase {
       [
         new ClassType(null, 'TestClass', ['i' => new FieldType(false, new IntegerType())]),
         [
-          'name' => 'ClassType',
-          'additionalInfo' => [
+          'typeName' => 'ClassType',
+          'properties' => [
             'fields' => [
               [
                 'identifier' => 'i',
                 'final' => false,
                 'type' => [
-                  'name' => 'IntegerType',
+                  'typeName' => 'IntegerType'
                 ]
               ]
+            ],
+            'parentType' => null,
+            'identifier' => 'TestClass',
+          ]
+        ]
+      ], [
+        new FunctionType(new OuterFunctionArgumentListType([new OuterFunctionArgument(new IntegerType())], false), new VoidType()),
+        [
+          'typeName' => 'FunctionType',
+          'properties' => [
+            'arguments' => [
+              'typeName' => 'OuterFunctionArgumentListType',
+              'properties' => [
+                'arguments' => [
+                  [
+                    'name' => null,
+                    'optional' => false,
+                    'type' => [
+                      'typeName' => 'IntegerType'
+                    ]
+                  ],
+                ],
+                'varg' => false
+              ],
+            ],
+            'returnType' => [
+              'typeName' => 'VoidType'
             ]
           ]
         ]
@@ -36,7 +67,6 @@ class TypeToNodeTest extends TestCase {
    * @dataProvider provider
    */
   public function testNodes(Type $type, array $expectedNode): void {
-    // var_dump(json_decode(json_encode($type->buildNodeInterfaceType()), true));
-    $this->assertEquals($expectedNode, json_decode(json_encode($type->buildNodeInterfaceType()), true));
+    $this->assertEquals($expectedNode, json_decode(json_encode($type->getInterfaceType()), true));
   }
 }

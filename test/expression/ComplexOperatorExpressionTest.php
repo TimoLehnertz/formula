@@ -50,9 +50,9 @@ class ComplexOperatorExpressionTest extends TestCase {
    */
     //     $node = $expression->buildNode(new Scope());
     //     $this->assertEquals('ComplexOperatorExpression', $node->nodeType);
-    //     $this->assertCount(2, $node->connectedInputs);
-    //     $this->assertEquals($outerLeftExpression->buildNode(new Scope()), $node->connectedInputs[0]);
-    //     $this->assertEquals($outerRightExpression->buildNode(new Scope()), $node->connectedInputs[1]);
+    //     $this->assertCount(2, $node->connected);
+    //     $this->assertEquals($outerLeftExpression->buildNode(new Scope()), $node->connected[0]);
+    //     $this->assertEquals($outerRightExpression->buildNode(new Scope()), $node->connected[1]);
     //     $this->assertEquals(['operator' => '+='], $node->info);
   }
 }

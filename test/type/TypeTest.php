@@ -265,7 +265,7 @@ class TypeTest extends TestCase {
     /**
      * MemberAccsessType
      */
-    $tests[] = ['a', new MemberAccsessType('a'), new MemberAccsessType('a'), new IntegerType(), new MemberAccsessType('a'), new IntegerType(), 'member accsess(a)', [], new MemberAccsessValue('a'), 'a', true, new MemberAccsessValue('a'), new MemberAccsessValue('b'), true];
+    $tests[] = ['a', new MemberAccsessType('a'), new MemberAccsessType('a'), new IntegerType(), new MemberAccsessType('a'), new IntegerType(), 'MemberAccsessType(a)', [], new MemberAccsessValue('a'), 'a', true, new MemberAccsessValue('a'), new MemberAccsessValue('b'), true];
 
     /**
      * StringType
@@ -305,15 +305,15 @@ class TypeTest extends TestCase {
     $compatibleOperands = [];
     $compatibleOperands[] = new CompatibleOperator(null, $constructorType, null, $constructor);
     $operators[] = new OperatorTestMeta(ImplementableOperator::TYPE_NEW, $compatibleOperands);
-    
+
     $tests[] = [$classTypeValue, $classTypeType, $classTypeType, new IntegerType(), $classTypeType, new IntegerType(), 'ClassTypeType', $operators, $classTypeValue, 'classType', true, null, new IntegerValue(1), false];
-    
+
     /**
      * EnumInstanceType
      */
     $operators = [];
     $enumType = new EnumTypeType(new \ReflectionEnum(Frequency::class));
-    $tests[] = [Frequency::ALWAYS, new EnumInstanceType($enumType), new EnumInstanceType($enumType), new IntegerType(), new EnumInstanceType($enumType), new IntegerType(), 'enumInstance(enum('.Frequency::class.'))', $operators, new EnumInstanceValue(Frequency::ALWAYS), 'ALWAYS', true, new EnumInstanceValue(Frequency::ALWAYS), new EnumInstanceValue(Frequency::NEVER), true];
+    $tests[] = [Frequency::ALWAYS, new EnumInstanceType($enumType), new EnumInstanceType($enumType), new IntegerType(), new EnumInstanceType($enumType), new IntegerType(), 'EnumInstanceType(EnumTypeType(' . Frequency::class . '))', $operators, new EnumInstanceValue(Frequency::ALWAYS), 'ALWAYS', true, new EnumInstanceValue(Frequency::ALWAYS), new EnumInstanceValue(Frequency::NEVER), true];
 
     /**
      * EnumTypeType
@@ -329,7 +329,7 @@ class TypeTest extends TestCase {
     $operators[] = new OperatorTestMeta(ImplementableOperator::TYPE_MEMBER_ACCESS, $compatibleOperands);
 
 
-    $tests[] = [$enumTypeValue, $enumTypeType, $enumTypeType, new IntegerType(), $enumTypeType, new IntegerType(), 'enum('.Frequency::class.')', $operators, $enumTypeValue, 'EnumType', true, null, new IntegerValue(1), true];
+    $tests[] = [$enumTypeValue, $enumTypeType, $enumTypeType, new IntegerType(), $enumTypeType, new IntegerType(), 'EnumTypeType(' . Frequency::class . ')', $operators, $enumTypeValue, 'EnumType', true, null, new IntegerValue(1), true];
 
     return $tests;
   }
@@ -359,6 +359,7 @@ class TypeTest extends TestCase {
           $testValue->toPHPValue();
           $this->fail('Expected exception');
         } catch (\Exception $e) {
+          $this->once();
         }
       } else if ($phpValue === 'callable') {
         $this->assertTrue(is_callable($testValue->toPHPValue()));
@@ -368,7 +369,6 @@ class TypeTest extends TestCase {
         $this->assertEquals($phpValue, $testValue->toPHPValue());
       }
     }
-
     // test compatible Operators
     foreach ($operators as $operatorMeta) {
       $compatible = $type->getCompatibleOperands($operatorMeta->operator);

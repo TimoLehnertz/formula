@@ -70,7 +70,7 @@ class ArgumentListExpressionTest extends TestCase {
     $expression = new ArgumentListExpression($expressions);
     $node = $expression->buildNode(new Scope());
     $this->assertEquals('ArgumentListExpression', $node->nodeType);
-    $this->assertCount(1, $node->connectedInputs);
-    $this->assertEquals($constantExpression->buildNode(new Scope()), $node->connectedInputs[0]);
+    $this->assertCount(1, $node->connected);
+    $this->assertEquals($constantExpression->buildNode(new Scope()), $node->connected[0]);
   }
 }

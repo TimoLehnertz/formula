@@ -41,7 +41,7 @@ class MemberAccsessExpressionTest extends TestCase {
      */
     $node = $expression->buildNode($scope);
     $this->assertEquals('MemberAccsessExpression', $node->nodeType);
-    $this->assertCount(0, $node->connectedInputs);
+    $this->assertCount(0, $node->connected);
     $this->assertEquals(['identifier' => 'abc'], $node->info);
   }
 }

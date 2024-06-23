@@ -19,16 +19,16 @@ class DateIntervalType extends Type {
     return $type instanceof DateIntervalType;
   }
 
-  public function getImplementedOperators(): array {
-    return [];
-  }
+  // public function getImplementedOperators(): array {
+  //   return [];
+  // }
 
   protected function getTypeCompatibleOperands(ImplementableOperator $operator): array {
     return [];
   }
 
   public function getIdentifier(bool $nested = false): string {
-    return 'DateIntervalType';
+    return 'DateInterval';
   }
 
   protected function getTypeOperatorResultType(ImplementableOperator $operator, ?Type $otherType): ?Type {

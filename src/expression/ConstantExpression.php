@@ -38,6 +38,6 @@ class ConstantExpression implements Expression {
   }
 
   public function buildNode(Scope $scope): Node {
-    return new Node('ConstantExpression', [], ['type' => $this->type->buildNodeInterfaceType(),'value' => $this->value->toString()]);
+    return new Node('ConstantExpression', [], ['type' => $this->type->getInterfaceType(),'value' => $this->value->toString()]);
   }
 }

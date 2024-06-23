@@ -33,9 +33,9 @@ class MemberAccsessType extends Type {
     return 'MemberAccsessType('.$this->memberIdentifier.')';
   }
 
-  public function getImplementedOperators(): array {
-    return [];
-  }
+  // public function getImplementedOperators(): array {
+  //   return [];
+  // }
 
   protected function getTypeOperatorResultType(ImplementableOperator $operator, ?Type $otherType): ?Type {
     return null;
@@ -43,5 +43,9 @@ class MemberAccsessType extends Type {
 
   protected function getTypeCompatibleOperands(ImplementableOperator $operator): array {
     return [];
+  }
+
+  protected function getProperties(): ?array {
+    return ['memberIdentifier' => $this->memberIdentifier];
   }
 }

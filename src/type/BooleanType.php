@@ -22,12 +22,12 @@ class BooleanType extends Type {
   }
 
   public function getIdentifier(bool $nested = false): string {
-    return 'BooleanType';
+    return 'boolean';
   }
 
-  public function getImplementedOperators(): array {
-    return [];
-  }
+  // public function getImplementedOperators(): array {
+  //   return [];
+  // }
 
   public function getTypeCompatibleOperands(ImplementableOperator $operator): array {
     return [];

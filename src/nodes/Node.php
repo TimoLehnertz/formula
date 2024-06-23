@@ -1,5 +1,7 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace TimoLehnertz\formula\nodes;
 
 /**
@@ -12,16 +14,29 @@ class Node {
   /**
    * @var array<int, Node>
    */
-  public readonly array $connectedInputs;
+  public readonly array $connected;
 
   public readonly array $info;
 
   /**
    * @param array<int, Node> $connectedInputs
    */
-  public function __construct(string $nodeType, array $connectedInputs, array $info = []) {
+  public function __construct(string $nodeType, array $connected, array $info = []) {
+    foreach ($connected as $connecte) {
+      if(!($connecte instanceof Node)) {
+        throw new \Exception('Moin');
+      }
+    }
     $this->nodeType = $nodeType;
-    $this->connectedInputs = $connectedInputs;
+    $this->connected = $connected;
     $this->info = $info;
+  }
+
+  public function toArray(): array {
+    $connected = [];
+    foreach ($this->connected as $node) {
+      $connected[] = $node->toArray();
+    }
+    return ['nodeType' => $this->nodeType, 'connected' => $connected, 'properties' => $this->info];
   }
 }

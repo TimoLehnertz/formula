@@ -26,8 +26,8 @@ class FormulaTest extends TestCase {
   public function testGetNodeTree(): void {
     $formula = new Formula('1+1');
     $nodeTree = $formula->getNodeTree();
-    $this->assertEquals('OperatorExpression', $nodeTree->rootNode->nodeType);
-    $this->assertCount(2, $nodeTree->rootNode->connectedInputs);
+    $this->assertEquals('OperatorExpression', $nodeTree['rootNode']['nodeType']);
+    $this->assertCount(2, $nodeTree['rootNode']['connected']);
   }
 
   public function testWhile(): void {
@@ -168,7 +168,7 @@ class FormulaTest extends TestCase {
 
   public function testConstraintInvalidReturnType(): void {
     $this->expectException(FormulaValidationException::class);
-    $this->expectExceptionMessage('Unable to convert DateTimeImmutable to float');
+    $this->expectExceptionMessage('1:0 Validation error: Unable to convert DateTimeImmutable to float');
     new Formula('"2024-01-01"', null, new FloatType());
   }
 

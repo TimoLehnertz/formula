@@ -54,32 +54,32 @@ class CompoundType extends Type {
     }
   }
 
-  public function getImplementedOperators(): array {
-    $implemented = [];
-    foreach ($this->types[0]->getImplementedOperators() as $implementedOperator) {
-      $implemented[$implementedOperator->getID()] = true;
-    }
-    foreach ($this->types as $type) {
-      foreach ($implemented as $key => $value) {
-        $implemented[$key] = false;
-      }
-      foreach ($type->getImplementedOperators() as $implementedOperator) {
-        $implemented[$implementedOperator->getID()] = true;
-      }
-      $newImplemented = [];
-      foreach ($implemented as $key => $value) {
-        if($value) {
-          $newImplemented[$key] = false;
-        }
-      }
-      $implemented = $newImplemented;
-    }
-    $operators = [];
-    foreach (array_keys($implemented) as $operatorID) {
-      $operators[] = new ImplementableOperator($operatorID);
-    }
-    return $operators;
-  }
+  // public function getImplementedOperators(): array {
+  //   $implemented = [];
+  //   foreach ($this->types[0]->getImplementedOperators() as $implementedOperator) {
+  //     $implemented[$implementedOperator->getID()] = true;
+  //   }
+  //   foreach ($this->types as $type) {
+  //     foreach ($implemented as $key => $value) {
+  //       $implemented[$key] = false;
+  //     }
+  //     foreach ($type->getImplementedOperators() as $implementedOperator) {
+  //       $implemented[$implementedOperator->getID()] = true;
+  //     }
+  //     $newImplemented = [];
+  //     foreach ($implemented as $key => $value) {
+  //       if($value) {
+  //         $newImplemented[$key] = false;
+  //       }
+  //     }
+  //     $implemented = $newImplemented;
+  //   }
+  //   $operators = [];
+  //   foreach (array_keys($implemented) as $operatorID) {
+  //     $operators[] = new ImplementableOperator($operatorID);
+  //   }
+  //   return $operators;
+  // }
 
   protected function getTypeCompatibleOperands(ImplementableOperator $operator): array {
     $operandLists = [];
@@ -204,6 +204,14 @@ class CompoundType extends Type {
       }
       return (new CompoundType($newTypes))->setFinal($final);
     }
+  }
+
+  protected function getProperties(): ?array {
+    $types = [];
+    foreach ($this->types as $type) {
+      $types[] = $type->getInterfaceType();
+    }
+    return ['types' => $types];
   }
 }
 

@@ -1,5 +1,7 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace TimoLehnertz\formula\statement;
 
 use TimoLehnertz\formula\FormulaBugException;
@@ -38,13 +40,13 @@ class ForEachStatement extends Statement {
 
   public function validateStatement(Scope $scope, ?Type $allowedReturnType = null): StatementReturnType {
     $getterType = $this->getterExpression->validate($scope);
-    if(!($getterType instanceof IteratableType)) {
+    if (!($getterType instanceof IteratableType)) {
       throw new FormulaValidationException('For each getter must iteratable');
     }
-    if($this->elementType === null) {
+    if ($this->elementType === null) {
       $this->elementType = $getterType->getElementsType();
-    } else if(!$this->elementType->assignableBy($getterType->getElementsType(), false)) {
-      throw new FormulaValidationException($this->elementType->getIdentifier().' is not assignable by '.$getterType->getElementsType()->getIdentifier());
+    } else if (!$this->elementType->assignableBy($getterType->getElementsType(), false)) {
+      throw new FormulaValidationException($this->elementType->getIdentifier() . ' is not assignable by ' . $getterType->getElementsType()->getIdentifier());
     }
     $loopScope = $scope->buildChild();
     $loopScope->define($this->final, $this->elementType, $this->elementIdentifier);
@@ -53,19 +55,17 @@ class ForEachStatement extends Statement {
   }
 
   public function runStatement(Scope $scope): StatementReturn {
+    /** @var IteratableValue $iterator */
     $iterator = $this->getterExpression->run($scope);
-    if(!($iterator instanceof IteratableValue)) {
-      throw new FormulaBugException('Expected iterator');
-    }
     /** @var Value $value */
-    foreach($iterator->getIterator() as $value) {
+    foreach ($iterator->getIterator() as $value) {
       $loopScope = $scope->buildChild();
       $loopScope->define($this->final, $this->elementType, $this->elementIdentifier, $value);
       $return = $this->body->run($loopScope);
-      if($return->returnValue !== null) {
+      if ($return->returnValue !== null) {
         return $return;
       }
-      if($return->breakFlag) {
+      if ($return->breakFlag) {
         break;
       }
     }
@@ -74,6 +74,6 @@ class ForEachStatement extends Statement {
 
   public function toString(?PrettyPrintOptions $prettyPrintOptions): string {
     $typeStr = $this->elementType === null ? 'var' : $this->elementType->getIdentifier();
-    return 'for ('.$typeStr.' '.$this->elementIdentifier.' : '.$this->getterExpression->toString($prettyPrintOptions).') '.$this->body->toString($prettyPrintOptions);
+    return 'for (' . $typeStr . ' ' . $this->elementIdentifier . ' : ' . $this->getterExpression->toString($prettyPrintOptions) . ') ' . $this->body->toString($prettyPrintOptions);
   }
 }

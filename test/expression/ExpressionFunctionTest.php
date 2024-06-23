@@ -14,7 +14,7 @@ class ExpressionFunctionTest extends TestCase {
 
   public function testNodeTree(): void {
     $formula = new Formula('(boolean a) -> a');
-    $rootNode = $formula->getNodeTree()->rootNode;
-    $this->assertInstanceOf(IdentifierExpression::class, $rootNode->connectedInputs[0]);
+    $rootNode = $formula->getNodeTree()['rootNode'];
+    $this->assertEquals('FunctionExpression', $rootNode['nodeType']);
   }
 }

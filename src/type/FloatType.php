@@ -23,12 +23,12 @@ class FloatType extends Type {
   }
 
   public function getIdentifier(bool $nested = false): string {
-    return 'FloatType';
+    return 'float';
   }
 
-  public function getImplementedOperators(): array {
-    return NumberValueHelper::getImplementedOperators();
-  }
+  // public function getImplementedOperators(): array {
+  //   return NumberValueHelper::getImplementedOperators();
+  // }
 
   protected function getTypeCompatibleOperands(ImplementableOperator $operator): array {
     return NumberValueHelper::getTypeCompatibleOperands($this, $operator);

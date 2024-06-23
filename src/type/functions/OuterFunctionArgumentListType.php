@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace TimoLehnertz\formula\type\functions;
 
-use BadFunctionCallException;
 use TimoLehnertz\formula\FormulaValidationException;
-use TimoLehnertz\formula\nodes\NodeInterfaceType;
 use TimoLehnertz\formula\operator\ImplementableOperator;
 use TimoLehnertz\formula\type\Type;
 use TimoLehnertz\formula\PrettyPrintOptions;
@@ -126,9 +124,9 @@ class OuterFunctionArgumentListType extends Type {
     return '(' . $identifier . ')';
   }
 
-  public function getImplementedOperators(): array {
-    return [];
-  }
+  // public function getImplementedOperators(): array {
+  //   return [];
+  // }
 
   protected function getTypeCompatibleOperands(ImplementableOperator $operator): array {
     return [];
@@ -154,5 +152,17 @@ class OuterFunctionArgumentListType extends Type {
       }
     }
     return new OuterFunctionArgumentListType($newArgs, $this->isVArgs);
+  }
+
+  protected function getProperties(): ?array {
+    $argumentTypes = [];
+    foreach ($this->arguments as $argument) {
+      $argumentTypes[]= [
+        'name' => $argument->name,
+        'optional' => $argument->optional,
+        'type' => $argument->type->getInterfaceType(),
+      ];
+    }
+    return ['arguments' => $argumentTypes, 'varg' => $this->isVArgs];
   }
 }

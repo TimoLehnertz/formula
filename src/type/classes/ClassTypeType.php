@@ -18,9 +18,9 @@ class ClassTypeType extends Type {
     $this->constructorType = $constructorType;
   }
 
-  public function getImplementedOperators(): array {
-    return [new ImplementableOperator(ImplementableOperator::TYPE_NEW)];
-  }
+  // public function getImplementedOperators(): array {
+  //   return [new ImplementableOperator(ImplementableOperator::TYPE_NEW)];
+  // }
 
   protected function getTypeCompatibleOperands(ImplementableOperator $operator): array {
     return [];
@@ -47,5 +47,9 @@ class ClassTypeType extends Type {
         return $this->constructorType;
     }
     return null;
+  }
+
+  protected function getProperties(): ?array {
+    return ['constructorType' => $this->constructorType->getInterfaceType()];
   }
 }

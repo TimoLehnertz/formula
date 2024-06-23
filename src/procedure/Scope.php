@@ -365,12 +365,14 @@ class Scope {
     $this->parent = $parent;
   }
 
-  public function toNodeTreeScope(): NodeTreeScope {
+  public function toNodeTreeScope(): array {
     $definedValues = [];
-    /** @var DefinedValue $definedValue */
-    foreach ($this->defined as $identifier => $definedValue) {
-      $definedValues[$identifier] = $definedValue->getType()->buildNodeInterfaceType();
+    if($this->parent !== null) {
+      $definedValues = $this->parent->toNodeTreeScope();
     }
-    return new NodeTreeScope($this->parent?->toNodeTreeScope() ?? null, $definedValues);
+    foreach ($this->defined as $identifier => $definedValue) {
+      $definedValues[$identifier] = $definedValue->getType()->getInterfaceType();
+    }
+    return $definedValues;
   }
 }

@@ -1,7 +1,11 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace TimoLehnertz\formula\operator;
 
+use TimoLehnertz\formula\FormulaBugException;
+use TimoLehnertz\formula\FormulaException;
 use TimoLehnertz\formula\FormulaPart;
 use TimoLehnertz\formula\PrettyPrintOptions;
 
@@ -12,7 +16,6 @@ use TimoLehnertz\formula\PrettyPrintOptions;
  */
 class ImplementableOperator implements FormulaPart {
 
-  // @formatter:off
   public const TYPE_ADDITION = 0;
   public const TYPE_SUBTRACTION = 1;
   public const TYPE_UNARY_PLUS = 2;
@@ -36,7 +39,7 @@ class ImplementableOperator implements FormulaPart {
   public const TYPE_ARRAY_ACCESS = 20;
   public const TYPE_CALL = 21;
   public const TYPE_TYPE_CAST = 22;
-  // @formatter:on
+  public const MAX_ID = self::TYPE_TYPE_CAST;
 
   /**
    * @var ImplementableOperator::TYPE_*
@@ -57,7 +60,7 @@ class ImplementableOperator implements FormulaPart {
   }
 
   private static function idToOperatorType(int $id): OperatorType {
-    switch($id) {
+    switch ($id) {
       case ImplementableOperator::TYPE_ADDITION:
       case ImplementableOperator::TYPE_SUBTRACTION:
       case ImplementableOperator::TYPE_MULTIPLICATION:
@@ -84,12 +87,12 @@ class ImplementableOperator implements FormulaPart {
       case ImplementableOperator::TYPE_LOGICAL_NOT:
         return OperatorType::PrefixOperator;
       default:
-        throw new \UnexpectedValueException('Invalid ImplementableOperator ID '.$id);
+        throw new FormulaException('Invalid ImplementableOperator ID ' . $id);
     }
   }
 
   private static function idToIdentifier(int $id): string {
-    switch($id) {
+    switch ($id) {
       case ImplementableOperator::TYPE_SCOPE_RESOLUTION:
         return '::';
       case ImplementableOperator::TYPE_MEMBER_ACCESS:
@@ -137,7 +140,7 @@ class ImplementableOperator implements FormulaPart {
       case ImplementableOperator::TYPE_CALL:
         return '()';
       default:
-        throw new \UnexpectedValueException('Invalid ImplementableOperator ID '.$id);
+        throw new FormulaException('Invalid ImplementableOperator ID ' . $id);
     }
   }
 
@@ -151,5 +154,20 @@ class ImplementableOperator implements FormulaPart {
 
   public function getID(): int {
     return $this->id;
+  }
+
+  public function getOperatorNode(): array {
+    switch ($this->operatorType) {
+      case OperatorType::PrefixOperator:
+        $operatorType = 'prefix';
+        break;
+      case OperatorType::InfixOperator:
+        $operatorType = 'infix';
+        break;
+      // case OperatorType::PostfixOperator:
+      //   $operatorType = 'postfix';
+      //   break;
+    }
+    return ['operatorType' => $operatorType, 'id' => $this->id, 'identifier' => $this->identifier];
   }
 }

@@ -42,7 +42,7 @@ class TypeExpressionTest extends TestCase {
      */
     $node = $expression->buildNode(new Scope());
     $this->assertEquals('TypeExpression', $node->nodeType);
-    $this->assertCount(0, $node->connectedInputs);
-    $this->assertEquals(['type' => (new FloatType())->buildNodeInterfaceType()], $node->info);
+    $this->assertCount(0, $node->connected);
+    $this->assertEquals(['type' => (new FloatType())->getInterfaceType()], $node->info);
   }
 }

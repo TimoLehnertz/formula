@@ -131,9 +131,6 @@ class Tokenizer {
             $mode = 'number';
             break;
           }
-          if ($char === "\n") {
-            $tokenStartLine = $line;
-          }
           break;
         case 'lineComment':
           if ($char === "\n") {

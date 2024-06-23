@@ -25,9 +25,9 @@ class EnumInstanceType extends Type {
     return $type instanceof EnumInstanceType && $this->enumType->equals($type->enumType);
   }
 
-  public function getImplementedOperators(): array {
-    return [];
-  }
+  // public function getImplementedOperators(): array {
+  //   return [];
+  // }
 
   protected function getTypeCompatibleOperands(ImplementableOperator $operator): array {
     return [];
@@ -39,5 +39,9 @@ class EnumInstanceType extends Type {
 
   public function getIdentifier(bool $isNested = false): string {
     return 'EnumInstanceType('.$this->enumType->getIdentifier().')';
+  }
+
+  protected function getProperties(): ?array {
+    return ['enumType' => $this->enumType->getInterfaceType()];
   }
 }

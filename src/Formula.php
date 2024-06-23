@@ -54,9 +54,9 @@ class Formula {
   /**
    * @throws NodesNotSupportedException
    */
-  public function getNodeTree(): NodeTree {
+  public function getNodeTree(): array {
     $node = $this->content->buildNode($this->buildScope());
-    return new NodeTree($node, $this->buildScope()->toNodeTreeScope());
+    return (new NodeTree($node->toArray(), $this->buildScope()->toNodeTreeScope()))->toArray();
   }
 
   public function getReturnType(): Type {

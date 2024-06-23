@@ -33,9 +33,9 @@ class TypeType extends Type {
     return 'TypeType('.$this->type->getIdentifier().')';
   }
 
-  public function getImplementedOperators(): array {
-    return [];
-  }
+  // public function getImplementedOperators(): array {
+  //   return [];
+  // }
 
   protected function getTypeCompatibleOperands(ImplementableOperator $operator): array {
     return [];
@@ -43,5 +43,9 @@ class TypeType extends Type {
 
   protected function getTypeOperatorResultType(ImplementableOperator $operator, ?Type $otherType): ?Type {
     return null;
+  }
+
+  protected function getProperties(): ?array {
+    return ['type' => $this->type->getInterfaceType()];
   }
 }

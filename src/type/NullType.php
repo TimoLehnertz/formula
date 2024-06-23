@@ -25,12 +25,12 @@ class NullType extends Type {
   }
 
   public function getIdentifier(bool $isNested = false): string {
-    return 'NullType';
+    return 'null';
   }
 
-  public function getImplementedOperators(): array {
-    return [];
-  }
+  // public function getImplementedOperators(): array {
+  //   return [];
+  // }
 
   protected function getTypeCompatibleOperands(ImplementableOperator $operator): array {
     return [];

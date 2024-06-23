@@ -49,20 +49,20 @@ class ArrayType extends ClassType implements IteratableType {
     }
   }
 
-  public function getImplementedOperators(): array {
-    return [
-      new ImplementableOperator(ImplementableOperator::TYPE_ARRAY_ACCESS),
-      new ImplementableOperator(ImplementableOperator::TYPE_MEMBER_ACCESS),
-      new ImplementableOperator(ImplementableOperator::TYPE_ADDITION),
-      new ImplementableOperator(ImplementableOperator::TYPE_SUBTRACTION),
-      new ImplementableOperator(ImplementableOperator::TYPE_MULTIPLICATION),
-      new ImplementableOperator(ImplementableOperator::TYPE_DIVISION),
-      new ImplementableOperator(ImplementableOperator::TYPE_UNARY_PLUS),
-      new ImplementableOperator(ImplementableOperator::TYPE_UNARY_MINUS),
-      new ImplementableOperator(ImplementableOperator::TYPE_MODULO),
-      new ImplementableOperator(ImplementableOperator::TYPE_TYPE_CAST),
-    ];
-  }
+  // public function getImplementedOperators(): array {
+  //   return [
+  //     new ImplementableOperator(ImplementableOperator::TYPE_ARRAY_ACCESS),
+  //     new ImplementableOperator(ImplementableOperator::TYPE_MEMBER_ACCESS),
+  //     new ImplementableOperator(ImplementableOperator::TYPE_ADDITION),
+  //     new ImplementableOperator(ImplementableOperator::TYPE_SUBTRACTION),
+  //     new ImplementableOperator(ImplementableOperator::TYPE_MULTIPLICATION),
+  //     new ImplementableOperator(ImplementableOperator::TYPE_DIVISION),
+  //     new ImplementableOperator(ImplementableOperator::TYPE_UNARY_PLUS),
+  //     new ImplementableOperator(ImplementableOperator::TYPE_UNARY_MINUS),
+  //     new ImplementableOperator(ImplementableOperator::TYPE_MODULO),
+  //     new ImplementableOperator(ImplementableOperator::TYPE_TYPE_CAST),
+  //   ];
+  // }
 
   protected function getTypeCompatibleOperands(ImplementableOperator $operator): array {
     switch ($operator->getID()) {
@@ -134,5 +134,9 @@ class ArrayType extends ClassType implements IteratableType {
 
   public function getElementsType(): Type {
     return $this->elementsType;
+  }
+
+  protected function getProperties(): ?array {
+    return ['keyType' => $this->keyType->getInterfaceType(), 'elementsType' => $this->elementsType->getInterfaceType()];
   }
 }

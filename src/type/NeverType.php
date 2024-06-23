@@ -23,12 +23,12 @@ class NeverType extends Type {
   }
 
   public function getIdentifier(bool $isNested = false): string {
-    return 'NeverType';
+    return 'never';
   }
 
-  public function getImplementedOperators(): array {
-    return [];
-  }
+  // public function getImplementedOperators(): array {
+  //   return [];
+  // }
 
   protected function getTypeOperatorResultType(ImplementableOperator $operator, ?Type $otherType): ?Type {
     return null;

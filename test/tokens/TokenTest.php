@@ -3,6 +3,7 @@ namespace test\tokens;
 
 use PHPUnit\Framework\TestCase;
 use TimoLehnertz\formula\tokens\Token;
+use TimoLehnertz\formula\tokens\Tokenizer;
 
 class TokenTest extends TestCase {
 
@@ -32,5 +33,10 @@ class TokenTest extends TestCase {
     $this->assertEquals($tokenComment, $tokenPlus->next(true));
     $this->assertEquals($tokenComment, $tokenB->prev(true));
     $this->assertEquals($tokenPlus, $tokenB->prev());
+  }
+
+  public function testLast(): void {
+    $firstToken = Tokenizer::tokenize('int a = 0');
+    $this->assertEquals(Token::INT_CONSTANT, $firstToken->last()->id);
   }
 }

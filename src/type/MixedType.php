@@ -15,7 +15,7 @@ class MixedType extends Type {
   }
 
   public function getIdentifier(bool $nested = false): string {
-    return 'MixedType';
+    return 'mixed';
   }
 
   protected function typeAssignableBy(Type $type): bool {
@@ -26,9 +26,9 @@ class MixedType extends Type {
     return $type instanceof MixedType;
   }
 
-  public function getImplementedOperators(): array {
-    return [];
-  }
+  // public function getImplementedOperators(): array {
+  //   return [];
+  // }
 
   protected function getTypeOperatorResultType(ImplementableOperator $operator, ?Type $otherType): ?Type {
     return null;

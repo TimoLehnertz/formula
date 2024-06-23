@@ -40,7 +40,7 @@ class ConstantExpressionTest extends TestCase {
      */
     $node = $expression->buildNode(new Scope());
     $this->assertEquals('ConstantExpression', $node->nodeType);
-    $this->assertCount(0, $node->connectedInputs);
-    $this->assertEquals(['type' => $type->buildNodeInterfaceType(),'value' => $value->toString()], $node->info);
+    $this->assertCount(0, $node->connected);
+    $this->assertEquals(['type' => $type->getInterfaceType(),'value' => $value->toString()], $node->info);
   }
 }

@@ -62,9 +62,9 @@ class ClassType extends Type {
     return 'classType('.$this->identifier.')';
   }
 
-  public function getImplementedOperators(): array {
-    return [new ImplementableOperator(ImplementableOperator::TYPE_MEMBER_ACCESS)];
-  }
+  // public function getImplementedOperators(): array {
+  //   return [new ImplementableOperator(ImplementableOperator::TYPE_MEMBER_ACCESS)];
+  // }
 
   protected function getTypeCompatibleOperands(ImplementableOperator $operator): array {
     switch($operator->getID()) {
@@ -91,5 +91,17 @@ class ClassType extends Type {
         return $this->fields[$otherType->getMemberIdentifier()]->type;
     }
     return null;
+  }
+
+  protected function getProperties(): ?array {
+    $fields = [];
+    foreach ($this->fields as $identifier => $field) {
+      $fields [] = [
+        'identifier' => $identifier,
+        'type' => $field->type->getInterfaceType(),
+        'final' => $field->final,
+      ];
+    }
+    return ['parentType' => $this->parentType?->getInterfaceType() ?? null, 'fields' => $fields, 'identifier' => $this->identifier];
   }
 }

@@ -15,7 +15,7 @@ class VoidType extends Type {
   }
 
   public function getIdentifier(bool $nested = false): string {
-    return 'VoidType';
+    return 'void';
   }
 
   protected function typeAssignableBy(Type $type): bool {
@@ -26,9 +26,9 @@ class VoidType extends Type {
     return $type instanceof VoidType;
   }
 
-  public function getImplementedOperators(): array {
-    return [];
-  }
+  // public function getImplementedOperators(): array {
+  //   return [];
+  // }
 
   protected function getTypeCompatibleOperands(ImplementableOperator $operator): array {
     return [];

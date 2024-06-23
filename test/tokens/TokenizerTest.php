@@ -4,6 +4,7 @@ namespace test\tokens;
 use PHPUnit\Framework\TestCase;
 use TimoLehnertz\formula\tokens\Tokenizer;
 use TimoLehnertz\formula\tokens\Token;
+use TimoLehnertz\formula\tokens\TokenisationException;
 
 class TokenizerTest extends TestCase {
 
@@ -103,6 +104,24 @@ class TokenizerTest extends TestCase {
     $this->assertEquals('// abc', $tokenized->value);
     $this->assertEquals(Token::LINE_COMMENT, $tokenized->id);
     $this->assertEquals(Token::LINE_COMMENT, $tokenized->next(true)->id);
+  }
+
+  public function testUnexpectedEndOfInput(): void {
+    $this->expectException(TokenisationException::class);
+    $this->expectExceptionMessage('Unexpected end of input');
+    Tokenizer::tokenize("'I am an incomplete string");
+  }
+
+  public function testNumberWithTwoDots(): void {
+    $this->expectException(TokenisationException::class);
+    $this->expectExceptionMessage('Number cant have two dots');
+    Tokenizer::tokenize("1.2.3");
+  }
+
+  public function testNumberEndsWithDot(): void {
+    $this->expectException(TokenisationException::class);
+    $this->expectExceptionMessage('Incomplete number');
+    Tokenizer::tokenize("1.");
   }
 }
 

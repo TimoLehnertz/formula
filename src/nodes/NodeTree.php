@@ -2,17 +2,36 @@
 declare(strict_types = 1);
 namespace TimoLehnertz\formula\nodes;
 
+use TimoLehnertz\formula\operator\ImplementableOperator;
+
 /**
  * @author Timo Lehnertz
  */
 class NodeTree {
 
-  public readonly Node $rootNode;
+  public readonly array $rootNode;
 
-  public readonly NodeTreeScope $scope;
+  /**
+   * @var array<array> Defined types
+   */
+  public readonly array $scope;
 
-  public function __construct(Node $rootNode, NodeTreeScope $scope) {
+  /**
+   * @var array<array>
+   */
+  public readonly array $operators;
+
+  public function __construct(array $rootNode, array $scope) {
     $this->rootNode = $rootNode;
     $this->scope = $scope;
+    $operators = [];
+    for ($i=0; $i < ImplementableOperator::MAX_ID; $i++) { 
+      $operators[] = (new ImplementableOperator($i))->getOperatorNode();
+    }
+    $this->operators = $operators;
+  }
+
+  public function toArray(): array {
+    return ['rootNode' => $this->rootNode, 'scope' => $this->scope, 'operators' => $this->operators];
   }
 }

@@ -1,12 +1,15 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace TimoLehnertz\formula\type;
 
+use ReflectionClass;
 use TimoLehnertz\formula\FormulaBugException;
 use TimoLehnertz\formula\FormulaPart;
 use TimoLehnertz\formula\FormulaValidationException;
-use TimoLehnertz\formula\PrettyPrintOptions;
 use TimoLehnertz\formula\nodes\NodeInterfaceType;
+use TimoLehnertz\formula\PrettyPrintOptions;
 use TimoLehnertz\formula\operator\ImplementableOperator;
 
 /**
@@ -17,14 +20,15 @@ abstract class Type implements OperatorMeta, FormulaPart {
   // final per default
   private bool $final = true;
 
-  public function __construct() {}
+  public function __construct() {
+  }
 
   public function getCompatibleOperands(ImplementableOperator $operator): array {
     $array = $this->getTypeCompatibleOperands($operator);
-    switch($operator->getID()) {
+    switch ($operator->getID()) {
       case ImplementableOperator::TYPE_DIRECT_ASSIGNMENT:
       case ImplementableOperator::TYPE_DIRECT_ASSIGNMENT_OLD_VAL:
-        if($this->final) {
+        if ($this->final) {
           throw new FormulaValidationException('Can\'t assign final value');
         }
         $array[] = $this;
@@ -33,8 +37,8 @@ abstract class Type implements OperatorMeta, FormulaPart {
         $array[] = $this;
         break;
       case ImplementableOperator::TYPE_TYPE_CAST:
-        foreach($array as $type) {
-          if(!($type instanceof TypeType)) {
+        foreach ($array as $type) {
+          if (!($type instanceof TypeType)) {
             throw new FormulaBugException('Cast operator has to expect TypeType');
           }
         }
@@ -52,27 +56,27 @@ abstract class Type implements OperatorMeta, FormulaPart {
   }
 
   public function getOperatorResultType(ImplementableOperator $operator, ?Type $otherType): ?Type {
-    switch($operator->getID()) {
+    switch ($operator->getID()) {
       case ImplementableOperator::TYPE_DIRECT_ASSIGNMENT:
       case ImplementableOperator::TYPE_DIRECT_ASSIGNMENT_OLD_VAL:
-        if($this->final) {
+        if ($this->final) {
           return null;
         }
-        if($otherType === null || !$this->assignableBy($otherType)) {
+        if ($otherType === null || !$this->assignableBy($otherType)) {
           break;
         }
         return $this->setFinal(true);
       case ImplementableOperator::TYPE_EQUALS:
-        if($otherType === null || !$this->assignableBy($otherType)) {
+        if ($otherType === null || !$this->assignableBy($otherType)) {
           break;
         }
         return new BooleanType();
       case ImplementableOperator::TYPE_TYPE_CAST:
-        if($otherType instanceof TypeType) {
-          if($otherType->getType() instanceof BooleanType) {
+        if ($otherType instanceof TypeType) {
+          if ($otherType->getType() instanceof BooleanType) {
             return new BooleanType();
           }
-          if($otherType->getType()->equals(new StringType())) {
+          if ($otherType->getType()->equals(new StringType())) {
             return new StringType();
           }
         }
@@ -80,7 +84,7 @@ abstract class Type implements OperatorMeta, FormulaPart {
       case ImplementableOperator::TYPE_LOGICAL_AND:
       case ImplementableOperator::TYPE_LOGICAL_OR:
       case ImplementableOperator::TYPE_LOGICAL_XOR:
-        if($otherType !== null) {
+        if ($otherType !== null) {
           return new BooleanType();
         }
         break;
@@ -98,6 +102,14 @@ abstract class Type implements OperatorMeta, FormulaPart {
     return $this->final;
   }
 
+  // /**
+  //  * @return array<ImplementableOperator>
+  //  */
+  // public abstract function getImplementedOperators(): array;
+
+  /**
+   * @return array<Type>
+   */
   protected abstract function getTypeCompatibleOperands(ImplementableOperator $operator): array;
 
   protected abstract function getTypeOperatorResultType(ImplementableOperator $operator, ?Type $otherType): ?Type;
@@ -113,14 +125,23 @@ abstract class Type implements OperatorMeta, FormulaPart {
     return $this->typeAssignableBy($type);
   }
 
+  protected function getProperties(): ?array {
+    return null;
+  }
+
+  public function getInterfaceType(): array {
+    $reflection = new ReflectionClass($this::class);
+    $properties = $this->getProperties();
+    if ($properties === null) {
+      return ['typeName' => $reflection->getShortName()];
+    } else {
+      return ['typeName' => $reflection->getShortName(), 'properties' => $properties];
+    }
+  }
+
   protected abstract function typeAssignableBy(Type $type): bool;
 
   public function toString(PrettyPrintOptions $prettyPrintOptions): string {
     return $this->getIdentifier();
   }
-
-  /**
-   * @return array<ImplementableOperator>
-   */
-  public abstract function getImplementedOperators(): array;
 }

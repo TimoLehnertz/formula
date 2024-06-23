@@ -53,9 +53,9 @@ class OperatorExpressionTest extends TestCase {
      */
     $node = $expression->buildNode(new Scope());
     $this->assertEquals('OperatorExpression', $node->nodeType);
-    $this->assertCount(2, $node->connectedInputs);
-    $this->assertEquals($leftExpression->buildNode(new Scope()), $node->connectedInputs[0]);
-    $this->assertEquals($rightExpression->buildNode(new Scope()), $node->connectedInputs[1]);
+    $this->assertCount(2, $node->connected);
+    $this->assertEquals($leftExpression->buildNode(new Scope()), $node->connected[0]);
+    $this->assertEquals($rightExpression->buildNode(new Scope()), $node->connected[1]);
     $this->assertEquals(['operator' => $operator->getID()], $node->info);
   }
 
@@ -92,8 +92,8 @@ class OperatorExpressionTest extends TestCase {
      */
     $node = $expression->buildNode(new Scope());
     $this->assertEquals('OperatorExpression', $node->nodeType);
-    $this->assertCount(1, $node->connectedInputs);
-    $this->assertEquals($rightExpression->buildNode(new Scope()), $node->connectedInputs[0]);
+    $this->assertCount(1, $node->connected);
+    $this->assertEquals($rightExpression->buildNode(new Scope()), $node->connected[0]);
     $this->assertEquals(['operator' => $operator->getID()], $node->info);
   }
 

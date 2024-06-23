@@ -7,7 +7,6 @@ use function PHPUnit\Framework\assertInstanceOf;
 use TimoLehnertz\formula\Formula;
 use TimoLehnertz\formula\FormulaRuntimeException;
 use TimoLehnertz\formula\FormulaValidationException;
-use TimoLehnertz\formula\nodes\NodeTreeScope;
 use TimoLehnertz\formula\procedure\Scope;
 use TimoLehnertz\formula\type\ArrayType;
 use TimoLehnertz\formula\type\ArrayValue;
@@ -28,7 +27,6 @@ use TimoLehnertz\formula\type\Value;
 use TimoLehnertz\formula\type\classes\ClassType;
 use TimoLehnertz\formula\type\classes\FieldType;
 use TimoLehnertz\formula\type\classes\PHPClassInstanceValue;
-use TimoLehnertz\formula\type\DateIntervalType;
 use TimoLehnertz\formula\type\DateTimeImmutableType;
 use TimoLehnertz\formula\type\functions\FunctionType;
 use TimoLehnertz\formula\type\functions\OuterFunctionArgument;
@@ -251,13 +249,9 @@ class ScopeTest extends TestCase {
     $parentScope = new Scope();
     $parentScope->definePHP(false, 'i', 0);
     $childScope = $parentScope->buildChild();
-    $node = $childScope->toNodeTreeScope();
-
-    $parentNode = new NodeTreeScope(null, ['i' => (new IntegerType())->buildNodeInterfaceType()]);
-
-    $expectedNode = new NodeTreeScope($parentNode, []);
-
-    $this->assertEquals($expectedNode, $node);
+    $scopeArray = $childScope->toNodeTreeScope();
+    $expectedScopeArray = ['i' => ['typeName' => 'IntegerType']];
+    $this->assertEquals($expectedScopeArray, $scopeArray);
   }
 
   public function testMergeArguments(): void {

@@ -48,10 +48,10 @@ class TernaryExpressionTest extends TestCase {
      */
     $node = $expression->buildNode(new Scope());
     $this->assertEquals('TernaryExpression', $node->nodeType);
-    $this->assertCount(3, $node->connectedInputs);
-    $this->assertEquals($condition->buildNode(new Scope()), $node->connectedInputs[0]);
-    $this->assertEquals($leftExpression->buildNode(new Scope()), $node->connectedInputs[1]);
-    $this->assertEquals($rightExpression->buildNode(new Scope()), $node->connectedInputs[2]);
+    $this->assertCount(3, $node->connected);
+    $this->assertEquals($condition->buildNode(new Scope()), $node->connected[0]);
+    $this->assertEquals($leftExpression->buildNode(new Scope()), $node->connected[1]);
+    $this->assertEquals($rightExpression->buildNode(new Scope()), $node->connected[2]);
     $this->assertEquals([], $node->info);
   }
 

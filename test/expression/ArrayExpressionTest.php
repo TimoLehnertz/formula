@@ -51,8 +51,8 @@ class ArrayExpressionTest extends TestCase {
      */
     $node = $expression->buildNode(new Scope());
     $this->assertEquals('ArrayExpression', $node->nodeType);
-    $this->assertCount(1, $node->connectedInputs);
-    $this->assertEquals($constantNode, $node->connectedInputs[0]);
+    $this->assertCount(1, $node->connected);
+    $this->assertEquals($constantNode, $node->connected[0]);
     $this->assertEquals([], $node->info);
   }
 }

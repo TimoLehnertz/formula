@@ -60,7 +60,7 @@ class FunctionExpression implements Expression {
 
   public function buildNode(Scope $scope): Node {
     if($this->codeBlock instanceof ExpressionFunctionBody) {
-      return new Node('FunctionExpression', [$this->codeBlock->getExpression()], ['arguments' => 'todo']);
+      return new Node('FunctionExpression', [$this->codeBlock->getExpression()->buildNode($scope)], ['arguments' => 'todo']);
     } else {
       throw new NodesNotSupportedException('FunctionExpression');
     }
