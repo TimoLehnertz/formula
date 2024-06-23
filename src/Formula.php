@@ -30,19 +30,14 @@ class Formula {
 
   private readonly Scope $parentScope;
 
-  private readonly FormulaSettings $formulaSettings;
 
   private readonly string $source;
 
   private readonly Type $returnType;
 
-  public function __construct(string $source, ?Scope $parentScope = null, ?FormulaSettings $formulaSettings = null) {
+  public function __construct(string $source, ?Scope $parentScope = null, ?Type $expectedReturnType = null) {
     $this->source = $source;
     $this->defaultScope = new DefaultScope();
-    if ($formulaSettings === null) {
-      $formulaSettings = FormulaSettings::buildDefaultSettings();
-    }
-    $this->formulaSettings = $formulaSettings;
     $this->parentScope = $parentScope ?? new Scope();
     $firstToken = Tokenizer::tokenize($source);
     if ($firstToken !== null) {
@@ -53,7 +48,7 @@ class Formula {
     }
     $parsedContent = (new CodeBlockOrExpressionParser(true))->parse($firstToken, true, true);
     $this->content = $parsedContent->parsed;
-    $this->returnType = $this->content->validate($this->buildScope())->returnType ?? new VoidType();
+    $this->returnType = $this->content->validate($this->buildScope(), $expectedReturnType)->returnType ?? new VoidType();
   }
 
   /**

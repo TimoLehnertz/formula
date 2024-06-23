@@ -1,5 +1,7 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace TimoLehnertz\formula\type;
 
 use TimoLehnertz\formula\nodes\NodeInterfaceType;
@@ -20,21 +22,28 @@ class DateTimeImmutableType extends Type {
   }
 
   protected function getTypeCompatibleOperands(ImplementableOperator $operator): array {
-    switch($operator->getID()) {
+    switch ($operator->getID()) {
       case ImplementableOperator::TYPE_ADDITION:
       case ImplementableOperator::TYPE_SUBTRACTION:
         return [new DateIntervalType()];
+      case ImplementableOperator::TYPE_TYPE_CAST:
+        return [new TypeType(new IntegerType())];
       default:
         return [];
     }
   }
 
   protected function getTypeOperatorResultType(ImplementableOperator $operator, ?Type $otherType): ?Type {
-    switch($operator->getID()) {
+    switch ($operator->getID()) {
       case ImplementableOperator::TYPE_ADDITION:
       case ImplementableOperator::TYPE_SUBTRACTION:
-        if($otherType instanceof DateIntervalType) {
+        if ($otherType instanceof DateIntervalType) {
           return new DateTimeImmutableType();
+        }
+        break;
+      case ImplementableOperator::TYPE_TYPE_CAST:
+        if ($otherType instanceof TypeType && $otherType->getType() instanceof IntegerType) {
+          return new IntegerType();
         }
         break;
     }

@@ -1,5 +1,7 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace TimoLehnertz\formula\type;
 
 use TimoLehnertz\formula\operator\ImplementableOperator;
@@ -18,28 +20,28 @@ class DateIntervalValue extends Value {
 
   public function toString(): string {
     $format = 'P';
-    if($this->value->y > 0) {
-      $format .= $this->value->y.'Y';
+    if ($this->value->y > 0) {
+      $format .= $this->value->y . 'Y';
     }
-    if($this->value->m > 0) {
-      $format .= $this->value->m.'M';
+    if ($this->value->m > 0) {
+      $format .= $this->value->m . 'M';
     }
-    if($this->value->d > 0) {
-      $format .= $this->value->d.'D';
+    if ($this->value->d > 0) {
+      $format .= $this->value->d . 'D';
     }
-    if($this->value->h > 0 || $this->value->i > 0 || $this->value->s > 0) {
+    if ($this->value->h > 0 || $this->value->i > 0 || $this->value->s > 0) {
       $format .= 'T';
-      if($this->value->h > 0) {
-        $format .= $this->value->h.'H';
+      if ($this->value->h > 0) {
+        $format .= $this->value->h . 'H';
       }
-      if($this->value->i > 0) {
-        $format .= $this->value->i.'M';
+      if ($this->value->i > 0) {
+        $format .= $this->value->i . 'M';
       }
-      if($this->value->s > 0) {
-        $format .= $this->value->s.'S';
+      if ($this->value->s > 0) {
+        $format .= $this->value->s . 'S';
       }
     }
-    if($format === 'P') {
+    if ($format === 'P') {
       $format .= '0D';
     }
     return $format;
@@ -62,7 +64,7 @@ class DateIntervalValue extends Value {
   }
 
   public function valueEquals(Value $other): bool {
-    if($other instanceof DateIntervalValue) {
+    if ($other instanceof DateIntervalValue) {
       return $other->toString() === $this->toString();
     }
     return false;

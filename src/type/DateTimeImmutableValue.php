@@ -1,5 +1,7 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace TimoLehnertz\formula\type;
 
 use TimoLehnertz\formula\operator\ImplementableOperator;
@@ -19,15 +21,22 @@ class DateTimeImmutableValue extends Value {
   }
 
   protected function valueOperate(ImplementableOperator $operator, ?Value $other): Value {
-    switch($operator->getID()) {
+    switch ($operator->getID()) {
       case ImplementableOperator::TYPE_ADDITION:
-        if($other instanceof DateIntervalValue) {
+        if ($other instanceof DateIntervalValue) {
           return new DateTimeImmutableValue($this->value->add($other->toPHPValue()));
         }
+        break;
       case ImplementableOperator::TYPE_SUBTRACTION:
-        if($other instanceof DateIntervalValue) {
+        if ($other instanceof DateIntervalValue) {
           return new DateTimeImmutableValue($this->value->sub($other->toPHPValue()));
         }
+        break;
+      case ImplementableOperator::TYPE_TYPE_CAST:
+        if ($other instanceof TypeValue && $other->getValue() instanceof IntegerType) {
+          return new IntegerValue($this->value->getTimestamp());
+        }
+        break;
     }
     throw new FormulaBugException('Invalid Operator');
   }
@@ -49,7 +58,7 @@ class DateTimeImmutableValue extends Value {
   }
 
   public function valueEquals(Value $other): bool {
-    if($other instanceof DateTimeImmutableValue) {
+    if ($other instanceof DateTimeImmutableValue) {
       return $this->value == $other->value;
     }
     return false;

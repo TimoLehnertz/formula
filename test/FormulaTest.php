@@ -5,11 +5,14 @@ namespace test;
 use PHPUnit\Framework\TestCase;
 use TimoLehnertz\formula\Formula;
 use TimoLehnertz\formula\FormulaRuntimeException;
+use TimoLehnertz\formula\FormulaValidationException;
 use TimoLehnertz\formula\PrettyPrintOptions;
 use TimoLehnertz\formula\procedure\Scope;
 use TimoLehnertz\formula\tokens\TokenisationException;
 use TimoLehnertz\formula\type\FloatType;
 use TimoLehnertz\formula\type\IntegerType;
+use TimoLehnertz\formula\type\StringType;
+
 use const false;
 
 class FormulaTest extends TestCase {
@@ -155,6 +158,18 @@ class FormulaTest extends TestCase {
   public function testGetSource(): void {
     $formula = new Formula('1+2+3');
     $this->assertEquals('1+2+3', $formula->getSource());
+  }
+
+  public function testConstraintReturnType(): void {
+    $formula = new Formula('"2024-01-01"', null, new IntegerType());
+    $this->assertInstanceOf(IntegerType::class, $formula->getReturnType());
+    $this->assertEquals((new \DateTimeImmutable("2024-01-01"))->getTimestamp(), $formula->calculate()->toPHPValue());
+  }
+
+  public function testConstraintInvalidReturnType(): void {
+    $this->expectException(FormulaValidationException::class);
+    $this->expectExceptionMessage('Unable to convert DateTimeImmutable to float');
+    new Formula('"2024-01-01"', null, new FloatType());
   }
 
   //   //   public function testUnexpectedEndOfInputException(): void {

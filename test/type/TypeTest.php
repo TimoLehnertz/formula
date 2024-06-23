@@ -1,4 +1,5 @@
 <?php
+
 namespace test\type;
 
 use PHPUnit\Framework\TestCase;
@@ -100,7 +101,7 @@ class TypeTest extends TestCase {
     $compatibleOperands = [];
     $compatibleOperands[] = new CompatibleOperator(null, new IntegerType(), null, new IntegerValue(-42));
     $operators[] = new OperatorTestMeta(ImplementableOperator::TYPE_UNARY_MINUS, $compatibleOperands);
-    $tests[] = [42,new IntegerType(),new IntegerType(),new FloatType(),new IntegerType(),new FloatType(),'int',$operators,new IntegerValue(42),'42',true,new IntegerValue(42),new IntegerValue(1),true];
+    $tests[] = [42, new IntegerType(), new IntegerType(), new FloatType(), new IntegerType(), new FloatType(), 'int', $operators, new IntegerValue(42), '42', true, new IntegerValue(42), new IntegerValue(1), true];
 
     /**
      * FloatType
@@ -148,7 +149,7 @@ class TypeTest extends TestCase {
     $compatibleOperands = [];
     $compatibleOperands[] = new CompatibleOperator(null, new FloatType(), null, new FloatValue(-42));
     $operators[] = new OperatorTestMeta(ImplementableOperator::TYPE_UNARY_MINUS, $compatibleOperands);
-    $tests[] = [42.0,new FloatType(),new FloatType(),new IntegerType(),new FloatType(),new IntegerType(),'float',$operators,new FloatValue(42),'42.0',true,new FloatValue(42),new FloatValue(1),true];
+    $tests[] = [42.0, new FloatType(), new FloatType(), new IntegerType(), new FloatType(), new IntegerType(), 'float', $operators, new FloatValue(42), '42.0', true, new FloatValue(42), new FloatValue(1), true];
 
     /**
      * ArrayType
@@ -164,9 +165,9 @@ class TypeTest extends TestCase {
     $assignable = new ArrayType(new IntegerType(), new FloatType());
     $notAssignable = new ArrayType(new IntegerType(), new IntegerType());
 
-    $arrayValue = new ArrayValue([new FloatValue(0),new FloatValue(1)]);
-    $tests[] = [[0,1],new ArrayType(new IntegerType(), new FloatType()),$equal,$notEqual,$assignable,$notAssignable,'float[]',$operators,$arrayValue,'{0.0,1.0}',true,$arrayValue,new ArrayValue([]),false];
-    $tests[] = [[0,1],new ArrayType(new StringType(), new FloatType()),new ArrayType(new StringType(), new FloatType()),$notEqual,new ArrayType(new StringType(), new FloatType()),$notAssignable,'array<String,float>',[],$arrayValue,'{0.0,1.0}',true,$arrayValue,new ArrayValue([]),false]; // test getIdentifier
+    $arrayValue = new ArrayValue([new FloatValue(0), new FloatValue(1)]);
+    $tests[] = [[0, 1], new ArrayType(new IntegerType(), new FloatType()), $equal, $notEqual, $assignable, $notAssignable, 'float[]', $operators, $arrayValue, '{0.0,1.0}', true, $arrayValue, new ArrayValue([]), false];
+    $tests[] = [[0, 1], new ArrayType(new StringType(), new FloatType()), new ArrayType(new StringType(), new FloatType()), $notEqual, new ArrayType(new StringType(), new FloatType()), $notAssignable, 'array<String,float>', [], $arrayValue, '{0.0,1.0}', true, $arrayValue, new ArrayValue([]), false]; // test getIdentifier
 
     /**
      * BooleanType
@@ -181,17 +182,17 @@ class TypeTest extends TestCase {
     $compatibleOperands[] = new CompatibleOperator(new BooleanType(), new BooleanType(), new BooleanValue(false), new BooleanValue(false));
     $operators[] = new OperatorTestMeta(ImplementableOperator::TYPE_LOGICAL_AND, $compatibleOperands);
 
-    $tests[] = [true,new BooleanType(),new BooleanType(),new IntegerType(),new BooleanType(),new IntegerType(),'boolean',$operators,new BooleanValue(true),'true',true,new BooleanValue(true),new BooleanValue(false),true];
+    $tests[] = [true, new BooleanType(), new BooleanType(), new IntegerType(), new BooleanType(), new IntegerType(), 'boolean', $operators, new BooleanValue(true), 'true', true, new BooleanValue(true), new BooleanValue(false), true];
 
     /**
      * DateIntervalType
      */
-    $tests[] = ['DateInterval',new DateIntervalType(),new DateIntervalType(),new IntegerType(),new DateIntervalType(),new IntegerType(),'DateInterval',[],new DateIntervalValue(new \DateInterval('P1Y1M1DT1H1M1S')),'P1Y1M1DT1H1M1S',true,new DateIntervalValue(new \DateInterval('P1Y1M1DT1H1M1S')),new DateIntervalValue(new \DateInterval('P0D')),true];
+    $tests[] = ['DateInterval', new DateIntervalType(), new DateIntervalType(), new IntegerType(), new DateIntervalType(), new IntegerType(), 'DateInterval', [], new DateIntervalValue(new \DateInterval('P1Y1M1DT1H1M1S')), 'P1Y1M1DT1H1M1S', true, new DateIntervalValue(new \DateInterval('P1Y1M1DT1H1M1S')), new DateIntervalValue(new \DateInterval('P0D')), true];
 
     /**
      * OuterFunctionArgumentListType
      */
-    $tests[] = ['exception',new OuterFunctionArgumentListType([], false),new OuterFunctionArgumentListType([], false),new IntegerType(),new OuterFunctionArgumentListType([], false),new OuterFunctionArgumentListType([new OuterFunctionArgument(new VoidType(), false, false)], false),'()',[],new OuterFunctionArgumentListValue([]),'OuterFunctionArgumentListValue',true,null,new OuterFunctionArgumentListValue([]),false];
+    $tests[] = ['exception', new OuterFunctionArgumentListType([], false), new OuterFunctionArgumentListType([], false), new IntegerType(), new OuterFunctionArgumentListType([], false), new OuterFunctionArgumentListType([new OuterFunctionArgument(new VoidType(), false, false)], false), '()', [], new OuterFunctionArgumentListValue([]), 'OuterFunctionArgumentListValue', true, null, new OuterFunctionArgumentListValue([]), false];
 
     /**
      * DateTimeImmutableType
@@ -205,8 +206,12 @@ class TypeTest extends TestCase {
     $compatibleOperands = [];
     $compatibleOperands[] = new CompatibleOperator(new DateIntervalType(), new DateTimeImmutableType(), new DateIntervalValue(new \DateInterval('P1D')), new DateTimeImmutableValue(new \DateTimeImmutable('2024-01-04')));
     $operators[] = new OperatorTestMeta(ImplementableOperator::TYPE_SUBTRACTION, $compatibleOperands);
+    // Operator (int)
+    $compatibleOperands = [];
+    $compatibleOperands[] = new CompatibleOperator(new TypeType(new IntegerType()), new IntegerType(), new TypeValue(new IntegerType()), new IntegerValue((new \DateTimeImmutable('2024-01-05'))->getTimestamp()));
+    $operators[] = new OperatorTestMeta(ImplementableOperator::TYPE_TYPE_CAST, $compatibleOperands);
 
-    $tests[] = [new \DateTimeImmutable('2024-01-05'),new DateTimeImmutableType(),new DateTimeImmutableType(),new IntegerType(),new DateTimeImmutableType(),new IntegerType(),'DateTimeImmutable',$operators,new DateTimeImmutableValue(new \DateTimeImmutable('2024-01-05')),'2024-01-05T00:00:00',true,new DateTimeImmutableValue(new \DateTimeImmutable('2024-01-05')),new DateTimeImmutableValue(new \DateTimeImmutable('2024-01-04')),true];
+    $tests[] = [new \DateTimeImmutable('2024-01-05'), new DateTimeImmutableType(), new DateTimeImmutableType(), new IntegerType(), new DateTimeImmutableType(), new IntegerType(), 'DateTimeImmutable', $operators, new DateTimeImmutableValue(new \DateTimeImmutable('2024-01-05')), '2024-01-05T00:00:00', true, new DateTimeImmutableValue(new \DateTimeImmutable('2024-01-05')), new DateTimeImmutableValue(new \DateTimeImmutable('2024-01-04')), true];
 
     /**
      * FunctionType
@@ -224,38 +229,38 @@ class TypeTest extends TestCase {
     $functionValue2 = new FunctionValue(new PHPFunctionBody(function () {
       return 0;
     }, true));
-    $tests[] = ['callable',new FunctionType($args, new VoidType()),new FunctionType($args, new VoidType()),new DateTimeImmutableType(),new FunctionType($args, new VoidType()),new FunctionType($args, new IntegerType()),'function() -> void',$operators,$functionValue,'function',true,$functionValue,$functionValue2,true];
+    $tests[] = ['callable', new FunctionType($args, new VoidType()), new FunctionType($args, new VoidType()), new DateTimeImmutableType(), new FunctionType($args, new VoidType()), new FunctionType($args, new IntegerType()), 'function() -> void', $operators, $functionValue, 'function', true, $functionValue, $functionValue2, true];
 
     /**
      * MixedType
      */
-    $tests[] = [null,new MixedType(),new MixedType(),new IntegerType(),new MixedType(),new IntegerType(),'mixed',[],null,null,null,null,null,null];
+    $tests[] = [null, new MixedType(), new MixedType(), new IntegerType(), new MixedType(), new IntegerType(), 'mixed', [], null, null, null, null, null, null];
 
     /**
      * NeverType
      */
-    $tests[] = [null,new NeverType(),new NeverType(),new IntegerType(),new NeverType(),new IntegerType(),'never',[],null,null,null,null,null,null];
+    $tests[] = [null, new NeverType(), new NeverType(), new IntegerType(), new NeverType(), new IntegerType(), 'never', [], null, null, null, null, null, null];
 
     /**
      * NullType
      */
-    $tests[] = [null,new NullType(),new NullType(),new IntegerType(),new NullType(),new IntegerType(),'null',[],new NullValue(),'null',false,new NullValue(),new IntegerValue(1),true];
+    $tests[] = [null, new NullType(), new NullType(), new IntegerType(), new NullType(), new IntegerType(), 'null', [], new NullValue(), 'null', false, new NullValue(), new IntegerValue(1), true];
 
     /**
      * TypeType
      */
     $type = new IntegerType();
-    $tests[] = [$type,new TypeType(new IntegerType()),new TypeType(new IntegerType()),new IntegerType(),new TypeType(new IntegerType()),new TypeType(new BooleanType()),'TypeType(int)',[],new TypeValue($type),'TypeValue(int)',true,new TypeValue(new IntegerType()),new TypeValue(new BooleanType()),true];
+    $tests[] = [$type, new TypeType(new IntegerType()), new TypeType(new IntegerType()), new IntegerType(), new TypeType(new IntegerType()), new TypeType(new BooleanType()), 'TypeType(int)', [], new TypeValue($type), 'TypeValue(int)', true, new TypeValue(new IntegerType()), new TypeValue(new BooleanType()), true];
 
     /**
      * VoidType
      */
-    $tests[] = ['exception',new VoidType(),new VoidType(),new IntegerType(),new VoidType(),new IntegerType(),'void',[],new VoidValue(),'void',false,new VoidValue(),new IntegerValue(1),true];
+    $tests[] = ['exception', new VoidType(), new VoidType(), new IntegerType(), new VoidType(), new IntegerType(), 'void', [], new VoidValue(), 'void', false, new VoidValue(), new IntegerValue(1), true];
 
     /**
      * MemberAccsessType
      */
-    $tests[] = ['a',new MemberAccsessType('a'),new MemberAccsessType('a'),new IntegerType(),new MemberAccsessType('a'),new IntegerType(),'member accsess(a)',[],new MemberAccsessValue('a'),'a',true,new MemberAccsessValue('a'),new MemberAccsessValue('b'),true];
+    $tests[] = ['a', new MemberAccsessType('a'), new MemberAccsessType('a'), new IntegerType(), new MemberAccsessType('a'), new IntegerType(), 'member accsess(a)', [], new MemberAccsessValue('a'), 'a', true, new MemberAccsessValue('a'), new MemberAccsessValue('b'), true];
 
     /**
      * StringType
@@ -266,7 +271,7 @@ class TypeTest extends TestCase {
     $compatibleOperands[] = new CompatibleOperator(new StringType(), new StringType(), new StringValue(' world!'), new StringValue('Hello world!'));
     $operators[] = new OperatorTestMeta(ImplementableOperator::TYPE_ADDITION, $compatibleOperands);
 
-    $tests[] = ['Hello',new StringType(),new StringType(),new IntegerType(),new StringType(),new IntegerType(),'String',$operators,new StringValue('Hello'),'Hello',true,new StringValue('Hello'),new StringValue('no equal'),true];
+    $tests[] = ['Hello', new StringType(), new StringType(), new IntegerType(), new StringType(), new IntegerType(), 'String', $operators, new StringValue('Hello'), 'Hello', true, new StringValue('Hello'), new StringValue('no equal'), true];
 
     /**
      * ClassType
@@ -279,7 +284,7 @@ class TypeTest extends TestCase {
 
     $classType = new ClassType(null, 'C', ['f' => new FieldType(false, new IntegerType())]);
     $classValue = new ClassInstanceValue(['f' => new FieldValue(new IntegerValue(1))]);
-    $tests[] = [$classValue,$classType,$classType,new IntegerType(),$classType,new IntegerType(),'classType(C)',$operators,$classValue,'classInstance',true,null,new IntegerValue(1),false];
+    $tests[] = [$classValue, $classType, $classType, new IntegerType(), $classType, new IntegerType(), 'classType(C)', $operators, $classValue, 'classInstance', true, null, new IntegerValue(1), false];
 
     /**
      * ClassTypeType
@@ -296,7 +301,7 @@ class TypeTest extends TestCase {
     $compatibleOperands[] = new CompatibleOperator(null, $constructorType, null, $constructor);
     $operators[] = new OperatorTestMeta(ImplementableOperator::TYPE_NEW, $compatibleOperands);
 
-    $tests[] = [$classTypeValue,$classTypeType,$classTypeType,new IntegerType(),$classTypeType,new IntegerType(),'ClassTypeType',$operators,$classTypeValue,'classType',true,null,new IntegerValue(1),false];
+    $tests[] = [$classTypeValue, $classTypeType, $classTypeType, new IntegerType(), $classTypeType, new IntegerType(), 'ClassTypeType', $operators, $classTypeValue, 'classType', true, null, new IntegerValue(1), false];
 
     return $tests;
   }
@@ -311,24 +316,25 @@ class TypeTest extends TestCase {
     $this->assertFalse($type->equals($notAssignable));
     $this->assertEquals($expectedIdentifier, $type->getIdentifier());
 
-    if($testValue !== null) {
+    if ($testValue !== null) {
       $this->assertEquals($expectedValueString, $testValue->toString());
       $this->assertEquals($expectedTruthyness, $testValue->isTruthy());
 
-      if($equalValue !== null) {
+      if ($equalValue !== null) {
         $this->assertTrue($testValue->valueEquals($equalValue));
       }
       $this->assertFalse($testValue->valueEquals($notEqualValue));
       $this->assertFalse($testValue->valueEquals(new ClassInstanceValue([])));
       $this->assertEquals($copyEquals, $testValue->valueEquals($testValue->copy()));
-      if($phpValue === 'exception') {
+      if ($phpValue === 'exception') {
         try {
           $testValue->toPHPValue();
           $this->fail('Expected exception');
-        } catch(\Exception $e) {}
-      } else if($phpValue === 'callable') {
+        } catch (\Exception $e) {
+        }
+      } else if ($phpValue === 'callable') {
         $this->assertTrue(is_callable($testValue->toPHPValue()));
-      } else if($phpValue === 'DateInterval') {
+      } else if ($phpValue === 'DateInterval') {
         $this->assertInstanceOf(\DateInterval::class, $testValue->toPHPValue());
       } else {
         $this->assertEquals($phpValue, $testValue->toPHPValue());
@@ -336,40 +342,40 @@ class TypeTest extends TestCase {
     }
 
     // test compatible Operators
-    foreach($operators as $operatorMeta) {
+    foreach ($operators as $operatorMeta) {
       $compatible = $type->getCompatibleOperands($operatorMeta->operator);
       $expectedCompatible = $operatorMeta->getExpectedCompatible();
-      if(count($expectedCompatible) === 0) {
+      if (count($expectedCompatible) === 0) {
         $this->assertCount(0, $compatible);
       } else {
-        if(!CompoundType::buildFromTypes($compatible)->equals(CompoundType::buildFromTypes($expectedCompatible))) {
+        if (!CompoundType::buildFromTypes($compatible)->equals(CompoundType::buildFromTypes($expectedCompatible))) {
           var_dump($compatible, $expectedCompatible);
         }
         $this->assertTrue(CompoundType::buildFromTypes($compatible)->equals(CompoundType::buildFromTypes($expectedCompatible)));
       }
-      foreach($operatorMeta->compatibleOperands as $compatibleOperand) {
+      foreach ($operatorMeta->compatibleOperands as $compatibleOperand) {
         $resultType = $type->getOperatorResultType($operatorMeta->operator, $compatibleOperand->operand);
-        if($compatibleOperand->operand !== null) {
+        if ($compatibleOperand->operand !== null) {
           $this->assertNull($type->getOperatorResultType($operatorMeta->operator, null)); // test missing operand
-          if($operatorMeta->operator->getID() !== ImplementableOperator::TYPE_LOGICAL_AND) {
+          if ($operatorMeta->operator->getID() !== ImplementableOperator::TYPE_LOGICAL_AND) {
             $this->assertNull($type->getOperatorResultType($operatorMeta->operator, new ClassType(null, '---', []))); // test invalid operand
           }
         }
-        if(!$compatibleOperand->resultType->equals($resultType)) {
+        if (!$compatibleOperand->resultType->equals($resultType)) {
           var_dump($compatibleOperand->resultType, $resultType);
         }
         $this->assertTrue($compatibleOperand->resultType->equals($resultType));
 
-        if($compatibleOperand->expectedRetult !== null) {
+        if ($compatibleOperand->expectedRetult !== null) {
           $resultValue = $testValue->operate($operatorMeta->operator, $compatibleOperand->testValue);
           /**
            * Test that no other exception than FormulaBugException is beeing thrown when operating an operator with missing or invalid value
            */
-          if($compatibleOperand->testValue !== null) {
+          if ($compatibleOperand->testValue !== null) {
             try {
               $testValue->operate($operatorMeta->operator, null);
               $this->fail('Expected FormulaBugException');
-            } catch(FormulaBugException $e) {
+            } catch (FormulaBugException $e) {
               $this->once();
             }
             //             try {
@@ -382,7 +388,7 @@ class TypeTest extends TestCase {
           /**
            * Check that the resulting value is correct
            */
-          if(!$compatibleOperand->expectedRetult->valueEquals($resultValue)) {
+          if (!$compatibleOperand->expectedRetult->valueEquals($resultValue)) {
             var_dump($compatibleOperand->expectedRetult, $resultValue);
           }
           $this->assertTrue($compatibleOperand->expectedRetult->valueEquals($resultValue));
@@ -393,11 +399,12 @@ class TypeTest extends TestCase {
     $this->assertEquals([], $type->getCompatibleOperands(new ImplementableOperator(ImplementableOperator::TYPE_SCOPE_RESOLUTION)));
     $this->assertNull($type->getOperatorResultType(new ImplementableOperator(ImplementableOperator::TYPE_SCOPE_RESOLUTION), null));
     $this->assertNull($type->getOperatorResultType(new ImplementableOperator(ImplementableOperator::TYPE_SCOPE_RESOLUTION), new IntegerType()));
-    if($testValue !== null) {
+    if ($testValue !== null) {
       try {
         $testValue->operate(new ImplementableOperator(ImplementableOperator::TYPE_SCOPE_RESOLUTION), null);
         $this->fail('Expected FormulaBugException');
-      } catch(FormulaBugException $e) {}
+      } catch (FormulaBugException $e) {
+      }
     }
   }
 }
@@ -411,7 +418,7 @@ class OperatorTestMeta {
   public function __construct(int $implementableOperatorID, array $compatibleOperands) {
     $this->operator = new ImplementableOperator($implementableOperatorID);
     $this->compatibleOperands = $compatibleOperands;
-    if($implementableOperatorID === ImplementableOperator::TYPE_TYPE_CAST) {
+    if ($implementableOperatorID === ImplementableOperator::TYPE_TYPE_CAST) {
       $this->compatibleOperands[] = new CompatibleOperator(new TypeType(new BooleanType()), new BooleanType(), null, null);
       $this->compatibleOperands[] = new CompatibleOperator(new TypeType(new StringType()), new StringType(), null, null);
     }
@@ -419,8 +426,8 @@ class OperatorTestMeta {
 
   public function getExpectedCompatible(): array {
     $types = [];
-    foreach($this->compatibleOperands as $compatibleOperand) {
-      if($compatibleOperand->operand !== null) {
+    foreach ($this->compatibleOperands as $compatibleOperand) {
+      if ($compatibleOperand->operand !== null) {
         $types[] = $compatibleOperand->operand;
       }
     }
