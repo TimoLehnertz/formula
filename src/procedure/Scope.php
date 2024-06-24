@@ -184,6 +184,9 @@ class Scope {
     $reflectionReturnType = $reflection->getReturnType();
     if ($reflectionReturnType !== null) {
       $returnType = Scope::reflectionTypeToFormulaType($reflectionReturnType);
+      if($reflectionReturnType->allowsNull()) {
+        $returnType = CompoundType::buildFromTypes([$returnType, new NullType()]);
+      }
     } else {
       $returnType = new MixedType();
     }

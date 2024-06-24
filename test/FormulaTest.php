@@ -179,7 +179,7 @@ class FormulaTest extends TestCase {
   }
 
   public function testAdvanced(): void {
-    $src = 'getModuleComponentIndex()==1 ? S1875-S362 : getModuleComponentIndex()>1 ? getMeasurementAtComponentIndex(getModuleComponentIndex()-1,{S362ID,S363ID,S364ID,S365ID,S366ID},MeasurementInterpolation.OFF) -S362 : null';
+    $src = 'getModuleComponentIndex()==1 ? S1875-S362 : earlyReturnIfNull(getModuleComponentIndex())>1 ? earlyReturnIfNull(getMeasurementAtComponentIndex(earlyReturnIfNull(getModuleComponentIndex())-1,{S362ID,S363ID,S364ID,S365ID,S366ID},MeasurementInterpolation.OFF)) -S362 : null';
     $scope = new Scope();
     $scope->definePHP(true, 'S1875', 1);
     $scope->definePHP(true, 'S362', 1);

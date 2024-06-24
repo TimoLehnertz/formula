@@ -265,6 +265,16 @@ class ScopeTest extends TestCase {
     new Formula("func(false)", $scope);
   }
 
+  public function testNullablePHPFunctionReturnType(): void {
+    $function = function (int $a): ?int {
+      return $a;
+    };
+    $scope = new Scope();
+    $scope->definePHP(false, 'func', $function);
+    $formula = new Formula("func(1)", $scope);
+    $this->assertEquals('int|null', $formula->getReturnType()->getIdentifier());
+  }
+
   public function testDateTimeReturn(): void {
     $scope = new Scope();
     $scope->definePHP(true,"func", function(): \DateTimeImmutable {return new \DateTimeImmutable("2024-01-01");});
