@@ -5,9 +5,5 @@ namespace TimoLehnertz\formula;
 /**
  * @author Timo Lehnertz
  */
-class ExitIfNullException extends \Exception {
-
-  public function __construct() {
-    parent::__construct();
-  }
+class ExitIfNullException extends FormulaException {
 }

@@ -16,6 +16,7 @@ use TimoLehnertz\formula\type\CompoundType;
 use TimoLehnertz\formula\type\NullType;
 use TimoLehnertz\formula\type\NeverType;
 use TimoLehnertz\formula\ExitIfNullException;
+use TimoLehnertz\formula\procedure\Scope;
 
 class DefaultScopeTest extends TestCase {
 
@@ -45,9 +46,9 @@ class DefaultScopeTest extends TestCase {
       ["firstOrNull({1.5,2,3})", CompoundType::buildFromTypes([new NullType(), new IntegerType(), new FloatType()]), 1.5, null],
       ["firstOrNull({null})", new NullType(), null, null],
       ["firstOrNull({})", new NullType(), null, null],
-      ["assertTrue(true)", new VoidType(), null, null],
-      ["assertFalse(false)", new VoidType(), null, null],
-      ["assertEquals(6,1+2+3)", new VoidType(), null, null],
+      ["assertTrue(true)", new MixedType(), null, null],
+      ["assertFalse(false)", new MixedType(), null, null],
+      ["assertEquals(6,1+2+3)", new MixedType(), null, null],
       ["sum({1,{{{2}},3},4}, 5, {6,7+8+9})", new FloatType(), 45, null],
       ["sizeof({1,{{{2}},3},4}, 5, {6,7+8+9})", new IntegerType(), 7, null],
       ["avg({1,{{{2}},3},4}, 5, {6,7+8+9})", new FloatType(), 45.0 / 7, null],
@@ -68,9 +69,10 @@ class DefaultScopeTest extends TestCase {
     if($expectedOutput !== null) {
       $this->expectOutputString($expectedOutput);
     }
-    if(!$expectedReturnType->assignableBy($formula->getReturnType())) {
-      var_dump($formula->getReturnType());
-    }
+    // if(!$expectedReturnType->assignableBy($formula->getReturnType())) {
+    //   var_dump($formula->getReturnType());
+    //   var_dump($source);
+    // }
     $this->assertTrue($expectedReturnType->equals($formula->getReturnType()));
     $result = $formula->calculate();
     if(($expectedReturnType instanceof VoidType)) {
@@ -96,6 +98,15 @@ class DefaultScopeTest extends TestCase {
   public function testEarlyReturnNormalType(): void {
     $formula = new Formula('earlyReturnIfNull(1)');
     $this->assertInstanceOf(IntegerType::class, $formula->getReturnType());
+    $this->assertEquals(1, $formula->calculate()->toPHPValue());
+  }
+
+  public function testEarlyReturnInFunction(): void {
+    $scope = new Scope();
+    $scope->definePHP(true, 'func', function(\DateInterval|int $a) {return $a;}); 
+    $scope->definePHP(true, 'func2', function(): ?\DateInterval {return null;});
+    $formula = new Formula('func(earlyReturnIfNull(func2()))', $scope);
+    $this->expectException(ExitIfNullException::class);
     $this->assertEquals(1, $formula->calculate()->toPHPValue());
   }
 }

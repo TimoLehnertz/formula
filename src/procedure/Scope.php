@@ -185,7 +185,7 @@ class Scope {
     if ($reflectionReturnType !== null) {
       $returnType = Scope::reflectionTypeToFormulaType($reflectionReturnType);
     } else {
-      $returnType = new VoidType();
+      $returnType = new MixedType();
     }
     $arguments = [];
     $reflectionArguments = $reflection->getParameters();

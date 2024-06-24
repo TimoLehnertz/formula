@@ -366,6 +366,7 @@ class TypeTest extends TestCase {
       $this->assertFalse($testValue->valueEquals($notEqualValue));
       $this->assertFalse($testValue->valueEquals(new ClassInstanceValue([])));
       $this->assertEquals($copyEquals, $testValue->valueEquals($testValue->copy()));
+      $this->assertFalse($testValue->valueEquals(new ClassInstanceValue([])));
       if ($phpValue === 'exception') {
         try {
           $testValue->toPHPValue();

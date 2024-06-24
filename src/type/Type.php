@@ -34,7 +34,7 @@ abstract class Type implements OperatorMeta, FormulaPart {
         $array[] = $this;
         break;
       case ImplementableOperator::TYPE_EQUALS:
-        $array[] = $this;
+        $array[] = new MixedType();
         break;
       case ImplementableOperator::TYPE_TYPE_CAST:
         foreach ($array as $type) {
@@ -67,10 +67,10 @@ abstract class Type implements OperatorMeta, FormulaPart {
         }
         return $this->setFinal(true);
       case ImplementableOperator::TYPE_EQUALS:
-        if ($otherType === null || !$this->assignableBy($otherType)) {
-          break;
+        if ($otherType !== null) {
+          return new BooleanType();
         }
-        return new BooleanType();
+        break;
       case ImplementableOperator::TYPE_TYPE_CAST:
         if ($otherType instanceof TypeType) {
           if ($otherType->getType() instanceof BooleanType) {
