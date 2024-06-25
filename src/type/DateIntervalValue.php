@@ -61,12 +61,19 @@ class DateIntervalValue extends Value {
         return $this->copy();
       case ImplementableOperator::TYPE_UNARY_MINUS:
         $new = clone $this->value;
-        if($new->invert === 0) {
+        if ($new->invert === 0) {
           $new->invert = 1;
         } else {
           $new->invert = 0;
         }
         return new DateIntervalValue($new);
+      case ImplementableOperator::TYPE_TYPE_CAST:
+        if ($other instanceof TypeValue && $other->getValue() instanceof IntegerType) {
+          $dateA = new \DateTimeImmutable('2024-01-01');
+          $dateB = $dateA->add($this->value);
+          return new IntegerValue($dateB->getTimestamp() - $dateA->getTimestamp());
+        }
+        break;
     }
     throw new FormulaBugException('Invalid operation');
   }

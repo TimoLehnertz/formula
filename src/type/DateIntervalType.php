@@ -24,6 +24,10 @@ class DateIntervalType extends Type {
   // }
 
   protected function getTypeCompatibleOperands(ImplementableOperator $operator): array {
+    switch ($operator->getID()) {
+      case ImplementableOperator::TYPE_TYPE_CAST:
+        return [new TypeType(new IntegerType())];
+    }
     return [];
   }
 
@@ -37,6 +41,11 @@ class DateIntervalType extends Type {
         return new DateIntervalType();
       case ImplementableOperator::TYPE_UNARY_MINUS:
         return new DateIntervalType();
+      case ImplementableOperator::TYPE_TYPE_CAST:
+        if ($otherType instanceof TypeType && $otherType->getType() instanceof IntegerType) {
+          return new IntegerType();
+        }
+        break;
     }
     return null;
   }
