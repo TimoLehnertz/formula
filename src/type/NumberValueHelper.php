@@ -2,6 +2,7 @@
 declare(strict_types = 1);
 namespace TimoLehnertz\formula\type;
 
+use TimoLehnertz\formula\FormulaRuntimeException;
 use TimoLehnertz\formula\PrettyPrintOptions;
 use TimoLehnertz\formula\operator\ImplementableOperator;
 use TimoLehnertz\formula\FormulaBugException;
@@ -146,6 +147,9 @@ abstract class NumberValueHelper {
       case ImplementableOperator::TYPE_MULTIPLICATION:
         return new (static::getMostPreciseNumberValueClass($self, $other))($self->toPHPValue() * $other->toPHPValue());
       case ImplementableOperator::TYPE_DIVISION:
+        if($other->toPHPValue() == 0) {
+          throw new FormulaRuntimeException('Division by zero');
+        }
         return new FloatValue($self->toPHPValue() / $other->toPHPValue());
       case ImplementableOperator::TYPE_MODULO:
         return new IntegerValue($self->toPHPValue() % $other->toPHPValue());
