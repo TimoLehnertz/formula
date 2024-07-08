@@ -1,4 +1,11 @@
 # Formula
+
+[![Latest Stable Version](http://poser.pugx.org/timo-lehnertz/formula/v)](https://packagist.org/packages/timo-lehnertz/formula)
+[![Total Downloads](http://poser.pugx.org/timo-lehnertz/formula/downloads)](https://packagist.org/packages/timo-lehnertz/formula)
+[![License](http://poser.pugx.org/timo-lehnertz/formula/license)](https://packagist.org/packages/timo-lehnertz/formula)
+[![PHP Version Require](http://poser.pugx.org/timo-lehnertz/formula/require/php)](https://packagist.org/packages/timo-lehnertz/formula)
+[![Psalm Type Coverage](https://shepherd.dev/github/nerou42/formula/coverage.svg)](https://packagist.org/packages/timo-lehnertz/formula)
+
 An open source PHP formula parser based on https://github.com/socialist/formula
 
 ### Features

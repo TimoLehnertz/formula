@@ -1,4 +1,9 @@
+/.settings
+/.phpunit.cache
+/.phpunit.result.cache
+/.buildpath
+/.project
 composer.phar
-/vendor/
-.phpunit.cache
+/composer.lock
 /coverage/
+/vendor/
