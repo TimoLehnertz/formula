@@ -2,9 +2,7 @@
 	"name" : "timo-lehnertz/formula",
 	"description" : "An open source PHP formula parser based on https://github.com/socialist/formula",
 	"require" : {
-		"php" : ">=8.1",
-		"psalm/phar": "5.23",
-		"phpunit/phpunit" : "9.5.*"
+		"php" : ">=8.1"
 	},
 	"autoload" : {
 		"psr-4" : {
@@ -25,6 +23,7 @@
 		}
 	],
 	"require-dev" : {
-		
+		"psalm/phar": "5.23",
+		"phpunit/phpunit" : "9.5.*"
 	}
 }

@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace TimoLehnertz\formula\procedure;
 
-use function PHPUnit\Framework\assertEquals;
-use function PHPUnit\Framework\assertFalse;
-use function PHPUnit\Framework\assertTrue;
 use TimoLehnertz\formula\FormulaRuntimeException;
 use TimoLehnertz\formula\type\ArrayType;
 use TimoLehnertz\formula\type\BooleanType;
@@ -18,8 +15,6 @@ use TimoLehnertz\formula\type\Type;
 use TimoLehnertz\formula\type\functions\FunctionType;
 use TimoLehnertz\formula\type\functions\OuterFunctionArgument;
 use TimoLehnertz\formula\type\functions\OuterFunctionArgumentListType;
-use const false;
-use const true;
 use TimoLehnertz\formula\ExitIfNullException;
 
 /**
@@ -209,14 +204,20 @@ class DefaultScope extends Scope {
   }
 
   public static function assertTrueFunc(bool $condition) {
-    assertTrue($condition);
+    if($condition === false) {
+      throw new FormulaRuntimeException('failed asserting that false is true');
+    }
   }
 
   public static function assertEqualsFunc($expected, $actual, string $message = '') {
-    assertEquals($expected, $actual, $message);
+    if($expected != $actual) {
+      throw new FormulaRuntimeException('failed asserting that '.var_export($actual, true).' equals '.var_export($expected, true).' '.$message);
+    }
   }
 
   public static function assertFalseFunc(bool $condition, string $message = '') {
-    assertFalse($condition, $message);
+    if($condition === true) {
+      throw new FormulaRuntimeException('failed asserting that true is false');
+    }
   }
 }

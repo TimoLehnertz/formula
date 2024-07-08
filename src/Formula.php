@@ -2,9 +2,6 @@
 
 namespace TimoLehnertz\formula;
 
-use function PHPUnit\Framework\assertEquals;
-use function PHPUnit\Framework\assertFalse;
-use function PHPUnit\Framework\assertTrue;
 use TimoLehnertz\formula\nodes\NodeTree;
 use TimoLehnertz\formula\parsing\CodeBlockOrExpressionParser;
 use TimoLehnertz\formula\procedure\Scope;

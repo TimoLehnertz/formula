@@ -4,12 +4,10 @@ namespace TimoLehnertz\formula\parsing;
 
 use TimoLehnertz\formula\expression\BracketExpression;
 use TimoLehnertz\formula\expression\Expression;
-use TimoLehnertz\formula\expression\TernaryExpression;
 use TimoLehnertz\formula\operator\OperatorType;
 use TimoLehnertz\formula\operator\ParsedOperator;
 use TimoLehnertz\formula\tokens\Token;
 use TimoLehnertz\formula\PrettyPrintOptions;
-use function PHPUnit\Framework\assertFalse;
 
 /**
  * @author Timo Lehnertz
@@ -27,9 +25,9 @@ class ExpressionParser extends Parser {
     parent::__construct('expression');
     $this->forceBrackets = $forceBrackets;
     $this->topLevel = $topLevel;
-    if($topLevel) {
-      assertFalse($this->forceBrackets);
-    }
+    // if($topLevel) {
+    //   assertFalse($this->forceBrackets);
+    // }
   }
 
   private static array $expressionEndingTokens = [
