@@ -14,7 +14,7 @@ use TimoLehnertz\formula\type\IntegerType;
 
 class FormulaTest extends TestCase {
 
-  public function testEmptyFOrmula(): void {
+  public function testEmptyFormula(): void {
     $this->expectException(TokenisationException::class);
     $this->expectExceptionMessage('Invalid formula');
     new Formula('');

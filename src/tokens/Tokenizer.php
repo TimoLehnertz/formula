@@ -117,7 +117,7 @@ class Tokenizer {
             break;
           }
           // check identifier
-          if (ctype_alpha($buffer[0]) && strlen($buffer) > 1) {
+          if (strlen($buffer) > 1 && ctype_alpha($buffer[0])) {
             if (!static::isValidForIdentifier($char)) {
               $lastToken = new Token(Token::IDENTIFIER, substr($buffer, 0, strlen($buffer) - strlen($char)), $tokenStartLine, $lastStartPosition, $tokenSource, $lastToken);
               $i--;
