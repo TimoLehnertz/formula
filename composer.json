@@ -1,5 +1,5 @@
 {
-	"name" : "timo-lehnertz/formula",
+	"name" : "nerou/formula",
 	"description" : "An open source PHP formula parser based on https://github.com/socialist/formula",
 	"require" : {
 		"php" : ">=8.1"
