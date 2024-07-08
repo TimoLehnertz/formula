@@ -11,9 +11,6 @@ use TimoLehnertz\formula\procedure\Scope;
 use TimoLehnertz\formula\tokens\TokenisationException;
 use TimoLehnertz\formula\type\FloatType;
 use TimoLehnertz\formula\type\IntegerType;
-use TimoLehnertz\formula\type\StringType;
-
-use const false;
 
 class FormulaTest extends TestCase {
 
