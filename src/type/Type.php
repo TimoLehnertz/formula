@@ -8,7 +8,6 @@ use ReflectionClass;
 use TimoLehnertz\formula\FormulaBugException;
 use TimoLehnertz\formula\FormulaPart;
 use TimoLehnertz\formula\FormulaValidationException;
-use TimoLehnertz\formula\nodes\NodeInterfaceType;
 use TimoLehnertz\formula\PrettyPrintOptions;
 use TimoLehnertz\formula\operator\ImplementableOperator;
 
@@ -34,7 +33,7 @@ abstract class Type implements OperatorMeta, FormulaPart {
         $array[] = $this;
         break;
       case ImplementableOperator::TYPE_EQUALS:
-        $array[] = new MixedType();
+        $array[] = $this;
         break;
       case ImplementableOperator::TYPE_TYPE_CAST:
         foreach ($array as $type) {
