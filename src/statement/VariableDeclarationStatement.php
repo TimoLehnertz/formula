@@ -1,5 +1,7 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace TimoLehnertz\formula\statement;
 
 use TimoLehnertz\formula\PrettyPrintOptions;
@@ -31,7 +33,7 @@ class VariableDeclarationStatement extends Statement {
 
   public function validateStatement(Scope $scope, ?Type $allowedReturnType = null): StatementReturnType {
     $implicitType = $this->initializer->validate($scope);
-    if($this->type !== null) {
+    if ($this->type !== null) {
       $this->initializer = OperatorExpression::castExpression($this->initializer, $implicitType, $this->type, $scope, $this);
       $this->initializer->validate($scope);
     } else {
@@ -48,6 +50,6 @@ class VariableDeclarationStatement extends Statement {
   }
 
   public function toString(?PrettyPrintOptions $prettyPrintOptions): string {
-    return $this->type->getIdentifier().' '.$this->identifier.' = '.$this->initializer->toString($prettyPrintOptions).';';
+    return ($this->final ? 'final ' : '') . $this->type->getIdentifier() . ' ' . $this->identifier . ' = ' . $this->initializer->toString($prettyPrintOptions) . ';';
   }
 }

@@ -1,5 +1,7 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace TimoLehnertz\formula\parsing;
 
 use TimoLehnertz\formula\expression\ConstantExpression;
@@ -18,6 +20,8 @@ use TimoLehnertz\formula\type\DateTimeImmutableType;
 use TimoLehnertz\formula\type\DateTimeImmutableValue;
 use TimoLehnertz\formula\type\DateIntervalValue;
 use TimoLehnertz\formula\type\DateIntervalType;
+use TimoLehnertz\formula\type\VoidType;
+use TimoLehnertz\formula\type\VoidValue;
 
 /**
  * @author Timo Lehnertz
@@ -29,7 +33,7 @@ class ConstantExpressionParser extends Parser {
   }
 
   protected function parsePart(Token $firstToken): ParserReturn {
-    switch($firstToken->id) {
+    switch ($firstToken->id) {
       case Token::FLOAT_CONSTANT:
         return new ParserReturn(new ConstantExpression(new FloatType(true), new FloatValue(floatval($firstToken->value)), $firstToken->value), $firstToken->next());
       case Token::INT_CONSTANT:
@@ -39,13 +43,15 @@ class ConstantExpressionParser extends Parser {
       case Token::KEYWORD_TRUE:
         return new ParserReturn(new ConstantExpression(new BooleanType(true), new BooleanValue(true), $firstToken->value), $firstToken->next());
       case Token::STRING_CONSTANT:
-        return new ParserReturn(new ConstantExpression(new StringType(true), new StringValue($firstToken->value), "'".$firstToken->value."'"), $firstToken->next());
+        return new ParserReturn(new ConstantExpression(new StringType(true), new StringValue($firstToken->value), "'" . $firstToken->value . "'"), $firstToken->next());
       case Token::KEYWORD_NULL:
         return new ParserReturn(new ConstantExpression(new NullType(true), new NullValue(), $firstToken->value), $firstToken->next());
       case Token::DATE_TIME:
-        return new ParserReturn(new ConstantExpression(new DateTimeImmutableType(), new DateTimeImmutableValue(new \DateTimeImmutable($firstToken->value)), "'".$firstToken->value."'"), $firstToken->next());
+        return new ParserReturn(new ConstantExpression(new DateTimeImmutableType(), new DateTimeImmutableValue(new \DateTimeImmutable($firstToken->value)), "'" . $firstToken->value . "'"), $firstToken->next());
       case Token::DATE_INTERVAL:
-        return new ParserReturn(new ConstantExpression(new DateIntervalType(), new DateIntervalValue(new \DateInterval($firstToken->value)), "'".$firstToken->value."'"), $firstToken->next());
+        return new ParserReturn(new ConstantExpression(new DateIntervalType(), new DateIntervalValue(new \DateInterval($firstToken->value)), "'" . $firstToken->value . "'"), $firstToken->next());
+      case Token::KEYWORD_VOID:
+        return new ParserReturn(new ConstantExpression(new VoidType(), new VoidValue(), 'void'), $firstToken->next());
     }
     throw new ParsingSkippedException();
   }

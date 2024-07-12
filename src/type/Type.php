@@ -1,5 +1,7 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace TimoLehnertz\formula\type;
 
 use TimoLehnertz\formula\FormulaBugException;
@@ -17,14 +19,15 @@ abstract class Type implements OperatorMeta, FormulaPart {
   // final per default
   private bool $final = true;
 
-  public function __construct() {}
+  public function __construct() {
+  }
 
   public function getCompatibleOperands(ImplementableOperator $operator): array {
     $array = $this->getTypeCompatibleOperands($operator);
-    switch($operator->getID()) {
+    switch ($operator->getID()) {
       case ImplementableOperator::TYPE_DIRECT_ASSIGNMENT:
       case ImplementableOperator::TYPE_DIRECT_ASSIGNMENT_OLD_VAL:
-        if($this->final) {
+        if ($this->final) {
           throw new FormulaValidationException('Can\'t assign final value');
         }
         $array[] = $this;
@@ -33,46 +36,48 @@ abstract class Type implements OperatorMeta, FormulaPart {
         $array[] = $this;
         break;
       case ImplementableOperator::TYPE_TYPE_CAST:
-        foreach($array as $type) {
-          if(!($type instanceof TypeType)) {
+        foreach ($array as $type) {
+          if (!($type instanceof TypeType)) {
             throw new FormulaBugException('Cast operator has to expect TypeType');
           }
         }
-        $array[] = new TypeType(new BooleanType(false), false);
-        $array[] = new TypeType(new StringType(false), false);
+        $array[] = new TypeType(new BooleanType());
+        $array[] = new TypeType(new StringType());
         break;
       case ImplementableOperator::TYPE_LOGICAL_AND:
-        return [new BooleanType(false)];
+        return [new MixedType()];
       case ImplementableOperator::TYPE_LOGICAL_OR:
-        return [new BooleanType(false)];
+        return [new MixedType()];
       case ImplementableOperator::TYPE_LOGICAL_XOR:
-        return [new BooleanType(false)];
+        return [new MixedType()];
+      case ImplementableOperator::TYPE_LOGICAL_NOT:
+        return [];
     }
     return $array;
   }
 
   public function getOperatorResultType(ImplementableOperator $operator, ?Type $otherType): ?Type {
-    switch($operator->getID()) {
+    switch ($operator->getID()) {
       case ImplementableOperator::TYPE_DIRECT_ASSIGNMENT:
       case ImplementableOperator::TYPE_DIRECT_ASSIGNMENT_OLD_VAL:
-        if($this->final) {
+        if ($this->final) {
           return null;
         }
-        if($otherType === null || !$this->assignableBy($otherType)) {
+        if ($otherType === null || !$this->assignableBy($otherType)) {
           break;
         }
         return $this->setFinal(true);
       case ImplementableOperator::TYPE_EQUALS:
-        if($otherType === null || !$this->assignableBy($otherType)) {
+        if ($otherType === null || !$this->assignableBy($otherType)) {
           break;
         }
         return new BooleanType();
       case ImplementableOperator::TYPE_TYPE_CAST:
-        if($otherType instanceof TypeType) {
-          if($otherType->getType() instanceof BooleanType) {
+        if ($otherType instanceof TypeType) {
+          if ($otherType->getType() instanceof BooleanType) {
             return new BooleanType();
           }
-          if($otherType->getType()->equals(new StringType())) {
+          if ($otherType->getType()->equals(new StringType())) {
             return new StringType();
           }
         }
@@ -80,10 +85,14 @@ abstract class Type implements OperatorMeta, FormulaPart {
       case ImplementableOperator::TYPE_LOGICAL_AND:
       case ImplementableOperator::TYPE_LOGICAL_OR:
       case ImplementableOperator::TYPE_LOGICAL_XOR:
-        if($otherType !== null) {
+        if ($otherType !== null) {
           return new BooleanType();
         }
         break;
+      case ImplementableOperator::TYPE_LOGICAL_NOT:
+        if($otherType === null) {
+          return new BooleanType();
+        }
     }
     return $this->getTypeOperatorResultType($operator, $otherType);
   }

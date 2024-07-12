@@ -13,9 +13,6 @@ class Tokenizer {
 
   /**
    * Converts a string into Tokens
-   *
-   * @param string $string
-   * @return array<Token>
    */
   public static function tokenize(string $string): ?Token {
     $string = str_replace("\r\n", "\n", $string);

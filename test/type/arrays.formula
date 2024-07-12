@@ -14,8 +14,8 @@ arr = {1,5};
 arr /= 2;
 assertEquals({0.5,2.5}, arr);
 
-arr = {10,5};
-assertEquals({0,1}, arr % 2);
+var intArr = {10,5};
+assertEquals({0,1}, intArr % 2);
 
 arr = {10,5};
 assertEquals({-10,-5}, -arr);

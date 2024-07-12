@@ -11,6 +11,7 @@ class StatementParser extends VariantParser {
     // @formatter:off
     parent::__construct('statement', [
       new CodeBlockParser(false, false),
+      new FunctionParser(true),
       new ExpressionStatementParser(),
       new VariableDeclarationStatementParser(),
       new ReturnStatementParser(),
@@ -19,7 +20,6 @@ class StatementParser extends VariantParser {
       new BreakStatementParser(),
       new ContinueStatementParser(),
       new DoWhileStatementParser(),
-      new FunctionParser(true),
       new ForEachStatementParser(),
       new ForStatementParser(),
     ]);

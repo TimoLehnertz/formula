@@ -8,7 +8,9 @@ use TimoLehnertz\formula\type\ArrayType;
 use TimoLehnertz\formula\type\BooleanType;
 use TimoLehnertz\formula\type\CompoundType;
 use TimoLehnertz\formula\type\IntegerType;
+use TimoLehnertz\formula\type\NullType;
 use TimoLehnertz\formula\type\StringType;
+use TimoLehnertz\formula\type\VoidType;
 
 class TypeParserTest extends TestCase {
 
@@ -31,6 +33,20 @@ class TypeParserTest extends TestCase {
     $type = (new TypeParser(false))->parse($firstToken);
     $this->assertNull($type->nextToken);
     $this->assertInstanceOf(StringType::class, $type->parsed);
+  }
+  
+  public function testVoid(): void {
+    $firstToken = Tokenizer::tokenize("void");
+    $type = (new TypeParser(false))->parse($firstToken);
+    $this->assertNull($type->nextToken);
+    $this->assertInstanceOf(VoidType::class, $type->parsed);
+  }
+
+  public function testNull(): void {
+    $firstToken = Tokenizer::tokenize("null");
+    $type = (new TypeParser(false))->parse($firstToken);
+    $this->assertNull($type->nextToken);
+    $this->assertInstanceOf(NullType::class, $type->parsed);
   }
 
   public function testArray(): void {

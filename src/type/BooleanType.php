@@ -1,5 +1,7 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace TimoLehnertz\formula\type;
 
 use TimoLehnertz\formula\nodes\NodeInterfaceType;
@@ -31,11 +33,7 @@ class BooleanType extends Type {
   }
 
   public function getTypeOperatorResultType(ImplementableOperator $operator, ?Type $otherType): ?Type {
-    if($operator->getID() === ImplementableOperator::TYPE_LOGICAL_NOT) {
-      return new BooleanType();
-    } else {
-      return null;
-    }
+    return null;
   }
 
   public function buildNodeInterfaceType(): NodeInterfaceType {

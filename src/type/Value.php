@@ -1,5 +1,7 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace TimoLehnertz\formula\type;
 
 use TimoLehnertz\formula\FormulaBugException;
@@ -15,16 +17,16 @@ abstract class Value implements OperatorHandler {
 
   public function operate(ImplementableOperator $operator, ?Value $other): Value {
     // default operators
-    if($other !== null) {
-      switch($operator->getID()) {
+    if ($other !== null) {
+      switch ($operator->getID()) {
         case ImplementableOperator::TYPE_DIRECT_ASSIGNMENT:
-          if($this->container === null) {
+          if ($this->container === null) {
             throw new FormulaBugException('Missing value container');
           }
           $this->container->assign($other);
           return $other;
         case ImplementableOperator::TYPE_DIRECT_ASSIGNMENT_OLD_VAL:
-          if($this->container === null) {
+          if ($this->container === null) {
             throw new FormulaBugException('Missing value container');
           }
           $this->container->assign($other);
@@ -33,11 +35,11 @@ abstract class Value implements OperatorHandler {
         case ImplementableOperator::TYPE_EQUALS:
           return new BooleanValue($this->valueEquals($other));
         case ImplementableOperator::TYPE_TYPE_CAST:
-          if($other instanceof TypeValue) {
-            if($other->getValue() instanceof BooleanType) {
+          if ($other instanceof TypeValue) {
+            if ($other->getValue() instanceof BooleanType) {
               return new BooleanValue($this->isTruthy());
             }
-            if($other->getValue()->equals(new StringType(false))) {
+            if ($other->getValue()->equals(new StringType(false))) {
               return new StringValue($this->toString());
             }
           }
@@ -49,6 +51,8 @@ abstract class Value implements OperatorHandler {
         case ImplementableOperator::TYPE_LOGICAL_XOR:
           return new BooleanValue($this->isTruthy() xor $other->isTruthy());
       }
+    } else if ($operator->getID() === ImplementableOperator::TYPE_LOGICAL_NOT) {
+      return new BooleanValue(!$this->isTruthy());
     }
     return $this->valueOperate($operator, $other);
   }
