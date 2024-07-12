@@ -77,15 +77,15 @@ class ArrayType extends ClassType implements IteratableType {
       case ImplementableOperator::TYPE_UNARY_PLUS:
       case ImplementableOperator::TYPE_UNARY_MINUS:
       case ImplementableOperator::TYPE_MODULO:
-        return [...$this->elementsType->getCompatibleOperands($operator), new ArrayType($this->keyType, ...$this->elementsType->getCompatibleOperands($operator))];
+        $operands = $this->elementsType->getCompatibleOperands($operator);
+        return [...$operands, new ArrayType($this->keyType, CompoundType::buildFromTypes($operands))];
       case ImplementableOperator::TYPE_TYPE_CAST:
         $elementCasts = $this->elementsType->getCompatibleOperands($operator);
         $arrayCasts = [];
         foreach ($elementCasts as $elementCast) {
-          if (!($elementCast instanceof TypeType)) {
-            throw new FormulaBugException('Invalid cast');
+          if ($elementCast instanceof TypeType) {
+            $arrayCasts[] = new TypeType(new ArrayType($this->keyType, $elementCast->getType()));
           }
-          $arrayCasts[] = new TypeType(new ArrayType($this->keyType, $elementCast->getType()));
         }
         return $arrayCasts;
     }
@@ -126,6 +126,10 @@ class ArrayType extends ClassType implements IteratableType {
         break;
     }
     return null;
+  }
+
+  public function buildNodeInterfaceType(): NodeInterfaceType {
+    return new NodeInterfaceType('array', ['keyType' => $this->keyType->buildNodeInterfaceType(), 'elementsType' => $this->elementsType->buildNodeInterfaceType()]);
   }
 
   public function getKeyType(): Type {

@@ -12,6 +12,9 @@ class Tokenizer {
     return ctype_alpha($char) || ctype_digit($char) || $char === '_';
   }
 
+  /**
+   * Converts a string into Tokens
+   */
   public static function tokenize(string $string): ?Token {
     $string = str_replace("\r\n", "\n", $string);
     $string = str_replace("\n\r", "\n", $string);

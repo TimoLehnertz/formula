@@ -109,6 +109,12 @@ void addRes2(int num = 2) {
   res += num;
 }
 
+final var abc = null;
+final null|int abcd = 1.2;
+
+assertEquals(null, abc);
+assertEquals(1, abcd);
+
 addRes2(); // 32
 addRes2(1); // 33
 
@@ -145,6 +151,23 @@ function(int... args) -> float vargFunc = (int... args) -> sum(args);
 res += vargFunc(1,2,3); // 46
 
 res -= 6; // 40
+
+if({} && true) {
+  res++;
+}
+
+if({} || false) {
+  res--;
+}
+
+if(!null) {
+  res--;
+}
+
+if(!void) {
+  res++;
+}
+
 
 // WhileStatementParser
 while(true) {

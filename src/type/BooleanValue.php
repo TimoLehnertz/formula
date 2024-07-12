@@ -1,5 +1,7 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace TimoLehnertz\formula\type;
 
 use TimoLehnertz\formula\FormulaBugException;
@@ -29,11 +31,7 @@ class BooleanValue extends Value {
   }
 
   protected function valueOperate(ImplementableOperator $operator, ?Value $other): Value {
-    if($operator->getID() === ImplementableOperator::TYPE_LOGICAL_NOT) {
-      return new BooleanValue(!$this->value);
-    } else {
-      throw new FormulaBugException('Invalid operation');
-    }
+    throw new FormulaBugException('Invalid operation');
   }
 
   public function toPHPValue(): mixed {

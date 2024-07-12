@@ -46,11 +46,13 @@ abstract class Type implements OperatorMeta, FormulaPart {
         $array[] = new TypeType(new StringType());
         break;
       case ImplementableOperator::TYPE_LOGICAL_AND:
-        return [new BooleanType()];
+        return [new MixedType()];
       case ImplementableOperator::TYPE_LOGICAL_OR:
-        return [new BooleanType()];
+        return [new MixedType()];
       case ImplementableOperator::TYPE_LOGICAL_XOR:
-        return [new BooleanType()];
+        return [new MixedType()];
+      case ImplementableOperator::TYPE_LOGICAL_NOT:
+        return [];
     }
     return $array;
   }
@@ -67,10 +69,10 @@ abstract class Type implements OperatorMeta, FormulaPart {
         }
         return $this->setFinal(true);
       case ImplementableOperator::TYPE_EQUALS:
-        if ($otherType !== null) {
-          return new BooleanType();
+        if ($otherType === null || !$this->assignableBy($otherType)) {
+          break;
         }
-        break;
+        return new BooleanType();
       case ImplementableOperator::TYPE_TYPE_CAST:
         if ($otherType instanceof TypeType) {
           if ($otherType->getType() instanceof BooleanType) {
@@ -88,6 +90,10 @@ abstract class Type implements OperatorMeta, FormulaPart {
           return new BooleanType();
         }
         break;
+      case ImplementableOperator::TYPE_LOGICAL_NOT:
+        if($otherType === null) {
+          return new BooleanType();
+        }
     }
     return $this->getTypeOperatorResultType($operator, $otherType);
   }
