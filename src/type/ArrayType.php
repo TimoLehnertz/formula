@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace TimoLehnertz\formula\type;
 
-use TimoLehnertz\formula\FormulaBugException;
-use TimoLehnertz\formula\nodes\NodeInterfaceType;
 use TimoLehnertz\formula\operator\ImplementableOperator;
 use TimoLehnertz\formula\type\classes\ClassType;
 use TimoLehnertz\formula\type\classes\FieldType;
@@ -126,10 +124,6 @@ class ArrayType extends ClassType implements IteratableType {
         break;
     }
     return null;
-  }
-
-  public function buildNodeInterfaceType(): NodeInterfaceType {
-    return new NodeInterfaceType('array', ['keyType' => $this->keyType->buildNodeInterfaceType(), 'elementsType' => $this->elementsType->buildNodeInterfaceType()]);
   }
 
   public function getKeyType(): Type {
