@@ -153,21 +153,28 @@ res += vargFunc(1,2,3); // 46
 res -= 6; // 40
 
 if({} && true) {
-  res++;
+  res++; // 41
 }
 
 if({} || false) {
-  res--;
+  res--; // 40
 }
 
 if(!null) {
-  res--;
+  res--; // 39
 }
 
 if(!void) {
-  res++;
+  res++; // 40
 }
 
+res--; // 39
+
+int|String compound = false; // implicit cast to String
+
+if(compound == 'false') {
+  res++; // 40
+}
 
 // WhileStatementParser
 while(true) {
