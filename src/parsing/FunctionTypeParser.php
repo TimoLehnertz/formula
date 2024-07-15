@@ -31,11 +31,13 @@ class FunctionTypeParser extends Parser {
     $token = $token->requireNext();
     $parsedReturnType = (new TypeParser(false))->parse($token);
     $isVArgs = false;
-    foreach($arguments as $argument) {
+    /** @var OuterFunctionArgument $argument */
+    foreach($arguments as $key => $argument) {
       if($argument->varg) {
         if($isVArgs) {
           throw new ParsingException(ParsingException::ERROR_VARG_NOT_LAST, $token);
         }
+        $arguments[$key] = $argument->setOptional(true);
         $isVArgs = true;
       }
     }

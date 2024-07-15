@@ -3,6 +3,7 @@
 namespace test\type;
 
 use PHPUnit\Framework\TestCase;
+use TimoLehnertz\formula\Formula;
 use TimoLehnertz\formula\FormulaBugException;
 use TimoLehnertz\formula\operator\ImplementableOperator;
 use TimoLehnertz\formula\statement\Frequency;
@@ -330,6 +331,9 @@ class TypeTest extends TestCase {
    * @param array<OperatorTestMeta> $operators
    */
   public function testTypes(mixed $phpValue, Type $type, Type $equal, Type $notEqual, Type $assignable, Type $notAssignable, string $expectedIdentifier, array $operators, ?Value $testValue, ?string $expectedValueString, ?bool $expectedTruthyness, ?Value $equalValue, ?Value $notEqualValue, ?bool $copyEquals): void {
+    
+    // var_dump(json_encode((new Formula('1+1'))->getNodeTree()));
+    
     $this->assertTrue($type->equals($equal));
     $this->assertFalse($type->equals($notEqual));
     $this->assertTrue($type->assignableBy($assignable));

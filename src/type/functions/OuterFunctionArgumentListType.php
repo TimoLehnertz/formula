@@ -41,14 +41,14 @@ class OuterFunctionArgumentListType extends Type {
           throw new FormulaValidationException('Optional parameter can\'t be followed by VArgs');
         }
         $optional = true;
-        if ($i === count($arguments) - 1 && $isVArgs && !$argument->optional) {
-          throw new FormulaValidationException('VArg parameter must be optional');
-        }
+      }
+      if ($i === count($arguments) - 1 && $isVArgs && !$argument->optional) {
+        throw new FormulaValidationException('VArg parameter must be optional');
       }
     }
     // check that vargs are valid
     if ($isVArgs && count($arguments) === 0) {
-      throw new \BadMethodCallException('Vargs argument must have at least one argument');
+      throw new \BadMethodCallException('VArg argument must have at least one argument');
     }
   }
 
