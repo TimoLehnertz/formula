@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace TimoLehnertz\formula\procedure;
 
 use TimoLehnertz\formula\FormulaRuntimeException;
-use TimoLehnertz\formula\nodes\NodeTreeScope;
 use TimoLehnertz\formula\type\ArrayType;
 use TimoLehnertz\formula\type\ArrayValue;
 use TimoLehnertz\formula\type\BooleanType;
@@ -43,13 +42,8 @@ use TimoLehnertz\formula\type\EnumInstanceType;
 use TimoLehnertz\formula\type\EnumTypeType;
 use TimoLehnertz\formula\type\EnumInstanceValue;
 use TimoLehnertz\formula\type\EnumTypeValue;
+use TimoLehnertz\formula\type\functions\SpecificReturnType;
 use TimoLehnertz\formula\type\NeverType;
-use ReflectionFunctionAbstract;
-use ReflectionMethod;
-use ReflectionNamedType;
-use ReflectionParameter;
-use ReflectionProperty;
-use ReflectionType;
 
 /**
  * @author Timo Lehnertz
@@ -77,11 +71,11 @@ class Scope {
     }
   }
 
-  public static function reflectionTypeToFormulaType(?ReflectionType $reflectionType): Type {
+  public static function reflectionTypeToFormulaType(?\ReflectionType $reflectionType): Type {
     if ($reflectionType === null) {
       return new MixedType();
     }
-    if ($reflectionType instanceof ReflectionNamedType) {
+    if ($reflectionType instanceof \ReflectionNamedType) {
       if ($reflectionType->isBuiltin()) {
         switch ($reflectionType->getName()) {
           case 'string':
@@ -133,7 +127,7 @@ class Scope {
    * @param OuterFunctionArgumentListType|array<string, Type>|null|null $argumentType
    * @param ?callable(OuterFunctionArgumentListType): ?Type $specificFunctionReturnType
    */
-  public function definePHP(bool $final, string $identifier, mixed $value = '__undefined__', OuterFunctionArgumentListType|array|null $argumentType = null, ?Type $generalReturnType = null, ?callable $specificFunctionReturnType = null): void {
+  public function definePHP(bool $final, string $identifier, mixed $value = '__undefined__', OuterFunctionArgumentListType|array|null $argumentType = null, ?Type $generalReturnType = null, ?SpecificReturnType $specificFunctionReturnType = null): void {
     if ($value !== '__undefined__') {
       $value = Scope::convertPHPVar($value, false, $argumentType, $generalReturnType, $specificFunctionReturnType);
     }
@@ -180,7 +174,7 @@ class Scope {
    * @param OuterFunctionArgumentListType|array<string, Type>|null|null $argumentType
    * @param ?callable(OuterFunctionArgumentListType): ?Type $specificFunctionReturnType
    */
-  private static function reflectionFunctionToType(ReflectionFunctionAbstract $reflection, OuterFunctionArgumentListType|array|null $argumentType = null, ?Type $generalReturnType = null, ?callable $specificFunctionReturnType = null): FunctionType {
+  private static function reflectionFunctionToType(\ReflectionFunctionAbstract $reflection, OuterFunctionArgumentListType|array|null $argumentType = null, ?Type $generalReturnType = null, ?SpecificReturnType $specificFunctionReturnType = null): FunctionType {
     $reflectionReturnType = $reflection->getReturnType();
     if ($reflectionReturnType !== null) {
       $returnType = Scope::reflectionTypeToFormulaType($reflectionReturnType);
@@ -193,7 +187,7 @@ class Scope {
     $arguments = [];
     $reflectionArguments = $reflection->getParameters();
     $vargs = false;
-    /**  @var ReflectionParameter  $reflectionArgument */
+    /**  @var \ReflectionParameter  $reflectionArgument */
     foreach ($reflectionArguments as $reflectionArgument) {
       if ($reflectionArgument->isVariadic()) {
         $vargs = true;
@@ -220,12 +214,12 @@ class Scope {
     Scope::$phpClassTypes[$reflection->getName()] = new ClassType(null, '--', []); // dummy
 
     $fieldTypes = [];
-    /** @var ReflectionProperty $refelctionProperty */
-    foreach ($reflection->getProperties(ReflectionProperty::IS_PUBLIC) as $refelctionProperty) {
+    /** @var \ReflectionProperty $refelctionProperty */
+    foreach ($reflection->getProperties(\ReflectionProperty::IS_PUBLIC) as $refelctionProperty) {
       $fieldTypes[$refelctionProperty->getName()] = new FieldType($refelctionProperty->isReadOnly(), Scope::reflectionTypeToFormulaType($refelctionProperty->getType()));
     }
-    /** @var ReflectionMethod $reflectionMethod */
-    foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC) as $reflectionMethod) {
+    /** @var \ReflectionMethod $reflectionMethod */
+    foreach ($reflection->getMethods(\ReflectionMethod::IS_PUBLIC) as $reflectionMethod) {
       if ($reflectionMethod->isConstructor()) {
         continue;
       }
@@ -247,7 +241,7 @@ class Scope {
    * @param ?callable(OuterFunctionArgumentListType): ?Type $specificFunctionReturnType
    * @return array [Type, Value]
    */
-  public static function convertPHPVar(mixed $value, bool $onlyValue = false, OuterFunctionArgumentListType|array|null $argumentType = null, ?Type $generalReturnType = null, ?callable $specificFunctionReturnType = null): array {
+  public static function convertPHPVar(mixed $value, bool $onlyValue = false, OuterFunctionArgumentListType|array|null $argumentType = null, ?Type $generalReturnType = null, ?SpecificReturnType $specificFunctionReturnType = null): array {
     if ($value instanceof Value) {
       return [null, $value];
     } else if ($value instanceof \DateTimeImmutable) {
@@ -290,7 +284,7 @@ class Scope {
       return [new NullType(), new NullValue()];
     } else if (is_callable($value)) {
       if (is_array($value)) {
-        $reflection = new ReflectionMethod($value[0], $value[1]);
+        $reflection = new \ReflectionMethod($value[0], $value[1]);
       } else {
         $reflection = new \ReflectionFunction($value);
       }
@@ -319,13 +313,13 @@ class Scope {
       $reflection = new \ReflectionClass($value);
       $fieldTypes = [];
       //       $fieldValues = [];
-      /** @var ReflectionProperty $refelctionProperty */
-      foreach ($reflection->getProperties(ReflectionProperty::IS_PUBLIC) as $refelctionProperty) {
+      /** @var \ReflectionProperty $refelctionProperty */
+      foreach ($reflection->getProperties(\ReflectionProperty::IS_PUBLIC) as $refelctionProperty) {
         $fieldTypes[$refelctionProperty->getName()] = new FieldType($refelctionProperty->isReadOnly(), Scope::reflectionTypeToFormulaType($refelctionProperty->getType()));
         //         $fieldValues[$refelctionProperty->getName()] = new FieldValue(Scope::convertPHPVar($refelctionProperty->getValue($value), true)[1]);
       }
-      /** @var ReflectionMethod $reflectionMethod */
-      foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC) as $reflectionMethod) {
+      /** @var \ReflectionMethod $reflectionMethod */
+      foreach ($reflection->getMethods(\ReflectionMethod::IS_PUBLIC) as $reflectionMethod) {
         if ($reflectionMethod->isConstructor()) {
           continue;
         }

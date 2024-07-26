@@ -2,7 +2,6 @@
 declare(strict_types = 1);
 namespace TimoLehnertz\formula\type\functions;
 
-use TimoLehnertz\formula\nodes\NodeInterfaceType;
 use TimoLehnertz\formula\operator\ImplementableOperator;
 use TimoLehnertz\formula\type\Type;
 
@@ -15,15 +14,12 @@ class FunctionType extends Type {
 
   public readonly Type $generalReturnType;
 
-  /**
-   * @var ?callable(OuterFunctionArgumentListType): ?Type
-   */
-  private readonly mixed $specificReturnType;
+  private readonly ?SpecificReturnType $specificReturnType;
 
   /**
    * @param ?callable(OuterFunctionArgumentListType): ?Type $specificReturnType
    */
-  public function __construct(OuterFunctionArgumentListType $arguments, Type $generalReturnType, ?callable $specificReturnType = null) {
+  public function __construct(OuterFunctionArgumentListType $arguments, Type $generalReturnType, ?SpecificReturnType $specificReturnType = null) {
     parent::__construct();
     $this->arguments = $arguments;
     $this->generalReturnType = $generalReturnType;
@@ -67,7 +63,7 @@ class FunctionType extends Type {
         if($this->specificReturnType === null) {
           return $this->generalReturnType;
         } else {
-          return call_user_func($this->specificReturnType, $otherType);
+          return call_user_func($this->specificReturnType->specificReturnType, $otherType);
         }
       }
     }
@@ -75,6 +71,6 @@ class FunctionType extends Type {
   }
 
   protected function getProperties(): ?array {
-    return ['arguments' => $this->arguments->getInterfaceType(), 'returnType' => $this->generalReturnType->getInterfaceType()];
+    return ['arguments' => $this->arguments->getInterfaceType(), 'generalReturnType' => $this->generalReturnType->getInterfaceType(), 'specificReturnType' => $this->specificReturnType?->identifier ?? null];
   }
 }

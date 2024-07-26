@@ -63,7 +63,7 @@ class OperatorExpression implements Expression {
         if (count($operands) === 0) {
           throw new FormulaValidationException($leftType->toString(PrettyPrintOptions::buildDefault()) . ' does not implement operator ' . $this->operator->toString(PrettyPrintOptions::buildDefault()));
         }
-        $this->rightExpression = OperatorExpression::castExpression($this->rightExpression, $rightType, CompoundType::buildFromTypes($operands), $scope, $this);
+        $this->rightExpression = OperatorExpression::castExpression($this->rightExpression, $rightType, CompoundType::buildFromTypes($operands), $scope);
         $rightType = $this->rightExpression->validate($scope);
         $returnType = $leftType->getOperatorResultType($this->operator, $rightType);
         break;
@@ -91,7 +91,7 @@ class OperatorExpression implements Expression {
     }
   }
 
-  public static function castExpression(Expression $source, Type $sourceType, Type $targetType, Scope $scope, FormulaPart $context): Expression {
+  public static function castExpression(Expression $source, Type $sourceType, Type $targetType, Scope $scope): Expression {
     if ($targetType->assignableBy($sourceType)) {
       return $source;
     } else {

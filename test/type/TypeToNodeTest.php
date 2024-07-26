@@ -52,9 +52,10 @@ class TypeToNodeTest extends TestCase {
                 'varg' => false
               ],
             ],
-            'returnType' => [
+            'generalReturnType' => [
               'typeName' => 'VoidType'
-            ]
+            ],
+            'specificReturnType' => null,
           ]
         ]
       ]

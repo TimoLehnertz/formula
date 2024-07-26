@@ -2,7 +2,6 @@
 declare(strict_types = 1);
 namespace TimoLehnertz\formula\type;
 
-use TimoLehnertz\formula\nodes\NodeInterfaceType;
 use TimoLehnertz\formula\operator\ImplementableOperator;
 
 /**
@@ -88,11 +87,8 @@ class CompoundType extends Type {
       $operandLists[] = $type->getCompatibleOperands($operator);
     }
     $intersection = $operandLists[0];
-    // var_dump('Moin');
     foreach ($operandLists as $list) {
-      // var_dump($intersection);
-      $intersection = array_uintersect($intersection, $list, function(Type $a, Type $b) {return $a->equals($b);});
-      // var_dump($intersection);
+      $intersection = array_uintersect($intersection, $list, function(Type $a, Type $b) {return $a->equals($b) ? 0 : -1;});
     }
     return $intersection;
   }
