@@ -1,5 +1,7 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace TimoLehnertz\formula\type;
 
 use TimoLehnertz\formula\FormulaRuntimeException;
@@ -13,7 +15,7 @@ use TimoLehnertz\formula\FormulaBugException;
 abstract class NumberValueHelper {
 
   public static function getMostPreciseNumberType(Type $a, Type $b): Type {
-    if($b instanceof FloatType) {
+    if ($b instanceof FloatType) {
       return $b;
     }
     return $a;
@@ -23,7 +25,7 @@ abstract class NumberValueHelper {
    * @return class-string<IntegerValue|FloatValue>
    */
   public static function getMostPreciseNumberValueClass(IntegerValue|FloatValue $self, IntegerValue|FloatValue $other): string {
-    if($self instanceof FloatValue || $other instanceof FloatValue) {
+    if ($self instanceof FloatValue || $other instanceof FloatValue) {
       return FloatValue::class;
     } else {
       return IntegerValue::class;
@@ -44,54 +46,58 @@ abstract class NumberValueHelper {
   // }
 
   public static function getTypeCompatibleOperands(IntegerType|FloatType $self, ImplementableOperator $operator): array {
-    switch($operator->getID()) {
+    switch ($operator->getID()) {
       case ImplementableOperator::TYPE_ADDITION:
       case ImplementableOperator::TYPE_SUBTRACTION:
       case ImplementableOperator::TYPE_MULTIPLICATION:
       case ImplementableOperator::TYPE_DIVISION:
       case ImplementableOperator::TYPE_LESS:
       case ImplementableOperator::TYPE_GREATER:
-        return [new IntegerType(),new FloatType()];
+        return [new IntegerType(), new FloatType()];
       case ImplementableOperator::TYPE_MODULO:
-        return [new IntegerType()];
+        if ($self instanceof IntegerType) {
+          return [new IntegerType()];
+        } else {
+          break;
+        }
       case ImplementableOperator::TYPE_TYPE_CAST:
-        if($self instanceof IntegerType) {
+        if ($self instanceof IntegerType) {
           return [new TypeType(new FloatType())];
         } else {
           return [new TypeType(new IntegerType())];
         }
-      default:
-        return [];
+        break;
     }
+    return [];
   }
 
   public static function getTypeOperatorResultType(IntegerType|FloatType $typeA, ImplementableOperator $operator, ?Type $typeB): ?Type {
     // unary operations
-    switch($operator->getID()) {
+    switch ($operator->getID()) {
       case ImplementableOperator::TYPE_UNARY_MINUS:
       case ImplementableOperator::TYPE_UNARY_PLUS:
         return $typeA;
     }
     // binary operations
-    if($typeB === null) {
+    if ($typeB === null) {
       return null;
     }
-    if($operator->getID() === ImplementableOperator::TYPE_TYPE_CAST) {
-      if($typeB instanceof TypeType) {
-        if($typeB->getType() instanceof FloatType) {
+    if ($operator->getID() === ImplementableOperator::TYPE_TYPE_CAST) {
+      if ($typeB instanceof TypeType) {
+        if ($typeB->getType() instanceof FloatType) {
           return new FloatType();
         }
-        if($typeB->getType() instanceof IntegerType) {
+        if ($typeB->getType() instanceof IntegerType) {
           return new IntegerType();
         }
       }
       return null;
     }
     // number operations
-    if(!($typeB instanceof IntegerType) && !($typeB instanceof FloatType)) {
+    if (!($typeB instanceof IntegerType) && !($typeB instanceof FloatType)) {
       return null;
     }
-    switch($operator->getID()) {
+    switch ($operator->getID()) {
       case ImplementableOperator::TYPE_ADDITION:
       case ImplementableOperator::TYPE_SUBTRACTION:
       case ImplementableOperator::TYPE_MULTIPLICATION:
@@ -99,7 +105,10 @@ abstract class NumberValueHelper {
       case ImplementableOperator::TYPE_DIVISION:
         return new FloatType();
       case ImplementableOperator::TYPE_MODULO:
-        return new IntegerType();
+        if ($typeA instanceof IntegerType && $typeB instanceof IntegerType) {
+          return new IntegerType();
+        }
+        break;
       case ImplementableOperator::TYPE_GREATER:
       case ImplementableOperator::TYPE_LESS:
         return new BooleanType();
@@ -110,9 +119,9 @@ abstract class NumberValueHelper {
 
   public static function numberOperate(IntegerValue|FloatValue $self, ImplementableOperator $operator, ?Value $other): Value {
     // unary operations
-    switch($operator->getID()) {
+    switch ($operator->getID()) {
       case ImplementableOperator::TYPE_UNARY_MINUS:
-        if($self instanceof FloatValue) {
+        if ($self instanceof FloatValue) {
           return new FloatValue(-$self->toPHPValue());
         } else {
           return new IntegerValue(-$self->toPHPValue());
@@ -121,25 +130,25 @@ abstract class NumberValueHelper {
         return $self; // do nothing
     }
     // binary operations
-    if($other === null) {
+    if ($other === null) {
       throw new FormulaBugException('Invalid operation');
     }
     // cast
-    if($operator->getID() === ImplementableOperator::TYPE_TYPE_CAST) {
-      if($other instanceof TypeValue) {
-        if($other->getValue() instanceof FloatType) {
+    if ($operator->getID() === ImplementableOperator::TYPE_TYPE_CAST) {
+      if ($other instanceof TypeValue) {
+        if ($other->getValue() instanceof FloatType) {
           return new FloatValue($self->toPHPValue());
         }
-        if($other->getValue() instanceof IntegerType) {
+        if ($other->getValue() instanceof IntegerType) {
           return new IntegerValue((int) $self->toPHPValue());
         }
       }
       throw new FormulaBugException('Invalid operation');
     }
-    if(!($other instanceof FloatValue) && !($other instanceof IntegerValue)) { // only numbers
+    if (!($other instanceof FloatValue) && !($other instanceof IntegerValue)) { // only numbers
       throw new FormulaBugException('Invalid operation');
     }
-    switch($operator->getID()) {
+    switch ($operator->getID()) {
       case ImplementableOperator::TYPE_ADDITION:
         return new (static::getMostPreciseNumberValueClass($self, $other))($self->toPHPValue() + $other->toPHPValue());
       case ImplementableOperator::TYPE_SUBTRACTION:
@@ -147,7 +156,7 @@ abstract class NumberValueHelper {
       case ImplementableOperator::TYPE_MULTIPLICATION:
         return new (static::getMostPreciseNumberValueClass($self, $other))($self->toPHPValue() * $other->toPHPValue());
       case ImplementableOperator::TYPE_DIVISION:
-        if($other->toPHPValue() == 0) {
+        if ($other->toPHPValue() == 0) {
           throw new FormulaRuntimeException('Division by zero');
         }
         return new FloatValue($self->toPHPValue() / $other->toPHPValue());
@@ -158,7 +167,7 @@ abstract class NumberValueHelper {
       case ImplementableOperator::TYPE_LESS:
         return new BooleanValue($self->toPHPValue() < $other->toPHPValue());
       default:
-        throw new FormulaBugException('Invalid operation number '.$operator->toString(PrettyPrintOptions::buildDefault()));
+        throw new FormulaBugException('Invalid operation number ' . $operator->toString(PrettyPrintOptions::buildDefault()));
     }
   }
 }

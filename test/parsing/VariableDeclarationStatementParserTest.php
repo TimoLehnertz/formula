@@ -14,4 +14,11 @@ class VariableDeclarationStatementParserTest extends TestCase {
     $this->assertNull($type->nextToken);
     $this->assertInstanceOf(VariableDeclarationStatement::class, $type->parsed);
   }
+
+  public function testNull(): void {
+    $firstToken = Tokenizer::tokenize("final null abc = null;");
+    $type = (new VariableDeclarationStatementParser())->parse($firstToken);
+    $this->assertNull($type->nextToken);
+    $this->assertInstanceOf(VariableDeclarationStatement::class, $type->parsed);
+  }
 }

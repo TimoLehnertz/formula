@@ -44,4 +44,8 @@ class OuterFunctionArgument implements FormulaPart {
     }
     return $str;
   }
+
+  public function setOptional(bool $optional): OuterFunctionArgument {
+    return new OuterFunctionArgument($this->type, $optional, $this->varg, $this->name);
+  }
 }

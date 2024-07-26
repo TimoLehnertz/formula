@@ -87,28 +87,14 @@ class CompoundType extends Type {
     foreach($this->types as $type) {
       $operandLists[] = $type->getCompatibleOperands($operator);
     }
-    $joinedOperands = [];
-    foreach($operandLists[0] as $testType) {
-      $foundAll = true;
-      for($i = 1;$i < count($operandLists);$i++) {
-        $operandList = $operandLists[$i];
-        $foundInList = false;
-        foreach($operandList as $compType) {
-          if($testType->equals($compType)) {
-            $foundInList = true;
-            break;
-          }
-        }
-        if(!$foundInList) {
-          $foundAll = false;
-          break;
-        }
-      }
-      if($foundAll) {
-        $joinedOperands[] = $type;
-      }
+    $intersection = $operandLists[0];
+    // var_dump('Moin');
+    foreach ($operandLists as $list) {
+      // var_dump($intersection);
+      $intersection = array_uintersect($intersection, $list, function(Type $a, Type $b) {return $a->equals($b);});
+      // var_dump($intersection);
     }
-    return $joinedOperands;
+    return $intersection;
   }
 
   protected function getTypeOperatorResultType(ImplementableOperator $operator, ?Type $otherType): ?Type {

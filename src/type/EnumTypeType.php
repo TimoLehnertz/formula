@@ -4,8 +4,6 @@ namespace TimoLehnertz\formula\type;
 
 use TimoLehnertz\formula\type\classes\ClassType;
 use TimoLehnertz\formula\type\classes\FieldType;
-use ReflectionEnumBackedCase;
-use ReflectionEnumUnitCase;
 
 /**
  * @author Timo Lehnertz
@@ -16,7 +14,7 @@ class EnumTypeType extends ClassType {
 
   public function __construct(\ReflectionEnum $reflection) {
     $fields = [];
-    /**  @var ReflectionEnumUnitCase|ReflectionEnumBackedCase $enumCase */
+    /**  @var \ReflectionEnumUnitCase|\ReflectionEnumBackedCase $enumCase */
     foreach($reflection->getCases() as $enumCase) {
       $fields[$enumCase->getName()] = new FieldType(true, new EnumInstanceType($this));
     }

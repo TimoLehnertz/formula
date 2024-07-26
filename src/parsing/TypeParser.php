@@ -13,6 +13,7 @@ use TimoLehnertz\formula\type\Type;
 use TimoLehnertz\formula\type\VoidType;
 use TimoLehnertz\formula\type\DateTimeImmutableType;
 use TimoLehnertz\formula\type\DateIntervalType;
+use TimoLehnertz\formula\type\NullType;
 
 /**
  * ArrayDimension ::= [](<ArrayDimension>|<>)
@@ -131,6 +132,9 @@ class TypeParser extends Parser {
       $token = $firstToken->next();
     } else if($firstToken->id === Token::KEYWORD_VOID) {
       $type = new VoidType();
+      $token = $firstToken->next();
+    } else if($firstToken->id === Token::KEYWORD_NULL) {
+      $type = new NullType();
       $token = $firstToken->next();
     } else if($firstToken->id === Token::KEYWORD_DATE_INTERVAL) {
       $type = new DateIntervalType();
