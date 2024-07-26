@@ -22,9 +22,9 @@ class Node {
    * @param array<int, Node> $connectedInputs
    */
   public function __construct(string $nodeType, array $connected, array $info = []) {
-    foreach ($connected as $connecte) {
-      if(!($connecte instanceof Node)) {
-        throw new \Exception('Moin');
+    foreach ($connected as $node) {
+      if(!($node instanceof Node)) {
+        throw new \Exception('Invalid node');
       }
     }
     $this->nodeType = $nodeType;

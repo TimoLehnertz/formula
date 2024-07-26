@@ -5,7 +5,6 @@ namespace TimoLehnertz\formula\expression;
 use TimoLehnertz\formula\PrettyPrintOptions;
 use TimoLehnertz\formula\statement\CodeBlock;
 use TimoLehnertz\formula\statement\ReturnStatement;
-use const false;
 
 /**
  * @author Timo Lehnertz

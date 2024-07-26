@@ -2,7 +2,6 @@
 declare(strict_types = 1);
 namespace TimoLehnertz\formula\type;
 
-use TimoLehnertz\formula\nodes\NodeInterfaceType;
 use TimoLehnertz\formula\operator\ImplementableOperator;
 
 /**
@@ -22,7 +21,7 @@ class TypeType extends Type {
   }
 
   protected function typeAssignableBy(Type $type): bool {
-    return $this->equals($type);
+    return $type instanceof TypeType;
   }
 
   public function equals(Type $type): bool {

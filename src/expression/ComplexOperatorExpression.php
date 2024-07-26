@@ -3,10 +3,8 @@ declare(strict_types = 1);
 namespace TimoLehnertz\formula\expression;
 
 use TimoLehnertz\formula\PrettyPrintOptions;
-use TimoLehnertz\formula\nodes\Node;
 use TimoLehnertz\formula\operator\ImplementableOperator;
 use TimoLehnertz\formula\operator\ParsedOperator;
-use TimoLehnertz\formula\procedure\Scope;
 
 /**
  * @author Timo Lehnertz
