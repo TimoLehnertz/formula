@@ -23,7 +23,7 @@ class FormulaTest extends TestCase {
   public function testGetNodeTree(): void {
     $formula = new Formula('1+1');
     $nodeTree = $formula->getNodeTree();
-    echo json_encode($nodeTree);
+    // echo json_encode($nodeTree);
     $this->assertEquals('OperatorExpression', $nodeTree['rootNode']['nodeType']);
     $this->assertCount(2, $nodeTree['rootNode']['connected']);
   }
@@ -32,6 +32,14 @@ class FormulaTest extends TestCase {
     $formula = new Formula('int a = 0; while(a<3){a++;} return a;');
     $this->assertInstanceOf(IntegerType::class, $formula->getReturnType());
     $this->assertEquals(3, $formula->calculate()->toPHPValue());
+  }
+
+
+  public function testEqualsNull(): void {
+    $formula = new Formula('int a = 0; return a == null;');
+    $this->assertTrue($formula->calculate()->toPHPValue() === false);
+    $formula = new Formula('int|null a = null; return a == null;');
+    $this->assertTrue($formula->calculate()->toPHPValue() === true);
   }
 
   public function testIndentation(): void {

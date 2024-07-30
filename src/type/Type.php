@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace TimoLehnertz\formula\type;
 
-use ReflectionClass;
 use TimoLehnertz\formula\FormulaBugException;
 use TimoLehnertz\formula\FormulaPart;
 use TimoLehnertz\formula\FormulaValidationException;
@@ -34,6 +33,7 @@ abstract class Type implements OperatorMeta, FormulaPart {
         break;
       case ImplementableOperator::TYPE_EQUALS:
         $array[] = $this;
+        $array[] = new NullType();
         break;
       case ImplementableOperator::TYPE_TYPE_CAST:
         foreach ($array as $type) {
@@ -68,7 +68,7 @@ abstract class Type implements OperatorMeta, FormulaPart {
         }
         return $this->setFinal(true);
       case ImplementableOperator::TYPE_EQUALS:
-        if ($otherType === null || !$this->assignableBy($otherType)) {
+        if ($otherType === null || (!$this->assignableBy($otherType) && !($otherType instanceof NullType))) {
           break;
         }
         return new BooleanType();
@@ -135,7 +135,7 @@ abstract class Type implements OperatorMeta, FormulaPart {
   }
 
   public function getInterfaceType(): array {
-    $reflection = new ReflectionClass($this::class);
+    $reflection = new \ReflectionClass($this::class);
     $properties = $this->getProperties();
     if ($properties === null) {
       return ['typeName' => $reflection->getShortName()];

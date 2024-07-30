@@ -33,6 +33,9 @@ abstract class Value implements OperatorHandler {
           $this->setContainer(null);
           return $this;
         case ImplementableOperator::TYPE_EQUALS:
+          if($other instanceof NullValue) {
+            return new BooleanValue($this instanceof NullValue);
+          }
           return new BooleanValue($this->valueEquals($other));
         case ImplementableOperator::TYPE_TYPE_CAST:
           if ($other instanceof TypeValue) {
@@ -70,9 +73,6 @@ abstract class Value implements OperatorHandler {
 
   protected abstract function valueOperate(ImplementableOperator $operator, ?Value $other): Value;
 
-  /**
-   * @param Value $other guaranteed to be assignable
-   */
   public abstract function valueEquals(Value $other): bool;
 
   /**
