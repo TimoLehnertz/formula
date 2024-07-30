@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace TimoLehnertz\formula\expression;
 
 use TimoLehnertz\formula\FormulaBugException;
-use TimoLehnertz\formula\FormulaPart;
 use TimoLehnertz\formula\FormulaValidationException;
 use TimoLehnertz\formula\PrettyPrintOptions;
 use TimoLehnertz\formula\nodes\Node;

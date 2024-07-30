@@ -23,6 +23,7 @@ class FormulaTest extends TestCase {
   public function testGetNodeTree(): void {
     $formula = new Formula('1+1');
     $nodeTree = $formula->getNodeTree();
+    echo json_encode($nodeTree);
     $this->assertEquals('OperatorExpression', $nodeTree['rootNode']['nodeType']);
     $this->assertCount(2, $nodeTree['rootNode']['connected']);
   }
