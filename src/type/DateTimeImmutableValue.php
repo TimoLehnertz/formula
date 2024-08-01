@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace TimoLehnertz\formula\type;
 
 use TimoLehnertz\formula\operator\ImplementableOperator;
-use const false;
-use const true;
 use TimoLehnertz\formula\FormulaBugException;
 
 /**

@@ -83,6 +83,20 @@ class TokenizerTest extends TestCase {
       [Token::KEYWORD_DATE_TIME_IMMUTABLE, 'DateTimeImmutable ', 'DateTimeImmutable'],
       [Token::FUNCTION_ARROW, '-> ', '->'],
       [Token::KEYWORD_FUNCTION, 'function', 'function'],
+      [Token::DATE_TIME, '"2024-07-31"', '2024-07-31'],
+      [Token::DATE_TIME, '"2024-07-31T14:20"', '2024-07-31T14:20'],
+      [Token::DATE_TIME, '"2024-07-31T14:20:30"', '2024-07-31T14:20:30'],
+      [Token::DATE_TIME, '"2024-07-31T14:20:30+02:00"', '2024-07-31T14:20:30+02:00'],
+      [Token::DATE_TIME, '"2024-07-31T14:20:30-04:00"', '2024-07-31T14:20:30-04:00'],
+      [Token::DATE_TIME, '"2024-07-31T14:20:30Z"', '2024-07-31T14:20:30Z'],
+      [Token::DATE_TIME, '"2024-07-31T14:20:30.123Z"', '2024-07-31T14:20:30.123Z'],
+      [Token::DATE_TIME, '"2024-07-31 14:20:30"', '2024-07-31 14:20:30'],
+      [Token::DATE_INTERVAL, '"P1Y2M3DT4H5M6S"', 'P1Y2M3DT4H5M6S'],
+      [Token::DATE_INTERVAL, '"P5D"', 'P5D'],
+      [Token::DATE_INTERVAL, '"PT3H15M"', 'PT3H15M'],
+      [Token::DATE_INTERVAL, '"P2Y6M"', 'P2Y6M'],
+      [Token::DATE_INTERVAL, '"PT45S"', 'PT45S'],
+      [Token::DATE_INTERVAL, '"P0D"', 'P0D'],
     ];
   }
   // @formatter:on
