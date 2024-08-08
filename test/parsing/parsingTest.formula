@@ -118,6 +118,10 @@ assertEquals(1, abcd);
 addRes2(); // 32
 addRes2(1); // 33
 
+(addRes2());
+
+res-=2;
+
 // codeblockStatement
 
 {
