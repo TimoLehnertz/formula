@@ -16,7 +16,9 @@ use TimoLehnertz\formula\type\functions\FunctionType;
 use TimoLehnertz\formula\type\functions\OuterFunctionArgument;
 use TimoLehnertz\formula\type\functions\OuterFunctionArgumentListType;
 use TimoLehnertz\formula\ExitIfNullException;
+use TimoLehnertz\formula\type\FloatType;
 use TimoLehnertz\formula\type\functions\SpecificReturnType;
+use TimoLehnertz\formula\type\IntegerType;
 
 /**
  * @author Timo Lehnertz
@@ -56,8 +58,9 @@ class DefaultScope extends Scope {
     $this->definePHP(true, "assertTrue", [DefaultScope::class, "assertTrueFunc"]);
     $this->definePHP(true, "assertFalse", [DefaultScope::class, "assertFalseFunc"]);
     $this->definePHP(true, "assertEquals", [DefaultScope::class, "assertEqualsFunc"]);
-    $this->definePHP(true, "sum", [DefaultScope::class, "sumFunc"]);
-    $this->definePHP(true, "avg", [DefaultScope::class, "avgFunc"]);
+    $intOrFloat = CompoundType::buildFromTypes([new FloatType(), new IntegerType()]);
+    $this->definePHP(true, "sum", [DefaultScope::class, "sumFunc"], new OuterFunctionArgumentListType([new OuterFunctionArgument(CompoundType::buildFromTypes([$intOrFloat, new ArrayType(new MixedType(), $intOrFloat)]), true, true, 'values')], true));
+    $this->definePHP(true, "avg", [DefaultScope::class, "avgFunc"], new OuterFunctionArgumentListType([new OuterFunctionArgument(CompoundType::buildFromTypes([$intOrFloat, new ArrayType(new MixedType(), $intOrFloat)]), true, true, 'values')], true));
     $callbackType = new FunctionType(new OuterFunctionArgumentListType([new OuterFunctionArgument(new MixedType())]), new BooleanType());
     $this->definePHP(true, "array_filter", [DefaultScope::class, "array_filterFunc"], ['callback' => $callbackType], null, new SpecificReturnType('FORMULA_ARRAY_FILTER', function (OuterFunctionArgumentListType $args): ?Type {
       return $args->getArgumentType(0);

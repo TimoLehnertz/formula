@@ -10,7 +10,6 @@ use TimoLehnertz\formula\type\MixedType;
 use TimoLehnertz\formula\type\Type;
 use TimoLehnertz\formula\type\VoidType;
 use TimoLehnertz\formula\type\VoidValue;
-use const false;
 use TimoLehnertz\formula\type\IntegerType;
 use TimoLehnertz\formula\type\CompoundType;
 use TimoLehnertz\formula\type\NullType;
@@ -49,9 +48,9 @@ class DefaultScopeTest extends TestCase {
       ["assertTrue(true)", new MixedType(), null, null],
       ["assertFalse(false)", new MixedType(), null, null],
       ["assertEquals(6,1+2+3)", new MixedType(), null, null],
-      ["sum({1,{{{2}},3},4}, 5, {6,7+8+9})", new FloatType(), 45, null],
+      ["sum(1,{1,2,3.5}, 5.5, {5,7+8+9})", new FloatType(), 42, null],
       ["sizeof({1,{{{2}},3},4}, 5, {6,7+8+9})", new IntegerType(), 7, null],
-      ["avg({1,{{{2}},3},4}, 5, {6,7+8+9})", new FloatType(), 45.0 / 7, null],
+      ["avg(1,{1,2,3.5}, 5.5, {5,7+8+9})", new FloatType(), 42.0 / 7, null],
 
       ["array_filter({1,2,3,4}, (int a) -> a % 2 == 0)", new ArrayType(new IntegerType(), new IntegerType()), [1 => 2, 3 => 4], null],
       ["array_filter({1,2,3,4}, boolean(int a) {return a % 2 == 0;})", new ArrayType(new IntegerType(), new IntegerType()), [1 => 2, 3 => 4], null],
