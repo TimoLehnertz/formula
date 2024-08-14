@@ -61,4 +61,10 @@ dates += "P1D";
 
 assertEquals({"2024-01-02", "2024-02-02", "2024-03-02"}, dates);
 
+int a(int[] arr) {
+  return arr.length;
+}
+
+assertEquals(a({}), 0);
+
 return 25;

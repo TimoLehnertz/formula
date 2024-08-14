@@ -30,8 +30,8 @@ class ArrayExpression implements Expression {
     foreach($this->expressions as $expression) {
       $types[] = $expression->validate($scope);
     }
-    $elementType = CompoundType::buildFromTypes($types, true);
-    $this->arrayType = new ArrayType(new IntegerType(true), $elementType, true);
+    $elementType = CompoundType::buildFromTypes($types);
+    $this->arrayType = new ArrayType(new IntegerType(true), $elementType);
     return $this->arrayType;
   }
 
