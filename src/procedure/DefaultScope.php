@@ -55,6 +55,15 @@ class DefaultScope extends Scope {
         return CompoundType::buildFromTypes([new NullType(), $type->getElementsType()]);
       }
     }));
+    $this->definePHP(true, "lastOrNull", [DefaultScope::class, "lastOrNullFunc"], null, null, new SpecificReturnType('FORMULA_FIRST_OR_NULL', function (OuterFunctionArgumentListType $args): ?Type {
+      $type = $args->getArgumentType(0);
+      if ($type instanceof ArrayType) {
+        if ($type->getElementsType() instanceof NeverType) {
+          return new NullType();
+        }
+        return CompoundType::buildFromTypes([new NullType(), $type->getElementsType()]);
+      }
+    }));
     $this->definePHP(true, "assertTrue", [DefaultScope::class, "assertTrueFunc"]);
     $this->definePHP(true, "assertFalse", [DefaultScope::class, "assertFalseFunc"]);
     $this->definePHP(true, "assertEquals", [DefaultScope::class, "assertEqualsFunc"]);
@@ -188,6 +197,12 @@ class DefaultScope extends Scope {
     if (sizeof($array) === 0)
       return null;
     return $array[0];
+  }
+
+  public static function lastOrNullFunc(array $array): mixed {
+    if (sizeof($array) === 0)
+      return null;
+    return end($array);
   }
 
   public static function sumFunc(float|array ...$values): float {
