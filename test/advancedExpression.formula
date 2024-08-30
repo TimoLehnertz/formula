@@ -1,0 +1,47 @@
+(
+    (
+        5100.0*(
+            (
+                sizeof(
+                    getMeasurements(
+                        S4799ID, 'P6D'
+                    )
+                )>=6
+            )?avg(
+                getMeasurements(
+                    S4799ID, 'P6D'
+                )
+            ):avg(
+                getMeasurements(
+                    S1820ID, 'P6D'
+                )
+            )
+        )
+    )/(
+        (
+            avg(
+                getMeasurements(
+                    S1555ID, 'P6D', 'P0D'
+                )
+            )*86.4
+        )*(
+            (
+                sizeof(
+                    getMeasurements(
+                        S4799ID, 'P6D'
+                    )
+                )>=6
+            )?avg(
+                getMeasurements(
+                    S4582ID, 'P6D'
+                )
+            ):(
+                avg(
+                    getMeasurements(
+                        S1820ID, 'P6D'
+                    )
+                )*2
+            )
+        )
+    )
+)

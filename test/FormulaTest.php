@@ -184,6 +184,22 @@ class FormulaTest extends TestCase {
     $this->assertEquals(123, $formula->calculate()->toPHPValue());
   }
 
+  public function getMeasurements(int $sensorID, \DateInterval|int $fromBackInterval, \DateInterval|int $toFrontInterval = new \DateInterval('P0D')): int {
+    return 1;
+  }
+
+  public function testComplexExpression(): void {
+    $scope = new Scope();
+    $scope->definePHP(true, 'getMeasurements', [$this, 'getMeasurements']);
+    $scope->definePHP(true, 'S4799ID', 4799);
+    $scope->definePHP(true, 'S1820ID', 1820);
+    $scope->definePHP(true, 'S1555ID', 1555);
+    $scope->definePHP(true, 'S4582ID', 4582);
+    $source = file_get_contents('test/advancedExpression.formula');
+    $formula = new Formula($source, $scope);
+    $this->assertEqualsWithDelta($formula->calculate()->toPHPValue(), 29, 1);
+  }
+
   // public function testAdvanced(): void {
   //   $src = 'getModuleComponentIndex()==1 ? S1875-S362 : earlyReturnIfNull(getModuleComponentIndex())>1 ? earlyReturnIfNull(getMeasurementAtComponentIndex(earlyReturnIfNull(getModuleComponentIndex())-1,{S362ID,S363ID,S364ID,S365ID,S366ID},MeasurementInterpolation.OFF)) -S362 : null';
   //   $scope = new Scope();

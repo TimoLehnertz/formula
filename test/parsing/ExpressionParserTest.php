@@ -8,6 +8,7 @@ use TimoLehnertz\formula\expression\BracketExpression;
 use TimoLehnertz\formula\expression\ConstantExpression;
 use TimoLehnertz\formula\expression\IdentifierExpression;
 use TimoLehnertz\formula\expression\OperatorExpression;
+use TimoLehnertz\formula\expression\TernaryExpression;
 use TimoLehnertz\formula\operator\ImplementableOperator;
 use TimoLehnertz\formula\parsing\ExpressionParser;
 use TimoLehnertz\formula\tokens\Tokenizer;
@@ -91,5 +92,12 @@ class ExpressionParserTest extends TestCase {
     $this->assertInstanceOf(ImplementableOperator::class, $result->parsed->operator);
     $this->assertInstanceOf(TypeExpression::class, $result->parsed->rightExpression);
     $this->assertEquals('(float)1', $result->parsed->toString(PrettyPrintOptions::buildDefault()));
+  }
+
+  public function testTernary(): void {
+    $firstToken = Tokenizer::tokenize("(true?1:2)");
+    $result = (new ExpressionParser())->parse($firstToken);
+    $this->assertEquals($result->nextToken, null);
+    $this->assertInstanceOf(TernaryExpression::class, $result->parsed);
   }
 }
