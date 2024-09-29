@@ -141,7 +141,7 @@ res += string.length; // 40
 function(int) -> int intFunc = (int a) -> a*2;
 
 
-res += intFunc(1); // 42
+res += intFunc(1.9); // 42, wil be implicitly casted to 1
 
 intFunc = (int a) -> a;
 
