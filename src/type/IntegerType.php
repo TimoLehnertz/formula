@@ -2,7 +2,6 @@
 declare(strict_types = 1);
 namespace TimoLehnertz\formula\type;
 
-use TimoLehnertz\formula\nodes\NodeInterfaceType;
 use TimoLehnertz\formula\operator\ImplementableOperator;
 
 /**
@@ -25,10 +24,6 @@ class IntegerType extends Type {
   public function getIdentifier(bool $nested = false): string {
     return 'int';
   }
-
-  // public function getImplementedOperators(): array {
-  //   return NumberValueHelper::getImplementedOperators();
-  // }
 
   protected function getTypeCompatibleOperands(ImplementableOperator $operator): array {
     return NumberValueHelper::getTypeCompatibleOperands($this, $operator);

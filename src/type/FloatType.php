@@ -25,10 +25,6 @@ class FloatType extends Type {
     return 'float';
   }
 
-  // public function getImplementedOperators(): array {
-  //   return NumberValueHelper::getImplementedOperators();
-  // }
-
   protected function getTypeCompatibleOperands(ImplementableOperator $operator): array {
     return NumberValueHelper::getTypeCompatibleOperands($this, $operator);
   }
