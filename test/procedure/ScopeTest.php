@@ -141,7 +141,7 @@ class ScopeTest extends TestCase {
     // @formatter:on
     $this->assertTrue($expectedClassType->equals($res[0]));
     $value = $res[1];
-    assertInstanceOf(PHPClassInstanceValue::class, $value);
+    $this->assertInstanceOf(PHPClassInstanceValue::class, $value);
     $this->assertTrue($value->toPHPValue() === $object);
   }
 

@@ -147,8 +147,8 @@ class DefaultScope extends Scope {
     return floor($value);
   }
 
-  public static function roundFunc(int|float $num, int $precision = 0, int $mode = PHP_ROUND_HALF_UP): float {
-    return round($num, $precision, $mode);
+  public static function roundFunc(int|float $num, int $precision = 0): float {
+    return round($num, $precision);
   }
 
   public static function sinFunc(float $arg): float {

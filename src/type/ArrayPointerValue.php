@@ -2,7 +2,6 @@
 declare(strict_types = 1);
 namespace TimoLehnertz\formula\type;
 
-use TimoLehnertz\formula\FormulaBugException;
 use TimoLehnertz\formula\FormulaRuntimeException;
 use TimoLehnertz\formula\operator\ImplementableOperator;
 use TimoLehnertz\formula\procedure\ValueContainer;
