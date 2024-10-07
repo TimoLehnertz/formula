@@ -83,7 +83,7 @@ class OperatorParser extends Parser {
       case Token::DECREMENT:
         /**
          * If the next token is an identifier this must be a prefix as in a++
-         * It doesnt work the other way arround as a()++ could also be a legal postfix
+         * It doesn't work the other way around as a()++ could also be a legal postfix
          */
         $isPrefix = $firstToken->hasNext() && $firstToken->next()->id === Token::IDENTIFIER;
         if($firstToken->id === Token::INCREMENT) {
