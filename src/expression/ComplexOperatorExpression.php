@@ -9,7 +9,7 @@ use TimoLehnertz\formula\operator\ParsedOperator;
 /**
  * @author Timo Lehnertz
  *        
- *         Represents an OperatorExpression whoose string representation differs from the default implementation
+ *         Represents an OperatorExpression whose string representation differs from the default implementation
  */
 class ComplexOperatorExpression extends OperatorExpression {
 

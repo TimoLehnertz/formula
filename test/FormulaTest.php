@@ -9,8 +9,14 @@ use TimoLehnertz\formula\FormulaValidationException;
 use TimoLehnertz\formula\PrettyPrintOptions;
 use TimoLehnertz\formula\procedure\Scope;
 use TimoLehnertz\formula\tokens\TokenisationException;
+use TimoLehnertz\formula\type\BooleanType;
+use TimoLehnertz\formula\type\CompoundType;
 use TimoLehnertz\formula\type\FloatType;
+use TimoLehnertz\formula\type\FloatValue;
 use TimoLehnertz\formula\type\IntegerType;
+use TimoLehnertz\formula\type\NullType;
+use TimoLehnertz\formula\type\StringType;
+use TimoLehnertz\formula\type\StringValue;
 
 class FormulaTest extends TestCase {
 
@@ -197,6 +203,14 @@ class FormulaTest extends TestCase {
     $scope->definePHP(true, 'S4582ID', 4582);
     $source = file_get_contents('test/advancedExpression.formula');
     $formula = new Formula($source, $scope);
+    $this->assertEqualsWithDelta($formula->calculate()->toPHPValue(), 29, 1);
+  }
+
+  public function testCompoundTypeCast(): void {
+    $scope = new Scope();
+    $scope->define(true, CompoundType::buildFromTypes([new StringType(), new IntegerType()]), 'a', new StringValue('abc'));
+    $scope->define(true, CompoundType::buildFromTypes([new FloatType(), new BooleanType()]), 'b', new FloatValue(1));
+    $formula = new Formula('a = b; return b;', $scope);
     $this->assertEqualsWithDelta($formula->calculate()->toPHPValue(), 29, 1);
   }
 
