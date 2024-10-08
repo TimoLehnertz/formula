@@ -7,6 +7,8 @@ use TimoLehnertz\formula\expression\ComplexOperatorExpression;
 use TimoLehnertz\formula\expression\ConstantExpression;
 use TimoLehnertz\formula\expression\Expression;
 use TimoLehnertz\formula\expression\OperatorExpression;
+use TimoLehnertz\formula\nodes\Node;
+use TimoLehnertz\formula\procedure\Scope;
 use TimoLehnertz\formula\type\IntegerValue;
 use TimoLehnertz\formula\type\IntegerType;
 
@@ -36,7 +38,7 @@ class DecrementPostfixOperator implements ParsedOperator {
     return '--';
   }
 
-  public function getIdentifier(): string {
-    return 'a--';
+  public function buildNode(Scope $scope, ?Expression $leftExpression, ?Expression $rightExpression): Node {
+    return new Node('decrementPostfix', [$leftExpression->buildNode($scope)]);
   }
 }

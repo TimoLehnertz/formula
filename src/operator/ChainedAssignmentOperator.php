@@ -6,6 +6,8 @@ use TimoLehnertz\formula\PrettyPrintOptions;
 use TimoLehnertz\formula\expression\ComplexOperatorExpression;
 use TimoLehnertz\formula\expression\Expression;
 use TimoLehnertz\formula\expression\OperatorExpression;
+use TimoLehnertz\formula\nodes\Node;
+use TimoLehnertz\formula\procedure\Scope;
 
 /**
  * @author Timo Lehnertz
@@ -42,7 +44,7 @@ class ChainedAssignmentOperator implements ParsedOperator {
     return $this->identifier;
   }
 
-  public function getIdentifier(): string {
-    return $this->chainedOperator->toString(PrettyPrintOptions::buildDefault()).'=';
+  public function buildNode(Scope $scope, ?Expression $leftExpression, ?Expression $rightExpression): Node {
+    return new Node($this->chainedOperator->toString(PrettyPrintOptions::buildDefault()).'=', [$leftExpression->buildNode($scope), $rightExpression->buildNode($scope)]);
   }
 }

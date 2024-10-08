@@ -45,17 +45,6 @@ class ComplexOperatorExpression extends OperatorExpression {
   }
 
   public function buildNode(Scope $scope): Node {
-    $connected = [];
-    if ($this->outerLeftExpression !== null) {
-      $connected []= $this->outerLeftExpression->buildNode($scope);
-    }
-    if ($this->outerRightExpression !== null) {
-      $connected []= $this->outerRightExpression->buildNode($scope);
-    }
-    if($this->outerOperator !== null) {
-      return new Node('ComplexOperatorExpression', $connected, ['operator' => $this->outerOperator->getIdentifier()]);
-    } else {
-      return $connected[0];
-    }
+    return $this->outerOperator->buildNode($scope, $this->outerLeftExpression, $this->outerRightExpression);
   }
 }

@@ -1,11 +1,16 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace TimoLehnertz\formula\operator;
 
 use TimoLehnertz\formula\PrettyPrintOptions;
 use TimoLehnertz\formula\expression\ComplexOperatorExpression;
 use TimoLehnertz\formula\expression\Expression;
+use TimoLehnertz\formula\expression\OperatorExpression;
 use TimoLehnertz\formula\expression\TypeExpression;
+use TimoLehnertz\formula\nodes\Node;
+use TimoLehnertz\formula\procedure\Scope;
 use TimoLehnertz\formula\type\Type;
 
 /**
@@ -23,8 +28,8 @@ class TypeCastOperator implements ParsedOperator {
   }
 
   public function toString(PrettyPrintOptions $prettyPrintOptions): string {
-    if($this->explicit) {
-      return '('.$this->type->getIdentifier().')';
+    if ($this->explicit) {
+      return '(' . $this->type->getIdentifier() . ')';
     } else {
       return '';
     }
@@ -32,11 +37,7 @@ class TypeCastOperator implements ParsedOperator {
 
   public function transform(?Expression $leftExpression, ?Expression $rightExpression): Expression {
     $typeCastOperator = new ImplementableOperator(ImplementableOperator::TYPE_TYPE_CAST);
-    if($this->explicit) {
-      return new ComplexOperatorExpression($rightExpression, $typeCastOperator, new TypeExpression($this->type), null, $this, $rightExpression);
-    } else {
-      return new ComplexOperatorExpression($rightExpression, $typeCastOperator, new TypeExpression($this->type), null, null, $rightExpression);
-    }
+    return new ComplexOperatorExpression($rightExpression, $typeCastOperator, new TypeExpression($this->type), null, $this, $rightExpression);
   }
 
   public function getOperatorType(): OperatorType {
@@ -47,7 +48,11 @@ class TypeCastOperator implements ParsedOperator {
     return 3;
   }
 
-  public function getIdentifier(): string {
-    return 'typecast';
+  public function buildNode(Scope $scope, ?Expression $leftExpression, ?Expression $rightExpression): Node {
+    if ($this->explicit) {
+      return (new OperatorExpression($rightExpression, new ImplementableOperator(ImplementableOperator::TYPE_TYPE_CAST), new TypeExpression($this->type)))->buildNode($scope);
+    } else {
+      return $rightExpression->buildNode($scope);
+    }
   }
 }

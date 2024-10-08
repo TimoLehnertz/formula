@@ -227,8 +227,27 @@ class FormulaTest extends TestCase {
     $formula = new Formula('a+=1', $scope);
     $this->assertEquals(2, $formula->calculate()->toPHPValue());
     $rootNode = $formula->getNodeTree()['rootNode'];
-    $this->assertEquals('ComplexOperatorExpression', $rootNode['nodeType']);
-    $this->assertEquals('+=', $rootNode['properties']['operator']);
+    $this->assertEquals('+=', $rootNode['nodeType']);
+  }
+
+  public function testCallOperatorNodeTree(): void {
+    $scope = new Scope();
+    $formula = new Formula('sum(1)', $scope);
+    $this->assertEquals(1, $formula->calculate()->toPHPValue());
+    // print_r($formula->getNodeTree()['rootNode']);
+    // $rootNode = $formula->getNodeTree()['rootNode'];
+    // $this->assertEquals('ComplexOperatorExpression', $rootNode['nodeType']);
+    // $this->assertEquals('+=', $rootNode['properties']['operator']);
+  }
+
+  public function testArrayAccessOperatorNodeTree(): void {
+    $scope = new Scope();
+    $formula = new Formula('{1}[0]', $scope);
+    $this->assertEquals(1, $formula->calculate()->toPHPValue());
+    $this->assertCount(2, $formula->getNodeTree()['rootNode']['connected']);
+    // $rootNode = $formula->getNodeTree()['rootNode'];
+    // $this->assertEquals('ComplexOperatorExpression', $rootNode['nodeType']);
+    // $this->assertEquals('+=', $rootNode['properties']['operator']);
   }
 
   // public function testAdvanced(): void {
