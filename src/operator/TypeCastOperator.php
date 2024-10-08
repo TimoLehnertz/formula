@@ -32,7 +32,11 @@ class TypeCastOperator implements ParsedOperator {
 
   public function transform(?Expression $leftExpression, ?Expression $rightExpression): Expression {
     $typeCastOperator = new ImplementableOperator(ImplementableOperator::TYPE_TYPE_CAST);
-    return new ComplexOperatorExpression($rightExpression, $typeCastOperator, new TypeExpression($this->type), null, $this, $rightExpression);
+    if($this->explicit) {
+      return new ComplexOperatorExpression($rightExpression, $typeCastOperator, new TypeExpression($this->type), null, $this, $rightExpression);
+    } else {
+      return new ComplexOperatorExpression($rightExpression, $typeCastOperator, new TypeExpression($this->type), null, null, $rightExpression);
+    }
   }
 
   public function getOperatorType(): OperatorType {
@@ -41,5 +45,9 @@ class TypeCastOperator implements ParsedOperator {
 
   public function getPrecedence(): int {
     return 3;
+  }
+
+  public function getIdentifier(): string {
+    return 'typecast';
   }
 }

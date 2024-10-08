@@ -14,9 +14,10 @@ use TimoLehnertz\formula\type\CompoundType;
 use TimoLehnertz\formula\type\FloatType;
 use TimoLehnertz\formula\type\FloatValue;
 use TimoLehnertz\formula\type\IntegerType;
-use TimoLehnertz\formula\type\NullType;
 use TimoLehnertz\formula\type\StringType;
 use TimoLehnertz\formula\type\StringValue;
+
+use function PHPUnit\Framework\assertEquals;
 
 class FormulaTest extends TestCase {
 
@@ -206,12 +207,28 @@ class FormulaTest extends TestCase {
     $this->assertEqualsWithDelta($formula->calculate()->toPHPValue(), 29, 1);
   }
 
-  public function testCompoundTypeCast(): void {
+  public function testImplicitCastToString(): void {
     $scope = new Scope();
-    $scope->define(true, CompoundType::buildFromTypes([new StringType(), new IntegerType()]), 'a', new StringValue('abc'));
-    $scope->define(true, CompoundType::buildFromTypes([new FloatType(), new BooleanType()]), 'b', new FloatValue(1));
-    $formula = new Formula('a = b; return b;', $scope);
-    $this->assertEqualsWithDelta($formula->calculate()->toPHPValue(), 29, 1);
+    $scope->definePHP(false, 'a', false);
+    $formula = new Formula('a = 1', $scope);
+    $this->assertEquals("a=1", $formula->prettyprintFormula());
+  }
+
+  public function testImplicitCastToNodeTree(): void {
+    $scope = new Scope();
+    $scope->definePHP(false, 'a', false);
+    $formula = new Formula('a = 1', $scope);
+    $this->assertEquals('{"nodeType":"OperatorExpression","connected":[{"nodeType":"IdentifierExpression","connected":[],"properties":{"identifier":"a"}},{"nodeType":"ConstantExpression","connected":[],"properties":{"type":{"typeName":"IntegerType"},"value":"1"}}],"properties":{"operator":12}}', json_encode($formula->getNodeTree()['rootNode']));
+  }
+
+  public function testChainedOperatorsNodeTree(): void {
+    $scope = new Scope();
+    $scope->definePHP(false, 'a', 1);
+    $formula = new Formula('a+=1', $scope);
+    $this->assertEquals(2, $formula->calculate()->toPHPValue());
+    $rootNode = $formula->getNodeTree()['rootNode'];
+    $this->assertEquals('ComplexOperatorExpression', $rootNode['nodeType']);
+    $this->assertEquals('+=', $rootNode['properties']['operator']);
   }
 
   // public function testAdvanced(): void {

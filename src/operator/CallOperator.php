@@ -34,4 +34,8 @@ class CallOperator implements ParsedOperator {
   public function toString(PrettyPrintOptions $prettyPrintOptions): string {
     return $this->arguments->toString($prettyPrintOptions);
   }
+
+  public function getIdentifier(): string {
+    return '()';
+  }
 }

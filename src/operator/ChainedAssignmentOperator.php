@@ -41,4 +41,8 @@ class ChainedAssignmentOperator implements ParsedOperator {
   public function toString(PrettyPrintOptions $prettyPrintOptions): string {
     return $this->identifier;
   }
+
+  public function getIdentifier(): string {
+    return $this->chainedOperator->toString(PrettyPrintOptions::buildDefault()).'=';
+  }
 }

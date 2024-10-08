@@ -35,4 +35,8 @@ class IncrementPostfixOperator implements ParsedOperator {
   public function toString(PrettyPrintOptions $prettyPrintOptions): string {
     return '++';
   }
+
+  public function getIdentifier(): string {
+    return 'incrementPostfix';
+  }
 }

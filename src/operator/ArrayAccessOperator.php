@@ -33,4 +33,8 @@ class ArrayAccessOperator implements ParsedOperator {
   public function toString(PrettyPrintOptions $prettyPrintOptions): string {
     return '['.$this->indexExpression->toString($prettyPrintOptions).']';
   }
+
+  public function getIdentifier(): string {
+    return '[]';
+  }
 }

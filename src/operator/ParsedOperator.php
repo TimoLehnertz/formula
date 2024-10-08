@@ -18,4 +18,6 @@ interface ParsedOperator extends FormulaPart {
    * Transform this operator into an expression
    */
   public function transform(?Expression $leftExpression, ?Expression $rightExpression): Expression;
+
+  public function getIdentifier(): string;
 }
