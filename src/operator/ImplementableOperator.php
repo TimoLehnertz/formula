@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace TimoLehnertz\formula\operator;
 
-use TimoLehnertz\formula\FormulaBugException;
 use TimoLehnertz\formula\FormulaException;
 use TimoLehnertz\formula\FormulaPart;
 use TimoLehnertz\formula\PrettyPrintOptions;

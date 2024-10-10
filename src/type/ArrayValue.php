@@ -6,8 +6,6 @@ use TimoLehnertz\formula\FormulaBugException;
 use TimoLehnertz\formula\operator\ImplementableOperator;
 use TimoLehnertz\formula\type\classes\ClassInstanceValue;
 use TimoLehnertz\formula\type\classes\FieldValue;
-use const false;
-use const true;
 use TimoLehnertz\formula\FormulaRuntimeException;
 use TimoLehnertz\formula\operator\OperatorType;
 

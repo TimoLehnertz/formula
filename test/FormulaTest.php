@@ -10,8 +10,15 @@ use TimoLehnertz\formula\PrettyPrintOptions;
 use TimoLehnertz\formula\procedure\DefaultScope;
 use TimoLehnertz\formula\procedure\Scope;
 use TimoLehnertz\formula\tokens\TokenisationException;
+use TimoLehnertz\formula\type\BooleanType;
+use TimoLehnertz\formula\type\CompoundType;
 use TimoLehnertz\formula\type\FloatType;
+use TimoLehnertz\formula\type\FloatValue;
 use TimoLehnertz\formula\type\IntegerType;
+use TimoLehnertz\formula\type\StringType;
+use TimoLehnertz\formula\type\StringValue;
+
+use function PHPUnit\Framework\assertEquals;
 
 class FormulaTest extends TestCase {
 
@@ -199,6 +206,49 @@ class FormulaTest extends TestCase {
     $source = file_get_contents('test/advancedExpression.formula');
     $formula = new Formula($source, $scope);
     $this->assertEqualsWithDelta($formula->calculate()->toPHPValue(), 29, 1);
+  }
+
+  public function testImplicitCastToString(): void {
+    $scope = new Scope();
+    $scope->definePHP(false, 'a', false);
+    $formula = new Formula('a = 1', $scope);
+    $this->assertEquals("a=1", $formula->prettyprintFormula());
+  }
+
+  public function testImplicitCastToNodeTree(): void {
+    $scope = new Scope();
+    $scope->definePHP(false, 'a', false);
+    $formula = new Formula('a = 1', $scope);
+    $this->assertEquals('{"nodeType":"OperatorExpression","connected":[{"nodeType":"IdentifierExpression","connected":[],"properties":{"identifier":"a"}},{"nodeType":"ConstantExpression","connected":[],"properties":{"type":{"typeName":"IntegerType"},"value":"1"}}],"properties":{"operator":12}}', json_encode($formula->getNodeTree()['rootNode']));
+  }
+
+  public function testChainedOperatorsNodeTree(): void {
+    $scope = new Scope();
+    $scope->definePHP(false, 'a', 1);
+    $formula = new Formula('a+=1', $scope);
+    $this->assertEquals(2, $formula->calculate()->toPHPValue());
+    $rootNode = $formula->getNodeTree()['rootNode'];
+    $this->assertEquals('+=', $rootNode['nodeType']);
+  }
+
+  public function testCallOperatorNodeTree(): void {
+    $scope = new Scope();
+    $formula = new Formula('sum(1)', $scope);
+    $this->assertEquals(1, $formula->calculate()->toPHPValue());
+    // print_r($formula->getNodeTree()['rootNode']);
+    // $rootNode = $formula->getNodeTree()['rootNode'];
+    // $this->assertEquals('ComplexOperatorExpression', $rootNode['nodeType']);
+    // $this->assertEquals('+=', $rootNode['properties']['operator']);
+  }
+
+  public function testArrayAccessOperatorNodeTree(): void {
+    $scope = new Scope();
+    $formula = new Formula('{1}[0]', $scope);
+    $this->assertEquals(1, $formula->calculate()->toPHPValue());
+    $this->assertCount(2, $formula->getNodeTree()['rootNode']['connected']);
+    // $rootNode = $formula->getNodeTree()['rootNode'];
+    // $this->assertEquals('ComplexOperatorExpression', $rootNode['nodeType']);
+    // $this->assertEquals('+=', $rootNode['properties']['operator']);
   }
 
   // public function testAdvanced(): void {

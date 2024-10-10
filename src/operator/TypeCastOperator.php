@@ -1,11 +1,16 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace TimoLehnertz\formula\operator;
 
 use TimoLehnertz\formula\PrettyPrintOptions;
 use TimoLehnertz\formula\expression\ComplexOperatorExpression;
 use TimoLehnertz\formula\expression\Expression;
+use TimoLehnertz\formula\expression\OperatorExpression;
 use TimoLehnertz\formula\expression\TypeExpression;
+use TimoLehnertz\formula\nodes\Node;
+use TimoLehnertz\formula\procedure\Scope;
 use TimoLehnertz\formula\type\Type;
 
 /**
@@ -23,8 +28,8 @@ class TypeCastOperator implements ParsedOperator {
   }
 
   public function toString(PrettyPrintOptions $prettyPrintOptions): string {
-    if($this->explicit) {
-      return '('.$this->type->getIdentifier().')';
+    if ($this->explicit) {
+      return '(' . $this->type->getIdentifier() . ')';
     } else {
       return '';
     }
@@ -41,5 +46,13 @@ class TypeCastOperator implements ParsedOperator {
 
   public function getPrecedence(): int {
     return 3;
+  }
+
+  public function buildNode(Scope $scope, ?Expression $leftExpression, ?Expression $rightExpression): Node {
+    if ($this->explicit) {
+      return (new OperatorExpression($rightExpression, new ImplementableOperator(ImplementableOperator::TYPE_TYPE_CAST), new TypeExpression($this->type)))->buildNode($scope);
+    } else {
+      return $rightExpression->buildNode($scope);
+    }
   }
 }

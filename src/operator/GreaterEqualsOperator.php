@@ -6,6 +6,8 @@ use TimoLehnertz\formula\PrettyPrintOptions;
 use TimoLehnertz\formula\expression\ComplexOperatorExpression;
 use TimoLehnertz\formula\expression\Expression;
 use TimoLehnertz\formula\expression\OperatorExpression;
+use TimoLehnertz\formula\nodes\Node;
+use TimoLehnertz\formula\procedure\Scope;
 
 /**
  * @author Timo Lehnertz
@@ -33,5 +35,9 @@ class GreaterEqualsOperator implements ParsedOperator {
 
   public function toString(PrettyPrintOptions $prettyPrintOptions): string {
     return '>=';
+  }
+
+  public function buildNode(Scope $scope, ?Expression $leftExpression, ?Expression $rightExpression): Node {
+    return new Node('greaterEquals', [$leftExpression->buildNode($scope), $rightExpression->buildNode($scope)]);
   }
 }

@@ -32,21 +32,6 @@ class OperatorExpression implements Expression {
     $this->leftExpression = $leftExpression;
     $this->operator = $operator;
     $this->rightExpression = $rightExpression;
-
-    // switch($operator->getOperatorType()) {
-    //   case OperatorType::PrefixOperator:
-    //     assertNull($leftExpression, 'PrefixOperator can\'t have a left expression');
-    //     assertNotNull($rightExpression, 'PrefixOperator requires a right expression');
-    //     break;
-    //   case OperatorType::InfixOperator:
-    //     assertNotNull($leftExpression, 'InfixOperator requires a left expression');
-    //     assertNotNull($rightExpression, 'InfixOperator requires a right expression');
-    //     break;
-    //       case OperatorType::PostfixOperator:
-    //         assertNotNull($leftExpression, 'PostfixOperator requires a left expression');
-    //         assertNull($rightExpression, 'PostfixOperator can\'t have a right expression');
-    //         break;
-    // }
   }
 
   public function validate(Scope $scope): Type {
@@ -66,9 +51,6 @@ class OperatorExpression implements Expression {
         $rightType = $this->rightExpression->validate($scope);
         $returnType = $leftType->getOperatorResultType($this->operator, $rightType);
         break;
-        //       case OperatorType::PostfixOperator:
-        //         $returnType = $leftType->getOperatorResultType($this->operator, null);
-        //         break;
     }
     if ($returnType === null) {
       throw new FormulaValidationException('Invalid operation ' . ($leftType?->getIdentifier() ?? '') . ' ' . $this->operator->toString(PrettyPrintOptions::buildDefault()) . ' ' . ($rightType?->getIdentifier() ?? ''));
@@ -82,9 +64,6 @@ class OperatorExpression implements Expression {
         return $this->rightExpression->run($scope)->operate($this->operator, null);
       case OperatorType::InfixOperator:
         return $this->leftExpression->run($scope)->operate($this->operator, $this->rightExpression->run($scope));
-        //       case OperatorType::PostfixOperator:
-        //         return $this->leftExpression->run($scope)->operate($this->operator, null);
-        //         break;
       default:
         throw new FormulaBugException('Invalid operatorType');
     }

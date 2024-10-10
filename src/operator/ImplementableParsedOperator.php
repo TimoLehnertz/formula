@@ -5,6 +5,9 @@ namespace TimoLehnertz\formula\operator;
 use TimoLehnertz\formula\PrettyPrintOptions;
 use TimoLehnertz\formula\expression\Expression;
 use TimoLehnertz\formula\expression\OperatorExpression;
+use TimoLehnertz\formula\FormulaBugException;
+use TimoLehnertz\formula\nodes\Node;
+use TimoLehnertz\formula\procedure\Scope;
 
 /**
  * @author Timo Lehnertz
@@ -46,5 +49,9 @@ class ImplementableParsedOperator implements ParsedOperator {
 
   public function toString(PrettyPrintOptions $prettyPrintOptions): string {
     return $this->identifier;
+  }
+
+  public function buildNode(Scope $scope, ?Expression $leftExpression, ?Expression $rightExpression): Node {
+    throw new FormulaBugException('No identifier known');
   }
 }
