@@ -232,7 +232,7 @@ class FormulaTest extends TestCase {
   }
 
   public function testCallOperatorNodeTree(): void {
-    $scope = new Scope();
+    $scope = new DefaultScope();
     $formula = new Formula('sum(1)', $scope);
     $this->assertEquals(1, $formula->calculate()->toPHPValue());
     // print_r($formula->getNodeTree()['rootNode']);

@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use TimoLehnertz\formula\Formula;
 use TimoLehnertz\formula\FormulaBugException;
 use TimoLehnertz\formula\operator\ImplementableOperator;
+use TimoLehnertz\formula\procedure\DefaultScope;
 use TimoLehnertz\formula\procedure\Scope;
 use TimoLehnertz\formula\type\ArrayType;
 use TimoLehnertz\formula\type\ArrayValue;
@@ -41,7 +42,7 @@ class CustomTypeTest extends TestCase {
   }
 
   public function testTypeCast() {
-    $scope = new Scope();
+    $scope = new DefaultScope();
     $scope->definePHP(true, 'bar', $this->bar(...), null, new CustomArrayType());
     $scope->definePHP(true, 'foo', $this->foo(...), ['value' => new CustomArrayType()], new CustomArrayType());
     $formula = new Formula('avg(bar())', $scope);
