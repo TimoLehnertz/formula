@@ -15,6 +15,7 @@ use TimoLehnertz\formula\type\CompoundType;
 use TimoLehnertz\formula\type\NullType;
 use TimoLehnertz\formula\type\NeverType;
 use TimoLehnertz\formula\ExitIfNullException;
+use TimoLehnertz\formula\procedure\DefaultScope;
 use TimoLehnertz\formula\procedure\Scope;
 
 class DefaultScopeTest extends TestCase {
@@ -104,7 +105,7 @@ class DefaultScopeTest extends TestCase {
   }
 
   public function testEarlyReturnInFunction(): void {
-    $scope = new Scope();
+    $scope = new DefaultScope();
     $scope->definePHP(true, 'func', function(\DateInterval|int $a) {return $a;}); 
     $scope->definePHP(true, 'func2', function(): ?\DateInterval {return null;});
     $formula = new Formula('func(earlyReturnIfNull(func2()))', $scope);

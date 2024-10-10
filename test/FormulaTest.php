@@ -7,6 +7,7 @@ use TimoLehnertz\formula\Formula;
 use TimoLehnertz\formula\FormulaRuntimeException;
 use TimoLehnertz\formula\FormulaValidationException;
 use TimoLehnertz\formula\PrettyPrintOptions;
+use TimoLehnertz\formula\procedure\DefaultScope;
 use TimoLehnertz\formula\procedure\Scope;
 use TimoLehnertz\formula\tokens\TokenisationException;
 use TimoLehnertz\formula\type\FloatType;
@@ -78,7 +79,7 @@ class FormulaTest extends TestCase {
 
   public function testpow(): void {
     $str = 'pow(a,b)';
-    $scope = new Scope();
+    $scope = new DefaultScope();
     $scope->definePHP(false, 'a', 1);
     $scope->definePHP(false, 'b', 1);
     $formula = new Formula($str, $scope);
@@ -94,7 +95,7 @@ class FormulaTest extends TestCase {
 
   public function testNesting(): void {
     $str = '((min(a,2)*b+5)/(((2+5)-5)+99*0))-7.5';
-    $scope = new Scope();
+    $scope = new DefaultScope();
     $scope->definePHP(false, 'a', 2);
     $scope->definePHP(false, 'b', 5);
     $formula = new Formula($str, $scope);
@@ -189,7 +190,7 @@ class FormulaTest extends TestCase {
   }
 
   public function testComplexExpression(): void {
-    $scope = new Scope();
+    $scope = new DefaultScope();
     $scope->definePHP(true, 'getMeasurements', [$this, 'getMeasurements']);
     $scope->definePHP(true, 'S4799ID', 4799);
     $scope->definePHP(true, 'S1820ID', 1820);

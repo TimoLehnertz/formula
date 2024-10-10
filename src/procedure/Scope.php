@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace TimoLehnertz\formula\procedure;
 
+use TimoLehnertz\formula\FormulaBugException;
 use TimoLehnertz\formula\FormulaRuntimeException;
 use TimoLehnertz\formula\type\ArrayType;
 use TimoLehnertz\formula\type\ArrayValue;
@@ -316,7 +317,6 @@ class Scope {
       /** @var \ReflectionProperty $refelctionProperty */
       foreach ($reflection->getProperties(\ReflectionProperty::IS_PUBLIC) as $refelctionProperty) {
         $fieldTypes[$refelctionProperty->getName()] = new FieldType($refelctionProperty->isReadOnly(), Scope::reflectionTypeToFormulaType($refelctionProperty->getType()));
-        //         $fieldValues[$refelctionProperty->getName()] = new FieldValue(Scope::convertPHPVar($refelctionProperty->getValue($value), true)[1]);
       }
       /** @var \ReflectionMethod $reflectionMethod */
       foreach ($reflection->getMethods(\ReflectionMethod::IS_PUBLIC) as $reflectionMethod) {
@@ -325,10 +325,8 @@ class Scope {
         }
         $functionType = Scope::reflectionFunctionToType($reflectionMethod);
         $fieldTypes[$reflectionMethod->getName()] = new FieldType(true, $functionType);
-        //         $fieldValues[$reflectionMethod->getName()] = new FieldValue(new FunctionValue(new PHPFunctionBody([$value,$reflectionMethod->getName()])));
       }
       return [new ClassType(null, $reflection->getName(), $fieldTypes), new PHPClassInstanceValue($value)];
-      //       return [new ClassType(null, $reflection->getName(), $fieldTypes),new ClassInstanceValue($fieldValues)];
     }
     throw new FormulaRuntimeException('Unsupported php type');
   }
@@ -350,9 +348,10 @@ class Scope {
 
   public function unset(string $identifier): void {
     if (isset($this->defined[$identifier])) {
-      $this->defined[$identifier]->unset();
-    } else if ($this->parent !== null) {
-      $this->parent->unset($identifier);
+      if($this->defined[$identifier]->isUsed()) {
+        throw new FormulaBugException('Cant unset used variable '.$identifier);
+      }
+      unset($this->defined[$identifier]);
     } else {
       throw new FormulaRuntimeException($identifier . ' is not defined');
     }

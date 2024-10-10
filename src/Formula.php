@@ -23,18 +23,14 @@ class Formula {
 
   private readonly CodeBlockOrExpression $content;
 
-  private DefaultScope $defaultScope;
-
   private readonly Scope $parentScope;
-
 
   private readonly string $source;
 
   private readonly Type $returnType;
 
-  public function __construct(string $source, ?Scope $parentScope = null, ?Type $expectedReturnType = null) {
+  public function __construct(string $source, ?Scope $parentScope = new DefaultScope(), ?Type $expectedReturnType = null) {
     $this->source = $source;
-    $this->defaultScope = new DefaultScope();
     $this->parentScope = $parentScope ?? new Scope();
     $firstToken = Tokenizer::tokenize($source);
     if ($firstToken !== null) {
@@ -69,7 +65,6 @@ class Formula {
 
   private function buildScope(): Scope {
     $scope = new Scope();
-    $this->parentScope->setParent($this->defaultScope);
     $scope->setParent($this->parentScope);
     return $scope;
   }
@@ -87,5 +82,9 @@ class Formula {
 
   public function getSource(): string {
     return $this->source;
+  }
+
+  public function getDefaultScope(): DefaultScope {
+    return $this->defaultScope;
   }
 }

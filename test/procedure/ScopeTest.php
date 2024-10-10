@@ -5,6 +5,7 @@ namespace test\procedure;
 use PHPUnit\Framework\TestCase;
 use function PHPUnit\Framework\assertInstanceOf;
 use TimoLehnertz\formula\Formula;
+use TimoLehnertz\formula\FormulaBugException;
 use TimoLehnertz\formula\FormulaRuntimeException;
 use TimoLehnertz\formula\FormulaValidationException;
 use TimoLehnertz\formula\procedure\Scope;
@@ -211,9 +212,20 @@ class ScopeTest extends TestCase {
     $scope->definePHP(true, 'i', 1);
     $this->assertEquals(1, $scope->get('i')->toPHPValue());
     $scope->unset('i');
-    $this->expectException(ValueUnsetException::class);
-    $this->expectExceptionMessage('Property i is unset');
+    $this->expectException(FormulaRuntimeException::class);
+    $this->expectExceptionMessage('1:0 i is not defined');
     $scope->get('i');
+  }
+
+  public function testUnsetInUse(): void {
+    $scope = new Scope();
+    $scope->definePHP(true, 'i', 1);
+    $scope->unset('i'); // no exception
+    $scope->definePHP(true, 'i', 1);
+    new Formula('1+i', $scope);
+    $this->expectException(FormulaBugException::class);
+    $this->expectExceptionMessage('Cant unset used variable i');
+    $scope->unset('i'); // exception
   }
 
   public function testDefinePHPNull(): void {
@@ -277,7 +289,9 @@ class ScopeTest extends TestCase {
 
   public function testDateTimeReturn(): void {
     $scope = new Scope();
-    $scope->definePHP(true,"func", function(): \DateTimeImmutable {return new \DateTimeImmutable("2024-01-01");});
+    $scope->definePHP(true, "func", function (): \DateTimeImmutable {
+      return new \DateTimeImmutable("2024-01-01");
+    });
     $formula = new Formula('func()', $scope);
     $this->assertInstanceOf(DateTimeImmutableType::class, $formula->getReturnType());
     $this->assertEquals(new \DateTimeImmutable("2024-01-01"), $formula->calculate()->toPHPValue());
@@ -285,11 +299,25 @@ class ScopeTest extends TestCase {
 
   public function testDateIntervalReturn(): void {
     $scope = new Scope();
-    $scope->definePHP(true,"func", function(): \DateInterval {return new \DateInterval("P1D");});
+    $scope->definePHP(true, "func", function (): \DateInterval {
+      return new \DateInterval("P1D");
+    });
     $formula = new Formula('"2024-01-01" + func()', $scope);
     $this->assertInstanceOf(DateTimeImmutableType::class, $formula->getReturnType());
     $this->assertEquals(new \DateTimeImmutable("2024-01-02"), $formula->calculate()->toPHPValue());
   }
+
+  public function testFunctionReturnsValue(): void {
+    $scope = new Scope();
+    $scope->definePHP(true, "intValueFunction", intValueFunction(...), null, new IntegerType());
+    $formula = new Formula('intValueFunction()', $scope);
+    $this->assertInstanceOf(IntegerType::class, $formula->getReturnType());
+    $this->assertEquals(123, $formula->calculate()->toPHPValue());
+  }
+}
+
+function intValueFunction(): IntegerValue {
+  return new IntegerValue(123);
 }
 
 class ParentClass {
