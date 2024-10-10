@@ -346,12 +346,20 @@ class Scope {
     }
   }
 
-  public function unset(string $identifier): void {
+  public function forget(string $identifier): void {
     if (isset($this->defined[$identifier])) {
       if($this->defined[$identifier]->isUsed()) {
-        throw new FormulaBugException('Cant unset used variable '.$identifier);
+        throw new FormulaBugException('Cant forget used variable '.$identifier);
       }
       unset($this->defined[$identifier]);
+    } else {
+      throw new FormulaRuntimeException($identifier . ' is not defined');
+    }
+  }
+
+  public function unset(string $identifier): void {
+    if (isset($this->defined[$identifier])) {
+      $this->defined[$identifier]->unset();
     } else {
       throw new FormulaRuntimeException($identifier . ' is not defined');
     }

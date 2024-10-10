@@ -207,26 +207,37 @@ class ScopeTest extends TestCase {
     $scope->unset('i');
   }
 
+  public function testForget(): void {
+    $scope = new Scope();
+    $scope->definePHP(true, 'i', 1);
+    $this->assertEquals(1, $scope->get('i')->toPHPValue());
+    $scope->forget('i');
+    $this->expectException(FormulaRuntimeException::class);
+    $this->expectExceptionMessage('1:0 i is not defined');
+    $scope->forget('i');
+  }
+
+  public function testForgetInUse(): void {
+    $scope = new Scope();
+    $scope->definePHP(true, 'i', 1);
+    $scope->forget('i'); // no exception
+    $scope->definePHP(true, 'i', 1);
+    new Formula('1+i', $scope);
+    $this->expectException(FormulaBugException::class);
+    $this->expectExceptionMessage('Cant forget used variable i');
+    $scope->forget('i'); // exception
+  }
+
   public function testUnset(): void {
     $scope = new Scope();
     $scope->definePHP(true, 'i', 1);
     $this->assertEquals(1, $scope->get('i')->toPHPValue());
     $scope->unset('i');
-    $this->expectException(FormulaRuntimeException::class);
-    $this->expectExceptionMessage('1:0 i is not defined');
+    $this->expectException(ValueUnsetException::class);
+    $this->expectExceptionMessage('1:0 Property i is unset');
     $scope->get('i');
   }
 
-  public function testUnsetInUse(): void {
-    $scope = new Scope();
-    $scope->definePHP(true, 'i', 1);
-    $scope->unset('i'); // no exception
-    $scope->definePHP(true, 'i', 1);
-    new Formula('1+i', $scope);
-    $this->expectException(FormulaBugException::class);
-    $this->expectExceptionMessage('Cant unset used variable i');
-    $scope->unset('i'); // exception
-  }
 
   public function testDefinePHPNull(): void {
     $scope = new Scope();
