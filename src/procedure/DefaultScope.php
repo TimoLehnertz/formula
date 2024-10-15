@@ -123,11 +123,17 @@ class DefaultScope extends Scope {
 
   public static function minFunc(float|array ...$values): float {
     $values = DefaultScope::mergeArraysRecursive($values);
+    if(count($values) === 0) {
+      return 0;
+    }
     return min($values);
   }
 
   public static function maxFunc(float|array ...$values): float {
     $values = DefaultScope::mergeArraysRecursive($values);
+    if(count($values) === 0) {
+      return 0;
+    }
     return max($values);
   }
 
