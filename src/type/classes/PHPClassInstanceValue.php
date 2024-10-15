@@ -1,5 +1,7 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace TimoLehnertz\formula\type\classes;
 
 use TimoLehnertz\formula\FormulaBugException;
@@ -19,9 +21,16 @@ class PHPClassInstanceValue extends Value {
 
   private readonly \ReflectionClass $reflection;
 
+  private $e;
+
   public function __construct(mixed $instance) {
     $this->instance = $instance;
     $this->reflection = new \ReflectionClass($this->instance);
+    try {
+      throw new \Exception('invalid construction');
+    } catch (\Exception $e) {
+      $this->e = $e;
+    }
   }
 
   public function isTruthy(): bool {
@@ -33,20 +42,20 @@ class PHPClassInstanceValue extends Value {
   }
 
   public function valueEquals(Value $other): bool {
-    if($other instanceof PHPClassInstanceValue) {
+    if ($other instanceof PHPClassInstanceValue) {
       return $this->instance === $other->instance;
     }
     return false;
   }
 
   protected function valueOperate(ImplementableOperator $operator, ?Value $other): Value {
-    switch($operator->getID()) {
+    switch ($operator->getID()) {
       case ImplementableOperator::TYPE_MEMBER_ACCESS:
-        if($other instanceof MemberAccsessValue) {
-          if($this->reflection->hasProperty($other->getMemberIdentifier())) {
+        if ($other instanceof MemberAccsessValue) {
+          if ($this->reflection->hasProperty($other->getMemberIdentifier())) {
             return Scope::convertPHPVar($this->reflection->getProperty($other->getMemberIdentifier())->getValue($this->instance), true)[1];
           }
-          if($this->reflection->hasMethod($other->getMemberIdentifier())) {
+          if ($this->reflection->hasMethod($other->getMemberIdentifier())) {
             $instance = $this->instance;
             $reflection = $this->reflection;
             $returnType = $reflection->getMethod($other->getMemberIdentifier())->getReturnType();
@@ -57,7 +66,8 @@ class PHPClassInstanceValue extends Value {
           }
         }
     }
-    throw new FormulaBugException('Invalid operation '. $operator->getID());
+    throw $this->e;
+    throw new FormulaBugException('Invalid operation ' . $operator->getID());
   }
 
   public function toPHPValue(): mixed {
