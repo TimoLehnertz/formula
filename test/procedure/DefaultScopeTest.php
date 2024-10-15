@@ -16,7 +16,6 @@ use TimoLehnertz\formula\type\NullType;
 use TimoLehnertz\formula\type\NeverType;
 use TimoLehnertz\formula\ExitIfNullException;
 use TimoLehnertz\formula\procedure\DefaultScope;
-use TimoLehnertz\formula\procedure\Scope;
 
 class DefaultScopeTest extends TestCase {
 
@@ -27,7 +26,9 @@ class DefaultScopeTest extends TestCase {
       ["println('Hello world!')", new VoidType(), null, 'Hello world!'.PHP_EOL],
       ["pow(5,2)", new FloatType(), 25, null],
       ["min(5,6,7)", new FloatType(), 5, null],
+      ["min()", new FloatType(), 0, null],
       ["max(5,6,7)", new FloatType(), 7, null],
+      ["max()", new FloatType(), 0, null],
       ["sqrt(25)", new FloatType(), 5, null],
       ["ceil(5.3)", new FloatType(), 6, null],
       ["floor(5.3)", new FloatType(), 5, null],
