@@ -126,7 +126,6 @@ class Scope {
 
   /**
    * @param OuterFunctionArgumentListType|array<string, Type>|null|null $argumentType
-   * @param ?callable(OuterFunctionArgumentListType): ?Type $specificFunctionReturnType
    */
   public function definePHP(bool $final, string $identifier, mixed $value = '__undefined__', OuterFunctionArgumentListType|array|null $argumentType = null, ?Type $generalReturnType = null, ?SpecificReturnType $specificFunctionReturnType = null): void {
     if ($value !== '__undefined__') {
