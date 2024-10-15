@@ -3,11 +3,11 @@
 namespace test\procedure;
 
 use PHPUnit\Framework\TestCase;
-use function PHPUnit\Framework\assertInstanceOf;
 use TimoLehnertz\formula\Formula;
 use TimoLehnertz\formula\FormulaBugException;
 use TimoLehnertz\formula\FormulaRuntimeException;
 use TimoLehnertz\formula\FormulaValidationException;
+use TimoLehnertz\formula\operator\OperatorType;
 use TimoLehnertz\formula\procedure\Scope;
 use TimoLehnertz\formula\type\ArrayType;
 use TimoLehnertz\formula\type\ArrayValue;
@@ -324,6 +324,18 @@ class ScopeTest extends TestCase {
     $formula = new Formula('intValueFunction()', $scope);
     $this->assertInstanceOf(IntegerType::class, $formula->getReturnType());
     $this->assertEquals(123, $formula->calculate()->toPHPValue());
+  }
+
+  public function dummyCompoundEnumFunc(null|OperatorType $arg): void {
+
+  }
+
+  public function testCompoundEnumParam(): void {
+    $type = Scope::convertPHPVar($this->dummyCompoundEnumFunc(...))[0];
+    if(!($type instanceof FunctionType)) {
+      $this->fail();
+    }
+    $this->assertInstanceOf(CompoundType::class, $type->arguments->getArgumentType(0));
   }
 }
 

@@ -78,50 +78,61 @@ class Scope {
     }
     if ($reflectionType instanceof \ReflectionNamedType) {
       if ($reflectionType->isBuiltin()) {
+        $type = null;
         switch ($reflectionType->getName()) {
           case 'string':
-            return new StringType();
+            return self::setNullable(new StringType(), $reflectionType->allowsNull());
           case 'int':
-            return new IntegerType();
+            return self::setNullable(new IntegerType(), $reflectionType->allowsNull());
           case 'float':
-            return new FloatType();
+            return self::setNullable(new FloatType(), $reflectionType->allowsNull());
           case 'bool':
-            return new BooleanType();
+            return self::setNullable(new BooleanType(), $reflectionType->allowsNull());
           case 'array':
-            return new ArrayType(new MixedType(), new MixedType());
+            return self::setNullable(new ArrayType(new MixedType(), new MixedType()), $reflectionType->allowsNull());
           case 'mixed':
-            return new MixedType();
+            return self::setNullable(new MixedType(), $reflectionType->allowsNull());
           case 'void':
-            return new VoidType();
+            return self::setNullable(new VoidType(), $reflectionType->allowsNull());
           case 'object':
-            return new MixedType();
+            return self::setNullable(new MixedType(), $reflectionType->allowsNull());
           case 'callable':
-            return new FunctionType(new OuterFunctionArgumentListType([new OuterFunctionArgument(new MixedType(), true, false)], true), new MixedType());
+            return self::setNullable(new FunctionType(new OuterFunctionArgumentListType([new OuterFunctionArgument(new MixedType(), true, false)], true), new MixedType()), $reflectionType->allowsNull());
           case 'null':
-            return new NullType();
+            return self::setNullable(new NullType(), $reflectionType->allowsNull());
           case 'never':
-            return new NeverType();
+            return self::setNullable(new NeverType(), $reflectionType->allowsNull());
+          default:
+          throw new FormulaBugException('Unsupported inbuilt type '. $reflectionType->getName());
         }
       } else if (enum_exists($reflectionType->getName())) {
-        return new EnumInstanceType(new EnumTypeType(new \ReflectionEnum($reflectionType->getName())));
+        return self::setNullable(new EnumInstanceType(new EnumTypeType(new \ReflectionEnum($reflectionType->getName()))), $reflectionType->allowsNull());
       } else if (class_exists($reflectionType->getName())) {
         if($reflectionType->getName() === \DateInterval::class) {
-          return new DateIntervalType();
+          return self::setNullable(new DateIntervalType(), $reflectionType->allowsNull());
         } else if($reflectionType->getName() === \DateTimeImmutable::class) {
-          return new DateTimeImmutableType();
+          return self::setNullable(new DateTimeImmutableType(), $reflectionType->allowsNull());
         }
-        return Scope::reflectionClassToType(new \ReflectionClass($reflectionType->getName()));
+        return self::setNullable(Scope::reflectionClassToType(new \ReflectionClass($reflectionType->getName())), $reflectionType->allowsNull());
       } else if (interface_exists($reflectionType->getName())) {
-        return Scope::reflectionClassToType(new \ReflectionClass($reflectionType->getName()));
+        return self::setNullable(Scope::reflectionClassToType(new \ReflectionClass($reflectionType->getName())), $reflectionType->allowsNull());
       }
     } else if ($reflectionType instanceof \ReflectionUnionType) {
       $types = [];
       foreach ($reflectionType->getTypes() as $type) {
         $types[] = self::reflectionTypeToFormulaType($type);
       }
-      return CompoundType::buildFromTypes($types);
+      return self::setNullable(CompoundType::buildFromTypes($types), $reflectionType->allowsNull());
     }
     throw new \BadMethodCallException('PHP type ' . $reflectionType . ' is not supported');
+  }
+
+  private static function setNullable(Type $type, bool $nullable): Type {
+    if($nullable) {
+      return CompoundType::buildFromTypes([$type, new NullType()]);
+    } else {
+      return $type;
+    }
   }
 
   /**
