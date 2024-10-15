@@ -57,7 +57,7 @@ class PHPClassInstanceValue extends Value {
           }
         }
     }
-    throw new FormulaBugException('Invalid operation');
+    throw new FormulaBugException('Invalid operation '. $operator->getID());
   }
 
   public function toPHPValue(): mixed {
