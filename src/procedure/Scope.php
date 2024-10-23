@@ -78,7 +78,6 @@ class Scope {
     }
     if ($reflectionType instanceof \ReflectionNamedType) {
       if ($reflectionType->isBuiltin()) {
-        $type = null;
         switch ($reflectionType->getName()) {
           case 'string':
             return self::setNullable(new StringType(), $reflectionType->allowsNull());

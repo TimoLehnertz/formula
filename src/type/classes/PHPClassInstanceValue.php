@@ -21,16 +21,9 @@ class PHPClassInstanceValue extends Value {
 
   private readonly \ReflectionClass $reflection;
 
-  private $e;
-
   public function __construct(mixed $instance) {
     $this->instance = $instance;
     $this->reflection = new \ReflectionClass($this->instance);
-    try {
-      throw new \Exception('invalid construction');
-    } catch (\Exception $e) {
-      $this->e = $e;
-    }
   }
 
   public function isTruthy(): bool {
@@ -49,24 +42,20 @@ class PHPClassInstanceValue extends Value {
   }
 
   protected function valueOperate(ImplementableOperator $operator, ?Value $other): Value {
-    switch ($operator->getID()) {
-      case ImplementableOperator::TYPE_MEMBER_ACCESS:
-        if ($other instanceof MemberAccsessValue) {
-          if ($this->reflection->hasProperty($other->getMemberIdentifier())) {
-            return Scope::convertPHPVar($this->reflection->getProperty($other->getMemberIdentifier())->getValue($this->instance), true)[1];
-          }
-          if ($this->reflection->hasMethod($other->getMemberIdentifier())) {
-            $instance = $this->instance;
-            $reflection = $this->reflection;
-            $returnType = $reflection->getMethod($other->getMemberIdentifier())->getReturnType();
-            $isVoid = $returnType instanceof \ReflectionNamedType && $returnType->getName() === 'void';
-            return new FunctionValue(new PHPFunctionBody(function (...$args) use (&$instance, &$reflection, &$other) {
-              return Scope::convertPHPVar($reflection->getMethod($other->getMemberIdentifier())->invoke($instance, ...$args), true)[1];
-            }, $isVoid));
-          }
-        }
+    if ($operator->getID() === ImplementableOperator::TYPE_MEMBER_ACCESS && $other instanceof MemberAccsessValue) {
+      if ($this->reflection->hasProperty($other->getMemberIdentifier())) {
+        return Scope::convertPHPVar($this->reflection->getProperty($other->getMemberIdentifier())->getValue($this->instance), true)[1];
+      }
+      if ($this->reflection->hasMethod($other->getMemberIdentifier())) {
+        $instance = $this->instance;
+        $reflection = $this->reflection;
+        $returnType = $reflection->getMethod($other->getMemberIdentifier())->getReturnType();
+        $isVoid = $returnType instanceof \ReflectionNamedType && $returnType->getName() === 'void';
+        return new FunctionValue(new PHPFunctionBody(function (...$args) use (&$instance, &$reflection, &$other) {
+          return Scope::convertPHPVar($reflection->getMethod($other->getMemberIdentifier())->invoke($instance, ...$args), true)[1];
+        }, $isVoid));
+      }
     }
-    throw $this->e;
     throw new FormulaBugException('Invalid operation ' . $operator->getID());
   }
 

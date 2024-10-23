@@ -19,10 +19,6 @@ class NodeTree {
   public function __construct(array $rootNode, array $scope) {
     $this->rootNode = $rootNode;
     $this->scope = $scope;
-    $operators = [];
-    for ($i=0; $i < ImplementableOperator::MAX_ID; $i++) { 
-      $operators[] = (new ImplementableOperator($i))->getOperatorNode();
-    }
   }
 
   public function toArray(): array {

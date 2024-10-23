@@ -6,4 +6,5 @@
 composer.phar
 /composer.lock
 /coverage/
+/coverage-report/
 /vendor/

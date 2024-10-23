@@ -4,6 +4,7 @@ namespace TimoLehnertz\formula\parsing;
 
 use TimoLehnertz\formula\tokens\Token;
 use TimoLehnertz\formula\type\functions\FunctionType;
+use TimoLehnertz\formula\type\functions\OuterFunctionArgument;
 use TimoLehnertz\formula\type\functions\OuterFunctionArgumentListType;
 
 /**

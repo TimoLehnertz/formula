@@ -73,6 +73,13 @@ for(;true;) {
   i++;
 }
 
+for(;;) {
+  if(i >= 2) {
+    break;
+  }
+  res++; // 13
+}
+
 /**
  * Ternary
  */
