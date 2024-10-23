@@ -39,11 +39,7 @@ class ForStatement extends Statement {
 
   public function runStatement(Scope $scope): StatementReturn {
     $scope = $scope->buildChild();
-
-    $this->declarationStatement?->run($scope);
-    $this->incrementExpression?->validate($scope);
-
-    while($this->condition === null || $this->condition->run($scope)->isTruthy()) {
+    for ($this->declarationStatement?->run($scope); $this->condition?->run($scope)->isTruthy() ?? true; $this->incrementExpression?->run($scope)) { 
       $return = $this->body->run($scope);
       if($return->returnValue !== null) {
         return new StatementReturn($return->returnValue, false, false);
@@ -51,7 +47,6 @@ class ForStatement extends Statement {
       if($return->breakFlag) {
         break;
       }
-      $this->incrementExpression?->run($scope);
     }
     return new StatementReturn(null, false, false);
   }

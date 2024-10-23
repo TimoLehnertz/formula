@@ -5,8 +5,6 @@ namespace TimoLehnertz\formula\type\functions;
 use TimoLehnertz\formula\FormulaBugException;
 use TimoLehnertz\formula\operator\ImplementableOperator;
 use TimoLehnertz\formula\type\Value;
-use const false;
-use const true;
 
 /**
  * @author Timo Lehnertz

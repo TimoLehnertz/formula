@@ -8,8 +8,6 @@ use TimoLehnertz\formula\tokens\Token;
 use TimoLehnertz\formula\type\functions\InnerFunctionArgument;
 use TimoLehnertz\formula\type\functions\InnerFunctionArgumentList;
 use TimoLehnertz\formula\type\functions\InnerVargFunctionArgument;
-use const false;
-use const true;
 
 /**
  * @author Timo Lehnertz

@@ -150,9 +150,13 @@ res += intFunc(2); // 44
 res -= 4; // 40
 
 
-function(int... args) -> float vargFunc = (int... args) -> sum(args);
+function(int...) -> float vargFunc = (int... args) -> sum(args);
+var vargFunc2 = float (int... args) {return sum(args);};
+function(int... args) -> float vargFunc3 = (int... args) -> sum(args);
+
 
 res += vargFunc(1,2,3); // 46
+res += vargFunc2(1,-1); // 46
 
 res -= 6; // 40
 
