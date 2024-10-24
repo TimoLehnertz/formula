@@ -171,5 +171,6 @@ class Token {
   public const KEYWORD_DATE_INTERVAL = 72;
   public const FUNCTION_ARROW = 73; // ->
   public const KEYWORD_FUNCTION = 74;
+  public const KEYWORD_MIXED = 75;
   // @formatter:on
 }

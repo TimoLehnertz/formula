@@ -13,6 +13,7 @@ use TimoLehnertz\formula\type\Type;
 use TimoLehnertz\formula\type\VoidType;
 use TimoLehnertz\formula\type\DateTimeImmutableType;
 use TimoLehnertz\formula\type\DateIntervalType;
+use TimoLehnertz\formula\type\MixedType;
 use TimoLehnertz\formula\type\NullType;
 
 /**
@@ -146,6 +147,9 @@ class TypeParser extends Parser {
       $parsedType = (new FunctionTypeParser())->parse($firstToken);
       $token = $parsedType->nextToken;
       $type = $parsedType->parsed;
+    } else if($firstToken->id === Token::KEYWORD_MIXED) {
+      $type = new MixedType();
+      $token = $firstToken->next();
     } else {
       throw new ParsingSkippedException($firstToken->value.$firstToken->id);
     }

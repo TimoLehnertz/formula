@@ -199,6 +199,12 @@ if(compound2 == 2) {
   res--; // 40
 }
 
+mixed mixedVar = 5;
+if(mixedVar == 5) {
+  res++;
+}
+res--;
+
 // WhileStatementParser
 while(true) {
   return res; // 40

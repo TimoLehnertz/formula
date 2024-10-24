@@ -97,6 +97,7 @@ class TokenizerTest extends TestCase {
       [Token::DATE_INTERVAL, '"P2Y6M"', 'P2Y6M'],
       [Token::DATE_INTERVAL, '"PT45S"', 'PT45S'],
       [Token::DATE_INTERVAL, '"P0D"', 'P0D'],
+      [Token::KEYWORD_MIXED, 'mixed', 'mixed'],
     ];
   }
   // @formatter:on

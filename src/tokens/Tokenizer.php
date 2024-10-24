@@ -303,6 +303,7 @@ class Tokenizer {
     "DateTimeImmutable" => Token::KEYWORD_DATE_TIME_IMMUTABLE,
     "DateInterval" => Token::KEYWORD_DATE_INTERVAL,
     "function" => Token::KEYWORD_FUNCTION,
+    "mixed" => Token::KEYWORD_MIXED,
   ];
 
   private
