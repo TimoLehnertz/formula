@@ -16,6 +16,13 @@ An open source PHP formula parser based on https://github.com/socialist/formula
 - PHP DateTime
 - PHP DateInterval
 
+# Installation
+
+For an installation using composer add this to you `composer.json`
+`"require": {
+    "timo-lehnertz/formula": "^2.0"
+}`
+
 # Usage
 
 ```php
