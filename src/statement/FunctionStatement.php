@@ -34,10 +34,11 @@ class FunctionStatement extends Statement {
   }
 
   public function validateStatement(Scope $scope, ?Type $allowedReturnType = null): StatementReturnType {
-    $functionBody = new FormulaFunctionBody($this->arguments, $this->codeBlock, $scope);
-    $functionBody->validate($this->returnType);
     $this->functionType = new FunctionType($this->arguments->toOuterType(), $this->returnType);
     $scope->define(true, $this->functionType, $this->identifier);
+
+    $functionBody = new FormulaFunctionBody($this->arguments, $this->codeBlock, $scope);
+    $functionBody->validate($this->returnType);
     return new StatementReturnType(null, Frequency::NEVER, Frequency::NEVER);
   }
 

@@ -2,6 +2,7 @@
 declare(strict_types = 1);
 namespace TimoLehnertz\formula\parsing;
 
+use Exception;
 use TimoLehnertz\formula\operator\ChainedAssignmentOperator;
 use TimoLehnertz\formula\operator\DecrementPostfixOperator;
 use TimoLehnertz\formula\operator\DecrementPrefixOperator;
@@ -70,6 +71,9 @@ class OperatorParser extends Parser {
         return new ParserReturn(new ImplementableParsedOperator(ImplementableOperator::TYPE_SCOPE_RESOLUTION, '::', OperatorType::InfixOperator, 1), $firstToken->next());
       case Token::BRACKETS_OPEN:
         $tokenBefore = $firstToken->prev();
+        if($tokenBefore?->id === Token::BRACKETS_CLOSED) {
+          return (new CallOperatorParser())->parse($firstToken);
+        }
         if($tokenBefore === null || isset(static::$inFrontOfUnary[$tokenBefore->id])) {
           return (new TypeCastOperatorParser())->parse($firstToken);
         } else {

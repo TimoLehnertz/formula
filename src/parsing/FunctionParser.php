@@ -8,6 +8,7 @@ use TimoLehnertz\formula\tokens\Token;
 use TimoLehnertz\formula\type\functions\InnerFunctionArgument;
 use TimoLehnertz\formula\type\functions\InnerFunctionArgumentList;
 use TimoLehnertz\formula\type\functions\InnerVargFunctionArgument;
+use TimoLehnertz\formula\type\VoidType;
 
 /**
  * @author Timo Lehnertz
@@ -26,6 +27,7 @@ class FunctionParser extends Parser {
   }
 
   protected function parsePart(Token $firstToken): ParserReturn {
+    // var_dump('Moin');
     if(!$this->parseStatement) {
       try {
         $parsedReturnType = (new TypeParser(false))->parse($firstToken);
@@ -35,7 +37,11 @@ class FunctionParser extends Parser {
         $token = $firstToken;
       }
     } else {
-      $parsedReturnType = (new TypeParser(false))->parse($firstToken);
+      if($firstToken->id === Token::KEYWORD_VOID) {
+        $parsedReturnType = new ParserReturn(new VoidType(), $firstToken->next());
+      } else {
+        $parsedReturnType = (new TypeParser(false))->parse($firstToken);
+      }
       $token = $parsedReturnType->nextToken;
     }
     if($token === null) {

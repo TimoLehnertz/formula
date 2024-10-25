@@ -1,5 +1,7 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace TimoLehnertz\formula\parsing;
 
 use TimoLehnertz\formula\tokens\Token;
@@ -17,11 +19,11 @@ class CodeBlockOrExpressionParser extends Parser {
   protected function parsePart(Token $firstToken): ParserReturn {
     try {
       $parsedExpression = (new ExpressionParser())->parse($firstToken);
-      if($parsedExpression->nextToken !== null) {
+      if ($parsedExpression->nextToken !== null) {
         throw new ParsingSkippedException();
       }
       return new ParserReturn(new CodeBlockOrExpression($parsedExpression->parsed), $parsedExpression->nextToken);
-    } catch(ParsingSkippedException $e) {
+    } catch (ParsingException | ParsingSkippedException $e) {
       $parsed = (new CodeBlockParser(false, true))->parse($firstToken);
       return new ParserReturn(new CodeBlockOrExpression($parsed->parsed), $parsed->nextToken);
     }
