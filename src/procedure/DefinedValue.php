@@ -28,7 +28,7 @@ class DefinedValue implements ValueContainer {
 
   public function __construct(bool $final, Type $type, string $name, ?Value $initialValue) {
     $this->final = $final;
-    $this->type = $type->setFinal($this->final);
+    $this->type = $type->setAssignable(!$this->final);
     $this->name = $name;
     $this->value = $initialValue;
     $this->value?->setContainer($this->final ? null : $this);

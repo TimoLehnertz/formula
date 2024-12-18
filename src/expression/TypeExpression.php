@@ -36,4 +36,8 @@ class TypeExpression implements Expression {
   public function buildNode(Scope $scope): Node {
     return new Node('TypeExpression', [], ['type' => $this->type->getInterfaceType()]);
   }
+
+  public function getType(): Type {
+    return $this->type;
+  }
 }

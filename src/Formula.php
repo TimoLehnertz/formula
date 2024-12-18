@@ -84,7 +84,7 @@ class Formula {
     return $this->source;
   }
 
-  public function getDefaultScope(): DefaultScope {
-    return $this->defaultScope;
+  public function getContent(): CodeBlockOrExpression {
+    return $this->content;
   }
 }

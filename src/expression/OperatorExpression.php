@@ -111,4 +111,16 @@ class OperatorExpression implements Expression {
     }
     return new Node('OperatorExpression', $connected, ['operator' => $this->operator->getID()]);
   }
+
+  public function getLeftExpression(): ?Expression {
+    return $this->leftExpression;
+  }
+
+  public function getOperator(): ImplementableOperator {
+    return $this->operator;
+  }
+
+  public function getRightExpression(): ?Expression {
+    return $this->rightExpression;
+  }
 }

@@ -15,7 +15,7 @@ class FieldType {
 
   public function __construct(bool $final, Type $type) {
     $this->final = $final;
-    $this->type = $type->setFinal($this->final);
+    $this->type = $type->setAssignable(!$this->final);
   }
 
   public function equals(FieldType $other): bool {

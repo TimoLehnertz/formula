@@ -19,8 +19,8 @@ class ArrayType extends ClassType implements IteratableType {
 
   public function __construct(Type $keyType, Type $elementsType) {
     parent::__construct(null, 'array', ['length' => new FieldType(true, new IntegerType())]);
-    $this->keyType = $keyType->setFinal(false);
-    $this->elementsType = $elementsType->setFinal(false);
+    $this->keyType = $keyType->setAssignable(true);
+    $this->elementsType = $elementsType->setAssignable(true);
   }
 
   protected function typeAssignableBy(Type $type): bool {

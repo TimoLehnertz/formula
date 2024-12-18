@@ -22,6 +22,7 @@ class ConstantExpressionTest extends TestCase {
      */
     $type = $expression->validate(new Scope());
     $this->assertInstanceOf(FloatType::class, $type);
+    $this->assertEquals(123.4, $type->getRestrictedValues()[0]->toPHPValue());
 
     /**
      * Run

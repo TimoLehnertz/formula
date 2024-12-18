@@ -65,4 +65,20 @@ class FunctionExpression implements Expression {
       throw new NodesNotSupportedException('FunctionExpression');
     }
   }
+
+  public function getReturnType(): ?Type {
+    return $this->returnType;
+  }
+
+  public function getArguments(): InnerFunctionArgumentList {
+    return $this->arguments;
+  }
+
+  public function getCodeBlock(): CodeBlock {
+    return $this->codeBlock;
+  }
+
+  public function isImplicitReturnType(): bool {
+    return $this->implicitReturnType;
+  }
 }
