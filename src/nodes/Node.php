@@ -23,7 +23,7 @@ class Node {
    */
   public function __construct(string $nodeType, array $connected, array $info = []) {
     foreach ($connected as $node) {
-      if(!($node instanceof Node)) {
+      if (!($node instanceof Node)) {
         throw new \Exception('Invalid node');
       }
     }
@@ -32,6 +32,13 @@ class Node {
     $this->info = $info;
   }
 
+  /**
+   * @psalm-return array{
+   *   nodeType: string,
+   *   connected: list<array>,
+   *   properties: array<string, mixed>
+   * }
+   */
   public function toArray(): array {
     $connected = [];
     foreach ($this->connected as $node) {

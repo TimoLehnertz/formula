@@ -45,6 +45,14 @@ class Formula {
   }
 
   /**
+   * @psalm-return array{rootNode: array{
+   *   nodeType: string,
+   *   connected: list<array>,
+   *   properties: array<string, mixed>
+   * }, scope: array<string, @psalm-return array{
+   *   typeName: string,
+   *   properties?: array<string, mixed>
+   * }>}
    * @throws NodesNotSupportedException
    */
   public function getNodeTree(): array {

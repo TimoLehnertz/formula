@@ -102,33 +102,33 @@ abstract class Type implements OperatorMeta, FormulaPart {
         }
         break;
       case ImplementableOperator::TYPE_LOGICAL_NOT:
-        if($otherType === null) {
+        if ($otherType === null) {
           $type = new BooleanType();
         }
         break;
     }
-    if($type === null) {
+    if ($type === null) {
       $type = $this->getTypeOperatorResultType($operator, $otherType);
     }
-    if($type !== null && $this->restrictedValues !== null) {
+    if ($type !== null && $this->restrictedValues !== null) {
       $otherRestrictedValues = $otherType?->getRestrictedValues();
-      if($otherType === null) {
+      if ($otherType === null) {
         $restrictedValues = [];
         foreach ($this->restrictedValues as $value) {
           try {
             $restrictedValues[] = $value->operate($operator, null);
-          } catch(FormulaRuntimeException $e) { // catch division by zero and similar
+          } catch (FormulaRuntimeException $e) { // catch division by zero and similar
             $restrictedValues = null;
             break;
           }
         }
         $type = $type->setRestrictedValues($restrictedValues);
-      } else if($otherRestrictedValues !== null && count($otherRestrictedValues) === 1 && count($this->restrictedValues) === 1) {
+      } else if ($otherRestrictedValues !== null && count($otherRestrictedValues) === 1 && count($this->restrictedValues) === 1) {
         $valueA = $this->restrictedValues[0];
         $valueB = $otherRestrictedValues[0];
         try {
           $type = $type->setRestrictedValues([$valueA->operate($operator, $valueB)]);
-        } catch(FormulaRuntimeException $e) { // catch division by zero and similar
+        } catch (FormulaRuntimeException $e) { // catch division by zero and similar
           $type = $type->setRestrictedValues(null);
         }
       } else {
@@ -141,7 +141,7 @@ abstract class Type implements OperatorMeta, FormulaPart {
   public function setAssignable(bool $assignable): Type {
     $clone = clone $this;
     $clone->assignable = $assignable;
-    if($assignable) {
+    if ($assignable) {
       $clone->restrictedValues = null;
     }
     return $clone;
@@ -152,7 +152,7 @@ abstract class Type implements OperatorMeta, FormulaPart {
   }
 
   public function setRestrictedValues(?array $restrictedValues): Type {
-    if($restrictedValues !== null && $this->assignable) {
+    if ($restrictedValues !== null && $this->assignable) {
       throw new \UnexpectedValueException('Assignable type can\'t have value restrictions');
     }
     $clone = clone $this;
@@ -186,6 +186,12 @@ abstract class Type implements OperatorMeta, FormulaPart {
     return null;
   }
 
+  /**
+   * @psalm-return array{
+   *   typeName: string,
+   *   properties?: array<string, mixed>
+   * }
+   */
   public function getInterfaceType(): array {
     $reflection = new \ReflectionClass($this::class);
     $properties = $this->getProperties();

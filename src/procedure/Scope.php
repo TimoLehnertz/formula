@@ -382,6 +382,12 @@ class Scope {
     $this->parent = $parent;
   }
 
+  /**
+   * @psalm-return array<string, @psalm-return array{
+   *   typeName: string,
+   *   properties?: array<string, mixed>
+   * }>
+   */
   public function toNodeTreeScope(): array {
     $definedValues = [];
     if ($this->parent !== null) {
