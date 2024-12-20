@@ -152,7 +152,7 @@ abstract class Type implements OperatorMeta, FormulaPart {
   }
 
   public function setRestrictedValues(?array $restrictedValues): Type {
-    if($this->assignable) {
+    if($restrictedValues !== null && $this->assignable) {
       throw new \UnexpectedValueException('Assignable type can\'t have value restrictions');
     }
     $clone = clone $this;
