@@ -34,15 +34,25 @@ use TimoLehnertz\formula\type\functions\OuterFunctionArgument;
 use TimoLehnertz\formula\type\functions\OuterFunctionArgumentListType;
 use TimoLehnertz\formula\ValueUnsetException;
 
-use const false;
-
 class ScopeTest extends TestCase {
 
   public function testDefine(): void {
     $scope = new Scope();
     $this->assertFalse($scope->isDefined('i'));
-    $scope->definePHP(false, 'i', 0);
+    $scope->definePHP(false, 'i', 1);
     $this->assertTrue($scope->isDefined('i'));
+    $type = $scope->use('i');
+    $this->assertTrue($type->isAssignable());
+    $this->assertNull($type->getRestrictedValues());
+  }
+
+  public function testDefineFinal(): void {
+    $scope = new Scope();
+    $scope->definePHP(true, 'i', 1);
+    $this->assertTrue($scope->isDefined('i'));
+    $type = $scope->use('i');
+    $this->assertFalse($type->isAssignable());
+    $this->assertEquals(1, $type->getRestrictedValues()[0]->toPHPValue());
   }
 
   public function testRedefine(): void {

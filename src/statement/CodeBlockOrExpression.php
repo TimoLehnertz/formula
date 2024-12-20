@@ -53,4 +53,8 @@ class CodeBlockOrExpression extends Statement {
       throw new NodesNotSupportedException('Code block');
     }
   }
+
+  public function getContent(): CodeBlock|Expression {
+    return $this->content;
+  }
 }

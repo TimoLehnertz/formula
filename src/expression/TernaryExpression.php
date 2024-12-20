@@ -44,4 +44,16 @@ class TernaryExpression implements Expression {
   public function buildNode(Scope $scope): Node {
     return new Node('TernaryExpression', [$this->condition->buildNode($scope),$this->leftExpression->buildNode($scope),$this->rightExpression->buildNode($scope)]);
   }
+
+  public function getCondition(): Expression {
+    return $this->condition;
+  }
+
+  public function getLeftExpression(): Expression {
+    return $this->leftExpression;
+  }
+
+  public function getRightExpression(): Expression {
+    return $this->rightExpression;
+  }
 }

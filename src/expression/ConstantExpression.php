@@ -20,7 +20,7 @@ class ConstantExpression implements Expression {
   private readonly string $stringRepresentation;
 
   public function __construct(Type $type, Value $value, string $stringRepresentation) {
-    $this->type = $type->setFinal(true);
+    $this->type = $type->setAssignable(false)->setRestrictedValues([$value]);
     $this->value = $value;
     $this->stringRepresentation = $stringRepresentation;
   }
@@ -39,5 +39,17 @@ class ConstantExpression implements Expression {
 
   public function buildNode(Scope $scope): Node {
     return new Node('ConstantExpression', [], ['type' => $this->type->getInterfaceType(),'value' => $this->value->toString()]);
+  }
+
+  public function getType(): Type {
+    return $this->type;
+  }
+
+  public function getValue(): Value {
+    return $this->value;
+  }
+
+  public function getStringRepresentation(): string {
+    return $this->stringRepresentation;
   }
 }

@@ -47,4 +47,16 @@ class ComplexOperatorExpression extends OperatorExpression {
   public function buildNode(Scope $scope): Node {
     return $this->outerOperator->buildNode($scope, $this->outerLeftExpression, $this->outerRightExpression);
   }
+
+  public function getOuterLeftExpression(): ?Expression {
+    return $this->outerLeftExpression;
+  }
+
+  public function getOuterOperator(): ?ParsedOperator {
+    return $this->outerOperator;
+  }
+
+  public function getOuterRightExpression(): ?Expression {
+    return $this->outerRightExpression;
+  }
 }

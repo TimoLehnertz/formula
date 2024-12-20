@@ -14,9 +14,22 @@ class CompoundType extends Type {
    */
   private readonly array $types;
 
+  /**
+   * @param array<Type> $types
+   */
   private function __construct(array $types) {
     parent::__construct();
     $this->types = $types;
+    $restrictedValues = [];
+    foreach ($types as $type) {
+      if($type->getRestrictedValues() !== null) {
+        $restrictedValues = array_merge($restrictedValues, $type->getRestrictedValues());
+      } else {
+        $restrictedValues = null;
+        break;
+      }
+    }
+    $this->setRestrictedValues($restrictedValues);
   }
 
   public static function buildFromTypes(array $types): Type {
@@ -52,33 +65,6 @@ class CompoundType extends Type {
       return new CompoundType($uniqueTypes);
     }
   }
-
-  // public function getImplementedOperators(): array {
-  //   $implemented = [];
-  //   foreach ($this->types[0]->getImplementedOperators() as $implementedOperator) {
-  //     $implemented[$implementedOperator->getID()] = true;
-  //   }
-  //   foreach ($this->types as $type) {
-  //     foreach ($implemented as $key => $value) {
-  //       $implemented[$key] = false;
-  //     }
-  //     foreach ($type->getImplementedOperators() as $implementedOperator) {
-  //       $implemented[$implementedOperator->getID()] = true;
-  //     }
-  //     $newImplemented = [];
-  //     foreach ($implemented as $key => $value) {
-  //       if($value) {
-  //         $newImplemented[$key] = false;
-  //       }
-  //     }
-  //     $implemented = $newImplemented;
-  //   }
-  //   $operators = [];
-  //   foreach (array_keys($implemented) as $operatorID) {
-  //     $operators[] = new ImplementableOperator($operatorID);
-  //   }
-  //   return $operators;
-  // }
 
   protected function getTypeCompatibleOperands(ImplementableOperator $operator): array {
     $operandLists = [];
@@ -169,22 +155,22 @@ class CompoundType extends Type {
     return CompoundType::buildFromTypes($newTypes);
   }
 
-  public function setFinal(bool $final): Type {
+  public function setAssignable(bool $assignable): Type {
     $changeRequired = false;
     foreach($this->types as $type) {
-      if($type->isFinal() !== $final) {
+      if($type->isAssignable() !== $assignable) {
         $changeRequired = true;
         break;
       }
     }
     if(!$changeRequired) {
-      return parent::setFinal($final);
+      return parent::setAssignable($assignable);
     } else {
       $newTypes = [];
       foreach($this->types as $type) {
-        $newTypes[] = $type->setFinal($final);
+        $newTypes[] = $type->setAssignable($assignable);
       }
-      return (new CompoundType($newTypes))->setFinal($final);
+      return (new CompoundType($newTypes))->setAssignable($assignable);
     }
   }
 

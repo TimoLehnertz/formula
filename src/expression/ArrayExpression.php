@@ -17,6 +17,9 @@ use TimoLehnertz\formula\type\Value;
  */
 class ArrayExpression implements Expression {
 
+  /**
+   * @var array<Expression>
+   */
   private readonly array $expressions;
 
   private ArrayType $arrayType;
@@ -59,5 +62,16 @@ class ArrayExpression implements Expression {
       $inputs[] = $expression->buildNode($scope);
     }
     return new Node('ArrayExpression', $inputs);
+  }
+
+  /**
+   * @return array<Expression>
+   */
+  public function getExpressions(): array {
+    return $this->expressions;
+  }
+
+  public function getArrayType(): ArrayType {
+    return $this->arrayType;
   }
 }

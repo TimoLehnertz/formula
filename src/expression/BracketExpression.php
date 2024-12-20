@@ -13,7 +13,7 @@ use TimoLehnertz\formula\type\Value;
  */
 class BracketExpression implements Expression {
 
-  public readonly Expression $expression;
+  private readonly Expression $expression;
 
   public function __construct(Expression $expression) {
     $this->expression = $expression;
@@ -33,5 +33,9 @@ class BracketExpression implements Expression {
 
   public function buildNode(Scope $scope): Node {
     return new Node('BracketExpression', [$this->expression->buildNode($scope)]);
+  }
+
+  public function getExpression(): Expression {
+    return $this->expression;
   }
 }

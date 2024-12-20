@@ -76,6 +76,9 @@ class ArgumentListExpression implements Expression, CastableExpression {
     return new Node('ArgumentListExpression', $inputs);
   }
 
+  /**
+   * @return array<Expression>
+   */
   public function getExpressions(): array {
     return $this->expressions;
   }

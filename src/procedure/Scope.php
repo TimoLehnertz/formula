@@ -102,14 +102,14 @@ class Scope {
           case 'never':
             return self::setNullable(new NeverType(), $reflectionType->allowsNull());
           default:
-          throw new FormulaBugException('Unsupported inbuilt type '. $reflectionType->getName());
+            throw new FormulaBugException('Unsupported inbuilt type ' . $reflectionType->getName());
         }
       } else if (enum_exists($reflectionType->getName())) {
         return self::setNullable(new EnumInstanceType(new EnumTypeType(new \ReflectionEnum($reflectionType->getName()))), $reflectionType->allowsNull());
       } else if (class_exists($reflectionType->getName())) {
-        if($reflectionType->getName() === \DateInterval::class) {
+        if ($reflectionType->getName() === \DateInterval::class) {
           return self::setNullable(new DateIntervalType(), $reflectionType->allowsNull());
-        } else if($reflectionType->getName() === \DateTimeImmutable::class) {
+        } else if ($reflectionType->getName() === \DateTimeImmutable::class) {
           return self::setNullable(new DateTimeImmutableType(), $reflectionType->allowsNull());
         }
         return self::setNullable(Scope::reflectionClassToType(new \ReflectionClass($reflectionType->getName())), $reflectionType->allowsNull());
@@ -127,7 +127,7 @@ class Scope {
   }
 
   private static function setNullable(Type $type, bool $nullable): Type {
-    if($nullable) {
+    if ($nullable) {
       return CompoundType::buildFromTypes([$type, new NullType()]);
     } else {
       return $type;
@@ -137,16 +137,20 @@ class Scope {
   /**
    * @param OuterFunctionArgumentListType|array<string, Type>|null|null $argumentType
    */
-  public function definePHP(bool $final, string $identifier, mixed $value = '__undefined__', OuterFunctionArgumentListType|array|null $argumentType = null, ?Type $generalReturnType = null, ?SpecificReturnType $specificFunctionReturnType = null): void {
-    if ($value !== '__undefined__') {
-      $value = Scope::convertPHPVar($value, false, $argumentType, $generalReturnType, $specificFunctionReturnType);
-    }
+  public function definePHP(bool $final, string $identifier, mixed $value, OuterFunctionArgumentListType|array|null $argumentType = null, ?Type $generalReturnType = null, ?SpecificReturnType $specificFunctionReturnType = null): void {
+    $value = Scope::convertPHPVar($value, false, $argumentType, $generalReturnType, $specificFunctionReturnType);
     $this->define($final, $value[0], $identifier, $value[1]);
   }
 
   public function define(bool $final, Type $type, string $identifier, ?Value $value = null): void {
     if (isset($this->defined[$identifier])) {
       throw new FormulaRuntimeException('Can\'t redefine ' . $identifier);
+    }
+    if ($final) {
+      $type = $type->setAssignable(false);
+    }
+    if ($final && $value !== null) {
+      $type = $type->setRestrictedValues([$value]);
     }
     $this->defined[$identifier] = new DefinedValue($final, $type, $identifier, $value);
   }
@@ -188,7 +192,7 @@ class Scope {
     $reflectionReturnType = $reflection->getReturnType();
     if ($reflectionReturnType !== null) {
       $returnType = Scope::reflectionTypeToFormulaType($reflectionReturnType);
-      if($reflectionReturnType->allowsNull()) {
+      if ($reflectionReturnType->allowsNull()) {
         $returnType = CompoundType::buildFromTypes([$returnType, new NullType()]);
       }
     } else {
@@ -357,8 +361,8 @@ class Scope {
 
   public function forget(string $identifier): void {
     if (isset($this->defined[$identifier])) {
-      if($this->defined[$identifier]->isUsed()) {
-        throw new FormulaBugException('Cant forget used variable '.$identifier);
+      if ($this->defined[$identifier]->isUsed()) {
+        throw new FormulaBugException('Cant forget used variable ' . $identifier);
       }
       unset($this->defined[$identifier]);
     } else {
@@ -380,7 +384,7 @@ class Scope {
 
   public function toNodeTreeScope(): array {
     $definedValues = [];
-    if($this->parent !== null) {
+    if ($this->parent !== null) {
       $definedValues = $this->parent->toNodeTreeScope();
     }
     foreach ($this->defined as $identifier => $definedValue) {

@@ -6,6 +6,7 @@ namespace TimoLehnertz\formula\type;
 
 use TimoLehnertz\formula\FormulaBugException;
 use TimoLehnertz\formula\FormulaPart;
+use TimoLehnertz\formula\FormulaRuntimeException;
 use TimoLehnertz\formula\FormulaValidationException;
 use TimoLehnertz\formula\PrettyPrintOptions;
 use TimoLehnertz\formula\operator\ImplementableOperator;
@@ -16,7 +17,14 @@ use TimoLehnertz\formula\operator\ImplementableOperator;
 abstract class Type implements OperatorMeta, FormulaPart {
 
   // final per default
-  private bool $final = true;
+  private bool $assignable = false;
+
+  /**
+   * If the values of this type can be restricted to a limited number of specific values, this variable holds these values.
+   * Otherwise null.
+   * @var array<Value>|null
+   */
+  private ?array $restrictedValues = null;
 
   public function __construct() {
   }
@@ -26,7 +34,7 @@ abstract class Type implements OperatorMeta, FormulaPart {
     switch ($operator->getID()) {
       case ImplementableOperator::TYPE_DIRECT_ASSIGNMENT:
       case ImplementableOperator::TYPE_DIRECT_ASSIGNMENT_OLD_VAL:
-        if ($this->final) {
+        if (!$this->assignable) {
           throw new FormulaValidationException('Can\'t assign final value');
         }
         $array[] = $this;
@@ -57,28 +65,32 @@ abstract class Type implements OperatorMeta, FormulaPart {
   }
 
   public function getOperatorResultType(ImplementableOperator $operator, ?Type $otherType): ?Type {
+    $type = null;
     switch ($operator->getID()) {
       case ImplementableOperator::TYPE_DIRECT_ASSIGNMENT:
       case ImplementableOperator::TYPE_DIRECT_ASSIGNMENT_OLD_VAL:
-        if ($this->final) {
+        if (!$this->assignable) {
           return null;
         }
         if ($otherType === null || !$this->assignableBy($otherType)) {
           break;
         }
-        return $this->setFinal(true);
+        $type = $this->setAssignable(false); // result of operation is r value
+        break;
       case ImplementableOperator::TYPE_EQUALS:
         if ($otherType === null || (!$this->assignableBy($otherType) && !($otherType instanceof NullType))) {
           break;
         }
-        return new BooleanType();
+        $type = new BooleanType();
       case ImplementableOperator::TYPE_TYPE_CAST:
         if ($otherType instanceof TypeType) {
           if ($otherType->getType() instanceof BooleanType) {
-            return new BooleanType();
+            $type = new BooleanType();
+            break;
           }
           if ($otherType->getType()->equals(new StringType())) {
-            return new StringType();
+            $type = new StringType();
+            break;
           }
         }
         break;
@@ -86,31 +98,71 @@ abstract class Type implements OperatorMeta, FormulaPart {
       case ImplementableOperator::TYPE_LOGICAL_OR:
       case ImplementableOperator::TYPE_LOGICAL_XOR:
         if ($otherType !== null) {
-          return new BooleanType();
+          $type = new BooleanType();
         }
         break;
       case ImplementableOperator::TYPE_LOGICAL_NOT:
         if($otherType === null) {
-          return new BooleanType();
+          $type = new BooleanType();
         }
+        break;
     }
-    return $this->getTypeOperatorResultType($operator, $otherType);
+    if($type === null) {
+      $type = $this->getTypeOperatorResultType($operator, $otherType);
+    }
+    if($type !== null && $this->restrictedValues !== null) {
+      $otherRestrictedValues = $otherType?->getRestrictedValues();
+      if($otherType === null) {
+        $restrictedValues = [];
+        foreach ($this->restrictedValues as $value) {
+          try {
+            $restrictedValues[] = $value->operate($operator, null);
+          } catch(FormulaRuntimeException $e) { // catch division by zero and similar
+            $restrictedValues = null;
+            break;
+          }
+        }
+        $type = $type->setRestrictedValues($restrictedValues);
+      } else if($otherRestrictedValues !== null && count($otherRestrictedValues) === 1 && count($this->restrictedValues) === 1) {
+        $valueA = $this->restrictedValues[0];
+        $valueB = $otherRestrictedValues[0];
+        try {
+          $type = $type->setRestrictedValues([$valueA->operate($operator, $valueB)]);
+        } catch(FormulaRuntimeException $e) { // catch division by zero and similar
+          $type = $type->setRestrictedValues(null);
+        }
+      } else {
+        $type = $type->setRestrictedValues(null);
+      }
+    }
+    return $type;
   }
 
-  public function setFinal(bool $final): Type {
+  public function setAssignable(bool $assignable): Type {
     $clone = clone $this;
-    $clone->final = $final;
+    $clone->assignable = $assignable;
+    if($assignable) {
+      $clone->restrictedValues = null;
+    }
     return $clone;
   }
 
-  public function isFinal(): bool {
-    return $this->final;
+  public function isAssignable(): bool {
+    return $this->assignable;
   }
 
-  // /**
-  //  * @return array<ImplementableOperator>
-  //  */
-  // public abstract function getImplementedOperators(): array;
+  public function setRestrictedValues(?array $restrictedValues): Type {
+    if($restrictedValues !== null && $this->assignable) {
+      throw new \UnexpectedValueException('Assignable type can\'t have value restrictions');
+    }
+    $clone = clone $this;
+    $clone->restrictedValues = $restrictedValues;
+    return $clone;
+  }
+
+  public function getRestrictedValues(): ?array {
+    return $this->restrictedValues;
+  }
 
   /**
    * @return array<Type>

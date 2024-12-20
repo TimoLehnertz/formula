@@ -88,7 +88,7 @@ class ExpressionParserTest extends TestCase {
     $result = (new ExpressionParser())->parse($firstToken);
     $this->assertNull($result->nextToken);
     $this->assertInstanceOf(OperatorExpression::class, $result->parsed);
-    $this->assertInstanceOf(ConstantExpression::class, $result->parsed->leftExpression);
+    $this->assertInstanceOf(ConstantExpression::class, $result->parsed->getLeftExpression());
     $this->assertInstanceOf(ImplementableOperator::class, $result->parsed->operator);
     $this->assertInstanceOf(TypeExpression::class, $result->parsed->rightExpression);
     $this->assertEquals('(float)1', $result->parsed->toString(PrettyPrintOptions::buildDefault()));

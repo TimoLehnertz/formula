@@ -3,10 +3,8 @@
 namespace test\type;
 
 use PHPUnit\Framework\TestCase;
-use TimoLehnertz\formula\Formula;
 use TimoLehnertz\formula\FormulaBugException;
 use TimoLehnertz\formula\operator\ImplementableOperator;
-use TimoLehnertz\formula\statement\Frequency;
 use TimoLehnertz\formula\type\ArrayType;
 use TimoLehnertz\formula\type\ArrayValue;
 use TimoLehnertz\formula\type\BooleanType;
@@ -48,25 +46,69 @@ use TimoLehnertz\formula\type\classes\ClassTypeType;
 use TimoLehnertz\formula\type\classes\ConstructorType;
 use TimoLehnertz\formula\type\classes\ClassTypeValue;
 use TimoLehnertz\formula\type\classes\ConstructorValue;
-use TimoLehnertz\formula\type\EnumInstanceType;
-use TimoLehnertz\formula\type\EnumInstanceValue;
-use TimoLehnertz\formula\type\EnumTypeType;
-use TimoLehnertz\formula\type\EnumTypeValue;
 
 class TypeTest extends TestCase {
 
+  public function testIsAssignableDefaultsFalse(): void {
+    $this->assertFalse((new BooleanType())->isAssignable());
+  }
+
+  public function testSetAssignableReturnsDifferentInstance(): void {
+    $type = new BooleanType();
+    $newType = $type->setAssignable(true);
+    $this->assertNotSame($type, $newType);
+    $this->assertTrue($newType->isAssignable());
+    $this->assertFalse($type->isAssignable());
+  }
+
+  public function testGetRestrictedValuesDefaultsToNull(): void {
+    $this->assertNull((new BooleanType())->getRestrictedValues());
+  }
+
+  public function testSetRestrictedValuesReturnsDifferentInstance(): void {
+    $mockValue = $this->createMock(Value::class);
+    $type = new BooleanType();
+    $newType = $type->setRestrictedValues([$mockValue]);
+    $this->assertNotSame($type, $newType);
+  }
+
+  public function testSetRestrictedValuesStoresCorrectly(): void {
+    $value = new BooleanValue(true);
+    $newType = (new BooleanType())->setRestrictedValues([$value]);
+    $this->assertSame([$value], $newType->getRestrictedValues());
+  }
+
+  public function testSetRestrictedValuesAcceptsNull(): void {
+    $newType = (new BooleanType())->setRestrictedValues(null);
+    $this->assertNull($newType->getRestrictedValues());
+  }
+
+  public function testCannotSetRestrictedValuesOnAssignableType(): void {
+    $assignableType = (new BooleanType())->setAssignable(true);
+    $this->expectException(\UnexpectedValueException::class);
+    $this->expectExceptionMessage('Assignable type can\'t have value restrictions');
+    $assignableType->setRestrictedValues([]);
+  }
+
+  public function testSettingAssignableToClearsPreviousRestrictedValues(): void {
+    $mockValue = $this->createMock(Value::class);
+    $restrictedType = (new BooleanType())->setRestrictedValues([$mockValue]);
+    $this->assertNotNull($restrictedType->getRestrictedValues());
+    $assignableType = $restrictedType->setAssignable(true);
+    $this->assertNull($assignableType->getRestrictedValues());
+  }
+
+  public function testValueRestrictionsPropagate(): void {
+    $typeA = (new IntegerType())->setRestrictedValues([new IntegerValue(1)]);
+    $unaryResultType = $typeA->getOperatorResultType(new ImplementableOperator(ImplementableOperator::TYPE_UNARY_MINUS), null);
+    $this->assertEquals(-1, $unaryResultType->getRestrictedValues()[0]->toPHPValue());
+    $typeB = (new IntegerType())->setRestrictedValues([new IntegerValue(3)]);
+    $binaryResultType = $typeA->getOperatorResultType(new ImplementableOperator(ImplementableOperator::TYPE_SUBTRACTION), $typeB);
+    $this->assertEquals(-2, $binaryResultType->getRestrictedValues()[0]->toPHPValue());
+  }
+
   public function provider(): array {
     $tests = [];
-    
-    /**
-     * Default operators (tested with boolean)
-     */
-    // $operators = [];
-    // // Operator !
-    
-
-    // $tests[] = [true, new BooleanType(), new BooleanType(), new IntegerType(), new BooleanType(), new IntegerType(), 'boolean', $operators, new BooleanValue(true), 'true', true, new BooleanValue(true), new BooleanValue(false), true];
-
     /**
      * IntegerType
      */
@@ -331,9 +373,8 @@ class TypeTest extends TestCase {
    * @param array<OperatorTestMeta> $operators
    */
   public function testTypes(mixed $phpValue, Type $type, Type $equal, Type $notEqual, Type $assignable, Type $notAssignable, string $expectedIdentifier, array $operators, ?Value $testValue, ?string $expectedValueString, ?bool $expectedTruthyness, ?Value $equalValue, ?Value $notEqualValue, ?bool $copyEquals): void {
-    
     // var_dump(json_encode((new Formula('1+1'))->getNodeTree()));
-    
+
     $this->assertTrue($type->equals($equal));
     $this->assertFalse($type->equals($notEqual));
     $this->assertTrue($type->assignableBy($assignable));
@@ -433,7 +474,7 @@ class TypeTest extends TestCase {
 }
 
 function getDefaultOperators(Type $type, ?Value $testValue): array {
-  if($testValue === null) {
+  if ($testValue === null) {
     return [];
   }
   $operatorMetas = [];
