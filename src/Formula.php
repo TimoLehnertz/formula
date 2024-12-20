@@ -49,7 +49,7 @@ class Formula {
    *   nodeType: string,
    *   connected: list<array>,
    *   properties: array<string, mixed>
-   * }, scope: array<string, @psalm-return array{
+   * }, scope: array<string, array{
    *   typeName: string,
    *   properties?: array<string, mixed>
    * }>}
