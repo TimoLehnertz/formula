@@ -18,4 +18,9 @@ class CompoundTypeTest extends TestCase {
     $formula = new Formula('var a = func(); a = 0; return a;', $scope);
     $this->assertEquals(0, $formula->calculate()->toPHPValue());
   }
+
+  public function testNoValueRestrictions(): void {
+    $formula = new Formula('true ? 1 : 2');
+    $this->assertNull($formula->getReturnType()->getRestrictedValues());
+  }
 }

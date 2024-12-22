@@ -50,7 +50,7 @@ class CompoundType extends Type {
       }
     }
     if(count($uniqueTypes) === 1) {
-      return $uniqueTypes[0];
+      return $uniqueTypes[0]->setRestrictedValues(null);
     } else {
       return new CompoundType($uniqueTypes);
     }
