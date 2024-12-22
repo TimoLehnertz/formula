@@ -24,7 +24,7 @@ abstract class Type implements OperatorMeta, FormulaPart {
    * Otherwise null.
    * @var array<Value>|null
    */
-  private ?array $restrictedValues;
+  private ?array $restrictedValues = null;
 
   public function __construct(?array $restrictedValues = null) {
     $this->restrictedValues = $restrictedValues;
@@ -128,7 +128,9 @@ abstract class Type implements OperatorMeta, FormulaPart {
         $valueA = $this->restrictedValues[0];
         $valueB = $otherRestrictedValues[0];
         try {
-          $type = $type->setRestrictedValues([$valueA->operate($operator, $valueB)]);
+          if(!$type->isAssignable()) {
+            $type = $type->setRestrictedValues([$valueA->operate($operator, $valueB)]);
+          }
         } catch (FormulaRuntimeException) { // catch division by zero and similar
           $type = $type->setRestrictedValues(null);
         }
