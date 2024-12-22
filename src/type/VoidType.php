@@ -10,7 +10,7 @@ use TimoLehnertz\formula\operator\ImplementableOperator;
 class VoidType extends Type {
 
   public function __construct() {
-    parent::__construct();
+    parent::__construct([new VoidValue()]);
   }
 
   public function getIdentifier(bool $nested = false): string {
@@ -24,10 +24,6 @@ class VoidType extends Type {
   public function equals(Type $type): bool {
     return $type instanceof VoidType;
   }
-
-  // public function getImplementedOperators(): array {
-  //   return [];
-  // }
 
   protected function getTypeCompatibleOperands(ImplementableOperator $operator): array {
     return [];

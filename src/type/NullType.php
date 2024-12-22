@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace TimoLehnertz\formula\type;
 
-use TimoLehnertz\formula\nodes\NodeInterfaceType;
 use TimoLehnertz\formula\operator\ImplementableOperator;
 
 /**
@@ -13,7 +12,7 @@ use TimoLehnertz\formula\operator\ImplementableOperator;
 class NullType extends Type {
 
   public function __construct() {
-    parent::__construct();
+    parent::__construct([new NullValue()]);
   }
 
   protected function typeAssignableBy(Type $type): bool {
@@ -27,10 +26,6 @@ class NullType extends Type {
   public function getIdentifier(bool $isNested = false): string {
     return 'null';
   }
-
-  // public function getImplementedOperators(): array {
-  //   return [];
-  // }
 
   protected function getTypeCompatibleOperands(ImplementableOperator $operator): array {
     return [];

@@ -2,7 +2,6 @@
 declare(strict_types = 1);
 namespace TimoLehnertz\formula\type;
 
-use TimoLehnertz\formula\nodes\NodeInterfaceType;
 use TimoLehnertz\formula\operator\ImplementableOperator;
 
 /**
@@ -25,10 +24,6 @@ class NeverType extends Type {
   public function getIdentifier(bool $isNested = false): string {
     return 'never';
   }
-
-  // public function getImplementedOperators(): array {
-  //   return [];
-  // }
 
   protected function getTypeOperatorResultType(ImplementableOperator $operator, ?Type $otherType): ?Type {
     return null;
