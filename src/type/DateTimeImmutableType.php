@@ -16,7 +16,7 @@ class DateTimeImmutableType extends Type {
     return $this->equals($type);
   }
 
-  public function typeEquals(Type $type): bool {
+  public function equals(Type $type): bool {
     return $type instanceof DateTimeImmutableType;
   }
 

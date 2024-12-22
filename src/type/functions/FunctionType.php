@@ -33,7 +33,7 @@ class FunctionType extends Type {
     return $this->arguments->assignableBy($type->arguments, true) && $this->generalReturnType->assignableBy($type->generalReturnType, true);
   }
 
-  public function typeEquals(Type $type): bool {
+  public function equals(Type $type): bool {
     if($type instanceof FunctionType) {
       return $this->arguments->equals($type->arguments) && $this->generalReturnType->equals($type->generalReturnType) && $this->specificReturnType == $type->specificReturnType;
     } else {

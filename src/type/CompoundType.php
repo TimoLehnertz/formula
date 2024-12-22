@@ -112,7 +112,7 @@ class CompoundType extends Type {
     }
   }
 
-  public function typeEquals(Type $type): bool {
+  public function equals(Type $type): bool {
     if($type instanceof CompoundType) {
       if(count($type->types) !== count($this->types)) {
         return false;

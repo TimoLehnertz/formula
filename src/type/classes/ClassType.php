@@ -51,7 +51,7 @@ class ClassType extends Type {
     return $this->parentType->extends($classType);
   }
 
-  public function typeEquals(Type $type): bool {
+  public function equals(Type $type): bool {
     if(!($type instanceof ClassType)) {
       return false;
     }

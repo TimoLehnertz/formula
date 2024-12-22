@@ -21,7 +21,7 @@ class VoidType extends Type {
     return $type instanceof VoidType;
   }
 
-  public function typeEquals(Type $type): bool {
+  public function equals(Type $type): bool {
     return $type instanceof VoidType;
   }
 

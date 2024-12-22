@@ -19,7 +19,7 @@ class EnumInstanceType extends Type {
     return $type instanceof EnumInstanceType && $this->enumType->equals($type->enumType);
   }
 
-  public function typeEquals(Type $type): bool {
+  public function equals(Type $type): bool {
     return $type instanceof EnumInstanceType && $this->enumType->equals($type->enumType);
   }
 

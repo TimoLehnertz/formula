@@ -32,7 +32,7 @@ class ArrayType extends ClassType implements IteratableType {
     return $keysCompatible && $elementsCompatible;
   }
 
-  public function typeEquals(Type $type): bool {
+  public function equals(Type $type): bool {
     if (!($type instanceof ArrayType)) {
       return false;
     }

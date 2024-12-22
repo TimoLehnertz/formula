@@ -30,7 +30,7 @@ class ClassTypeType extends Type {
     return 'ClassTypeType';
   }
 
-  public function typeEquals(Type $type): bool {
+  public function equals(Type $type): bool {
     if($type instanceof ClassTypeType) {
       return $this->constructorType->equals($type->constructorType);
     }
