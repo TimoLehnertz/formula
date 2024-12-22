@@ -18,8 +18,6 @@ class CompoundType extends Type {
    * @param array<Type> $types
    */
   private function __construct(array $types) {
-    parent::__construct();
-    $this->types = $types;
     $restrictedValues = [];
     foreach ($types as $type) {
       if($type->getRestrictedValues() !== null) {
@@ -29,7 +27,8 @@ class CompoundType extends Type {
         break;
       }
     }
-    $this->setRestrictedValues($restrictedValues);
+    parent::__construct($restrictedValues);
+    $this->types = $types;
   }
 
   public static function buildFromTypes(array $types): Type {
