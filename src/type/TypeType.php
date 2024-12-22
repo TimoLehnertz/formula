@@ -24,7 +24,7 @@ class TypeType extends Type {
     return $type instanceof TypeType;
   }
 
-  public function equals(Type $type): bool {
+  public function typeEquals(Type $type): bool {
     return ($type instanceof TypeType) && $type->type->equals($this->type);
   }
 

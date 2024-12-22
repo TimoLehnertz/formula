@@ -22,7 +22,7 @@ class MixedType extends Type {
     return true;
   }
 
-  public function equals(Type $type): bool {
+  public function typeEquals(Type $type): bool {
     return $type instanceof MixedType;
   }
 

@@ -33,4 +33,18 @@ class FormulaIntegrationTest extends TestCase {
     }
     $this->assertEquals([1, 2, 3], $argumentValues);
   }
+
+  public function testThatEnumsAreNotEqual(): void {
+    $scope = new Scope();
+    $scope->definePHP(true, 'TestEnum', TestEnum::class);
+    $formula = new Formula('TestEnum.A == TestEnum.B', $scope);
+    $this->assertFalse($formula->calculate()->toPHPValue());
+    $formula = new Formula('TestEnum.A == TestEnum.A', $scope);
+    $this->assertTrue($formula->calculate()->toPHPValue());
+  }
+}
+
+enum TestEnum {
+  case A;
+  case B;
 }

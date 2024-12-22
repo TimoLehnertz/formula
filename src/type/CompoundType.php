@@ -18,16 +18,7 @@ class CompoundType extends Type {
    * @param array<Type> $types
    */
   private function __construct(array $types) {
-    $restrictedValues = [];
-    foreach ($types as $type) {
-      if($type->getRestrictedValues() !== null) {
-        $restrictedValues = array_merge($restrictedValues, $type->getRestrictedValues());
-      } else {
-        $restrictedValues = null;
-        break;
-      }
-    }
-    parent::__construct($restrictedValues);
+    parent::__construct();
     $this->types = $types;
   }
 
@@ -121,7 +112,7 @@ class CompoundType extends Type {
     }
   }
 
-  public function equals(Type $type): bool {
+  public function typeEquals(Type $type): bool {
     if($type instanceof CompoundType) {
       if(count($type->types) !== count($this->types)) {
         return false;

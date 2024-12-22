@@ -24,7 +24,7 @@ abstract class Type implements OperatorMeta, FormulaPart {
    * Otherwise null.
    * @var array<Value>|null
    */
-  private ?array $restrictedValues = null;
+  protected ?array $restrictedValues = null;
 
   public function __construct(?array $restrictedValues = null) {
     $this->restrictedValues = $restrictedValues;
@@ -163,6 +163,31 @@ abstract class Type implements OperatorMeta, FormulaPart {
     return $clone;
   }
 
+  public function equals(Type $other, bool $ignoreRestrictions = true): bool {
+    if(!$this->typeEquals($other)) {
+      return false;
+    }
+    if($ignoreRestrictions) {
+      return true;
+    }
+    if(($this->restrictedValues === null) !== ($other->restrictedValues === null)) {
+      return false;
+    }
+    if($this->restrictedValues === null) {
+      return true;
+    }
+    if(count($this->restrictedValues) !== count($other->restrictedValues)) {
+      return false;
+    }
+    $count = count($this->restrictedValues);
+    for ($i=0; $i < $count; $i++) { 
+      if(!$this->restrictedValues[$i]->valueEquals($other->restrictedValues[$i])) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   public function getRestrictedValues(): ?array {
     return $this->restrictedValues;
   }
@@ -179,7 +204,7 @@ abstract class Type implements OperatorMeta, FormulaPart {
    */
   public abstract function getIdentifier(bool $nested = false): string;
 
-  public abstract function equals(Type $type): bool;
+  public abstract function typeEquals(Type $type): bool;
 
   public function assignableBy(Type $type): bool {
     return $this->typeAssignableBy($type);

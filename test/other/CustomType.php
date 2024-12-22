@@ -16,7 +16,7 @@ class CustomType extends Type {
     return $this->equals($type);
   }
 
-  public function equals(Type $type): bool {
+  public function typeEquals(Type $type): bool {
     return $type instanceof CustomType;
   }
 
