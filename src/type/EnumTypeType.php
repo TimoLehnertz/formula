@@ -1,7 +1,11 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
 namespace TimoLehnertz\formula\type;
 
+use ReflectionEnumBackedCase;
+use ReflectionEnumUnitCase;
 use TimoLehnertz\formula\type\classes\ClassType;
 use TimoLehnertz\formula\type\classes\FieldType;
 
@@ -15,10 +19,10 @@ class EnumTypeType extends ClassType {
   public function __construct(\ReflectionEnum $reflection) {
     $fields = [];
     /**  @var \ReflectionEnumUnitCase|\ReflectionEnumBackedCase $enumCase */
-    foreach($reflection->getCases() as $enumCase) {
+    foreach ($reflection->getCases() as $enumCase) {
       $fields[$enumCase->getName()] = new FieldType(true, new EnumInstanceType($this));
     }
-    parent::__construct(null, $reflection->getName(), $fields);
+    parent::__construct(null, $reflection->getName(), $fields, [new EnumTypeValue($reflection)]);
     $this->reflection = $reflection;
   }
 
@@ -27,6 +31,6 @@ class EnumTypeType extends ClassType {
   }
 
   public function getIdentifier(bool $isNested = false): string {
-    return 'EnumTypeType('.$this->reflection->getName().')';
+    return 'EnumTypeType(' . $this->reflection->getName() . ')';
   }
 }

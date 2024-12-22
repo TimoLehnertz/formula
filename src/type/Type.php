@@ -24,9 +24,10 @@ abstract class Type implements OperatorMeta, FormulaPart {
    * Otherwise null.
    * @var array<Value>|null
    */
-  private ?array $restrictedValues = null;
+  private ?array $restrictedValues;
 
-  public function __construct() {
+  public function __construct(?array $restrictedValues = null) {
+    $this->restrictedValues = $restrictedValues;
   }
 
   public function getCompatibleOperands(ImplementableOperator $operator): array {
@@ -128,7 +129,7 @@ abstract class Type implements OperatorMeta, FormulaPart {
         $valueB = $otherRestrictedValues[0];
         try {
           $type = $type->setRestrictedValues([$valueA->operate($operator, $valueB)]);
-        } catch (FormulaRuntimeException $e) { // catch division by zero and similar
+        } catch (FormulaRuntimeException) { // catch division by zero and similar
           $type = $type->setRestrictedValues(null);
         }
       } else {

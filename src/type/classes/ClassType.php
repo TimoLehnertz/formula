@@ -23,8 +23,8 @@ class ClassType extends Type {
   /**
    * @param array<string, FieldType> $fields
    */
-  public function __construct(?ClassType $parentType, string $identifier, array $fields) {
-    parent::__construct();
+  public function __construct(?ClassType $parentType, string $identifier, array $fields, ?array $restrictedValues = null) {
+    parent::__construct($restrictedValues);
     $this->parentType = $parentType;
     $this->identifier = $identifier;
     if($this->parentType !== null) {

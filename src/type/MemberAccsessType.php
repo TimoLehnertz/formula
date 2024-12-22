@@ -12,7 +12,7 @@ class MemberAccsessType extends Type {
   private string $memberIdentifier;
 
   public function __construct(string $memberIdentifier) {
-    parent::__construct();
+    parent::__construct([new MemberAccsessValue($memberIdentifier)]);
     $this->memberIdentifier = $memberIdentifier;
   }
 

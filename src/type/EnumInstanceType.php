@@ -23,10 +23,6 @@ class EnumInstanceType extends Type {
     return $type instanceof EnumInstanceType && $this->enumType->equals($type->enumType);
   }
 
-  // public function getImplementedOperators(): array {
-  //   return [];
-  // }
-
   protected function getTypeCompatibleOperands(ImplementableOperator $operator): array {
     return [];
   }
