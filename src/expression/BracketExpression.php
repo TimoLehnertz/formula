@@ -32,7 +32,7 @@ class BracketExpression implements Expression {
   }
 
   public function buildNode(Scope $scope): Node {
-    return new Node('BracketExpression', [$this->expression->buildNode($scope)]);
+    return $this->expression->buildNode($scope);
   }
 
   public function getExpression(): Expression {

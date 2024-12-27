@@ -45,9 +45,6 @@ class BracketExpressionTest extends TestCase {
      * Node
      */
     $node = $expression->buildNode(new Scope());
-    $this->assertEquals('BracketExpression', $node->nodeType);
-    $this->assertCount(1, $node->connected);
-    $this->assertEquals($constantNode, $node->connected[0]);
-    $this->assertEquals([], $node->info);
+    $this->assertEquals('ConstantExpression', $node->nodeType);
   }
 }

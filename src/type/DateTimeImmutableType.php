@@ -20,14 +20,6 @@ class DateTimeImmutableType extends Type {
     return $type instanceof DateTimeImmutableType;
   }
 
-  // public function getImplementedOperators(): array {
-  //   return [
-  //     new ImplementableOperator(ImplementableOperator::TYPE_ADDITION),
-  //     new ImplementableOperator(ImplementableOperator::TYPE_SUBTRACTION),
-  //     new ImplementableOperator(ImplementableOperator::TYPE_TYPE_CAST)
-  //   ];
-  // }
-
   protected function getTypeCompatibleOperands(ImplementableOperator $operator): array {
     switch ($operator->getID()) {
       case ImplementableOperator::TYPE_ADDITION:
