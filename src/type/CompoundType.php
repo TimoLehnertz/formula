@@ -172,4 +172,3 @@ class CompoundType extends Type {
     return ['types' => $types];
   }
 }
-

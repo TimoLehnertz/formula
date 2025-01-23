@@ -268,6 +268,17 @@ class TypeTest extends TestCase {
     $compatibleOperands = [];
     $compatibleOperands[] = new CompatibleOperator(new DateIntervalType(), new DateTimeImmutableType(), new DateIntervalValue(new \DateInterval('P1D')), new DateTimeImmutableValue(new \DateTimeImmutable('2024-01-04')));
     $operators[] = new OperatorTestMeta(ImplementableOperator::TYPE_SUBTRACTION, $compatibleOperands);
+    // Operator <
+    $compatibleOperands = [];
+    $compatibleOperands[] = new CompatibleOperator(new DateTimeImmutableType(), new BooleanType(), new DateTimeImmutableValue(new \DateTimeImmutable('2024-01-01')), new BooleanValue(false));
+    $compatibleOperands[] = new CompatibleOperator(new DateTimeImmutableType(), new BooleanType(), new DateTimeImmutableValue(new \DateTimeImmutable('2024-01-06')), new BooleanValue(true));
+    $operators[] = new OperatorTestMeta(ImplementableOperator::TYPE_LESS, $compatibleOperands);
+    // Operator >
+    $compatibleOperands = [];
+    $compatibleOperands[] = new CompatibleOperator(new DateTimeImmutableType(), new BooleanType(), new DateTimeImmutableValue(new \DateTimeImmutable('2024-01-01')), new BooleanValue(true));
+    $compatibleOperands[] = new CompatibleOperator(new DateTimeImmutableType(), new BooleanType(), new DateTimeImmutableValue(new \DateTimeImmutable('2024-01-05')), new BooleanValue(false));
+    $operators[] = new OperatorTestMeta(ImplementableOperator::TYPE_GREATER, $compatibleOperands);
+    
     // Operator (int)
     $compatibleOperands = [];
     $compatibleOperands[] = new CompatibleOperator(new TypeType(new IntegerType()), new IntegerType(), new TypeValue(new IntegerType()), new IntegerValue((new \DateTimeImmutable('2024-01-05'))->getTimestamp()));
@@ -454,6 +465,7 @@ class TypeTest extends TestCase {
            */
           if (!$compatibleOperand->expectedRetult->valueEquals($resultValue)) {
             var_dump($compatibleOperand->expectedRetult, $resultValue);
+            var_dump($testValue);
           }
           $this->assertTrue($compatibleOperand->expectedRetult->valueEquals($resultValue));
         }

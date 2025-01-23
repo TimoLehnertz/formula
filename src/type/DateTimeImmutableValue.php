@@ -30,6 +30,16 @@ class DateTimeImmutableValue extends Value {
           return new DateTimeImmutableValue($this->value->sub($other->toPHPValue()));
         }
         break;
+      case ImplementableOperator::TYPE_LESS:
+        if ($other instanceof DateTimeImmutableValue) {
+          return new BooleanValue($this->value < $other->toPHPValue());
+        }
+        break;
+      case ImplementableOperator::TYPE_GREATER:
+        if ($other instanceof DateTimeImmutableValue) {
+          return new BooleanValue($this->value > $other->toPHPValue());
+        }
+        break;
       case ImplementableOperator::TYPE_TYPE_CAST:
         if ($other instanceof TypeValue && $other->getValue() instanceof IntegerType) {
           return new IntegerValue($this->value->getTimestamp());

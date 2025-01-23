@@ -19,10 +19,6 @@ class DateIntervalType extends Type {
     return $type instanceof DateIntervalType;
   }
 
-  // public function getImplementedOperators(): array {
-  //   return [];
-  // }
-
   protected function getTypeCompatibleOperands(ImplementableOperator $operator): array {
     switch ($operator->getID()) {
       case ImplementableOperator::TYPE_TYPE_CAST:

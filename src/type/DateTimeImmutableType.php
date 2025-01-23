@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace TimoLehnertz\formula\type;
 
 use TimoLehnertz\formula\operator\ImplementableOperator;
-use const false;
 
 /**
  * @author Timo Lehnertz
@@ -25,6 +24,9 @@ class DateTimeImmutableType extends Type {
       case ImplementableOperator::TYPE_ADDITION:
       case ImplementableOperator::TYPE_SUBTRACTION:
         return [new DateIntervalType()];
+        case ImplementableOperator::TYPE_GREATER:
+        case ImplementableOperator::TYPE_LESS:
+        return [new DateTimeImmutableType()];
       case ImplementableOperator::TYPE_TYPE_CAST:
         return [new TypeType(new IntegerType())];
       default:
@@ -38,6 +40,12 @@ class DateTimeImmutableType extends Type {
       case ImplementableOperator::TYPE_SUBTRACTION:
         if ($otherType instanceof DateIntervalType) {
           return new DateTimeImmutableType();
+        }
+        break;
+      case ImplementableOperator::TYPE_GREATER:
+      case ImplementableOperator::TYPE_LESS:
+        if ($otherType instanceof DateTimeImmutableType) {
+          return new BooleanType();
         }
         break;
       case ImplementableOperator::TYPE_TYPE_CAST:
